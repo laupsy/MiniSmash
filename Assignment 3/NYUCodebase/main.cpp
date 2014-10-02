@@ -1,11 +1,13 @@
-#include <iostream>
-#include "SpaceInvaders.h"
-using namespace std;
+/* Laura Barbera
+ Assignment 3 */
 
-int main(int argc, char *argv[]) {
+#include "SpaceInvaders.h"
+
+int main(int argc, char *argv[])
+{
     
-    SpaceInvaders app;
-    while(!app.UpdateAndRender()) {}
+    SpaceInvaders newGame;
+    while(!newGame.Update()) {}
+    
     return 0;
-    
 }

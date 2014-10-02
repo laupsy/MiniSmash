@@ -10,17 +10,13 @@
 		6D5A86AE19AE5C710066C1FD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5A86AD19AE5C710066C1FD /* Cocoa.framework */; };
 		6D5A86B819AE5C710066C1FD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6D5A86B619AE5C710066C1FD /* InfoPlist.strings */; };
 		6D5A86BA19AE5C710066C1FD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D5A86B919AE5C710066C1FD /* main.cpp */; };
-		6D5A86BE19AE5C710066C1FD /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 6D5A86BC19AE5C710066C1FD /* Credits.rtf */; };
 		6D5A86CD19AE5C710066C1FD /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5A86CC19AE5C710066C1FD /* XCTest.framework */; };
 		6D5A86CE19AE5C710066C1FD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5A86AD19AE5C710066C1FD /* Cocoa.framework */; };
 		6D5A86E319AE5CD10066C1FD /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5A86E219AE5CD10066C1FD /* SDL2.framework */; };
 		6D5AC2D019AE6280004CB1BF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5AC2CF19AE6280004CB1BF /* OpenGL.framework */; };
 		6D5AC2D219AE6A1E004CB1BF /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5AC2D119AE6A1E004CB1BF /* SDL2_image.framework */; };
-		CDD29AB319D9051D00ED1C2C /* SpaceInvaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDD29AB119D9051D00ED1C2C /* SpaceInvaders.cpp */; };
-		CDD29AB619D905A000ED1C2C /* Ship.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDD29AB419D905A000ED1C2C /* Ship.cpp */; };
-		CDD29AB919D905AD00ED1C2C /* Bullet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDD29AB719D905AD00ED1C2C /* Bullet.cpp */; };
-		CDD29ABC19D9134800ED1C2C /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDD29ABA19D9134800ED1C2C /* Entity.cpp */; };
-		CDD29ABF19D919EF00ED1C2C /* SheetSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDD29ABD19D919EF00ED1C2C /* SheetSprite.cpp */; };
+		CD2B0D2419DC67C000162224 /* SpaceInvaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD2B0D2219DC67C000162224 /* SpaceInvaders.cpp */; };
+		CD2B0D2A19DCC92100162224 /* Sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD2B0D2819DCC92100162224 /* Sprite.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,22 +38,15 @@
 		6D5A86B519AE5C710066C1FD /* NYUCodebase-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NYUCodebase-Info.plist"; sourceTree = "<group>"; };
 		6D5A86B719AE5C710066C1FD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6D5A86B919AE5C710066C1FD /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		6D5A86BD19AE5C710066C1FD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		6D5A86CB19AE5C710066C1FD /* NYUCodebaseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NYUCodebaseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D5A86CC19AE5C710066C1FD /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		6D5A86E219AE5CD10066C1FD /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		6D5AC2CF19AE6280004CB1BF /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		6D5AC2D119AE6A1E004CB1BF /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
-		CDD29AB119D9051D00ED1C2C /* SpaceInvaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpaceInvaders.cpp; path = ../SpaceInvaders.cpp; sourceTree = "<group>"; };
-		CDD29AB219D9051D00ED1C2C /* SpaceInvaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpaceInvaders.h; path = ../SpaceInvaders.h; sourceTree = "<group>"; };
-		CDD29AB419D905A000ED1C2C /* Ship.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ship.cpp; path = ../Ship.cpp; sourceTree = "<group>"; };
-		CDD29AB519D905A000ED1C2C /* Ship.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ship.h; path = ../Ship.h; sourceTree = "<group>"; };
-		CDD29AB719D905AD00ED1C2C /* Bullet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Bullet.cpp; path = ../Bullet.cpp; sourceTree = "<group>"; };
-		CDD29AB819D905AD00ED1C2C /* Bullet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bullet.h; path = ../Bullet.h; sourceTree = "<group>"; };
-		CDD29ABA19D9134800ED1C2C /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = SOURCE_ROOT; };
-		CDD29ABB19D9134800ED1C2C /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = SOURCE_ROOT; };
-		CDD29ABD19D919EF00ED1C2C /* SheetSprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SheetSprite.cpp; sourceTree = "<group>"; };
-		CDD29ABE19D919EF00ED1C2C /* SheetSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SheetSprite.h; sourceTree = "<group>"; };
+		CD2B0D2219DC67C000162224 /* SpaceInvaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpaceInvaders.cpp; sourceTree = "<group>"; };
+		CD2B0D2319DC67C000162224 /* SpaceInvaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceInvaders.h; sourceTree = "<group>"; };
+		CD2B0D2819DCC92100162224 /* Sprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sprite.cpp; sourceTree = "<group>"; };
+		CD2B0D2919DCC92100162224 /* Sprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sprite.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,7 +128,6 @@
 			children = (
 				6D5A86B519AE5C710066C1FD /* NYUCodebase-Info.plist */,
 				6D5A86B619AE5C710066C1FD /* InfoPlist.strings */,
-				6D5A86BC19AE5C710066C1FD /* Credits.rtf */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -147,17 +135,11 @@
 		6D5A86E119AE5CAA0066C1FD /* Code */ = {
 			isa = PBXGroup;
 			children = (
-				CDD29AB719D905AD00ED1C2C /* Bullet.cpp */,
-				CDD29AB819D905AD00ED1C2C /* Bullet.h */,
-				CDD29AB419D905A000ED1C2C /* Ship.cpp */,
-				CDD29AB519D905A000ED1C2C /* Ship.h */,
-				CDD29AB119D9051D00ED1C2C /* SpaceInvaders.cpp */,
-				CDD29ABD19D919EF00ED1C2C /* SheetSprite.cpp */,
-				CDD29ABE19D919EF00ED1C2C /* SheetSprite.h */,
-				CDD29ABA19D9134800ED1C2C /* Entity.cpp */,
-				CDD29ABB19D9134800ED1C2C /* Entity.h */,
-				CDD29AB219D9051D00ED1C2C /* SpaceInvaders.h */,
 				6D5A86B919AE5C710066C1FD /* main.cpp */,
+				CD2B0D2219DC67C000162224 /* SpaceInvaders.cpp */,
+				CD2B0D2319DC67C000162224 /* SpaceInvaders.h */,
+				CD2B0D2819DCC92100162224 /* Sprite.cpp */,
+				CD2B0D2919DCC92100162224 /* Sprite.h */,
 			);
 			name = Code;
 			sourceTree = "<group>";
@@ -240,7 +222,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D5A86B819AE5C710066C1FD /* InfoPlist.strings in Resources */,
-				6D5A86BE19AE5C710066C1FD /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,12 +239,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CDD29AB619D905A000ED1C2C /* Ship.cpp in Sources */,
-				CDD29AB319D9051D00ED1C2C /* SpaceInvaders.cpp in Sources */,
+				CD2B0D2419DC67C000162224 /* SpaceInvaders.cpp in Sources */,
+				CD2B0D2A19DCC92100162224 /* Sprite.cpp in Sources */,
 				6D5A86BA19AE5C710066C1FD /* main.cpp in Sources */,
-				CDD29ABC19D9134800ED1C2C /* Entity.cpp in Sources */,
-				CDD29ABF19D919EF00ED1C2C /* SheetSprite.cpp in Sources */,
-				CDD29AB919D905AD00ED1C2C /* Bullet.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,14 +269,6 @@
 				6D5A86B719AE5C710066C1FD /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		6D5A86BC19AE5C710066C1FD /* Credits.rtf */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6D5A86BD19AE5C710066C1FD /* en */,
-			);
-			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
