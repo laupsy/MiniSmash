@@ -250,7 +250,7 @@ void SpaceInvaders::Render() {
 }
 
 void SpaceInvaders::renderMain() {
-    drawText( textSheet, "THE LEGEND OF ZELDA: MAJORA'S MARK,DAY TWO", -0.8f, 0.1f, 0.04f, 1.0f, 0.4f, 0.8f, 1.0f);
+    drawText( textSheet, "THE LEGEND OF ZELDA: MAJORA'S MASK,DAY TWO", -0.8f, 0.1f, 0.04f, 1.0f, 0.4f, 0.8f, 1.0f);
     drawText( textSheet, "ROMANI'S COWS ARE IN TROUBLE AND LINK ISN'T AROUND.", -0.8f, -0.2f, 0.025f, 1.0f, 1.0f, 1.0f, 1.0f);
     drawText( textSheet, "ZELDA, YOUR JOB IS TO KILL THE ALIENS", -0.8f, -0.25f, 0.025f, 1.0f, 0.5f, 1.0f, 1.0f);
     drawText( textSheet, "BEFORE THEY STEAL ALL THE COWS. YOU HAVE", -0.8f, -0.3f, 0.025f, 1.0f, 0.5f, 1.0f, 1.0f);
