@@ -61,7 +61,7 @@ void SpaceInvaders::loadEntities() {
                                                      gridWidth,
                                                      gridHeight,
                                                      true,
-                                                     loadTexture("sprites.png") ) );
+                                                     loadTexture("betty_0.png") ) );
     }
     
     // Make 3 rows
@@ -110,7 +110,7 @@ void SpaceInvaders::loadEntities() {
                                    gridWidth,
                                    gridHeight,
                                    false,
-                                   loadTexture("sprites.png") );
+                                   loadTexture("betty_0.png") );
         
         bullets.push_back(newBullet);
     }
@@ -161,7 +161,7 @@ void SpaceInvaders::inputActions() {
     }
     
     else if ( state == STATE_GAME_OVER) {
-        if ( keys[SDL_SCANCODE_R] ) state = STATE_GAME_LEVEL;
+        if ( keys[SDL_SCANCODE_R] ) state = STATE_MAIN_MENU;
     }
     
 }
@@ -217,9 +217,6 @@ bool SpaceInvaders::Update() {
     inputActions();
     behaviorActions();
     
-    if ( score == 800 ) state = STATE_GAME_OVER;
-    if ( elapsed >= 35.000 ) state = STATE_GAME_OVER;
-    
     Render();
     
     return done;
@@ -273,6 +270,9 @@ void SpaceInvaders::renderLevel() {
 
 //    std::cout << elapsed << "\n";
     
+    
+    if ( score == 800 ) state = STATE_GAME_OVER;
+    if ( elapsed >= 35.000 ) state = STATE_GAME_OVER;
     
     float spriteScale = 0.5f;
     
