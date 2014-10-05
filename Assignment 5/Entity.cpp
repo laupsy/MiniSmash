@@ -93,6 +93,17 @@ void Entity::setCoords(const float& newX, const float& newY) {
 //}
 
 void Entity::moveLeft() {
+    if ( speed > 0.001 ) speed = speed * friction_x;
+    else speed = 0; // should stop moving when too slow
+    setX(x - speed);
+    direction_x = -1.0;
+    direction_y = 0.0;
+    u = width * 1;
+    cout << speed << endl;
+}
+
+void Entity::constantLeft() {
+    speed = speed * acceleration_x;
     setX(x - speed);
     direction_x = -1.0;
     direction_y = 0.0;
@@ -100,9 +111,17 @@ void Entity::moveLeft() {
 }
 
 void Entity::moveRight() {
-//    speed *= acceleration_x;
-    setX(x + speed );
-    direction_x = 1.0;
+    if ( speed > 0.001 ) speed = speed * friction_x;
+    else speed = 0; // should stop moving when too slow
+    setX(x + speed);    direction_x = 1.0;
+    direction_y = 0.0;
+    u = width * 3.5;
+}
+
+void Entity::constantRight() {
+    speed = speed * acceleration_x;
+    setX(x + speed);
+    direction_x = -1.0;
     direction_y = 0.0;
     u = width * 3.5;
 }
@@ -122,45 +141,37 @@ void Entity::moveDown() {
 }
 
 void Entity::slowDown() {
-    speed *= friction_x;
+//    speed *= friction_x;
 }
 
 void Entity::fall(float elapsed) {
-    velocity_y += acceleration_y;
-    y += velocity_y;
-    direction_y = -1.0;
-    cout << y << "\n";
+    if ( !colliding ) {
+        if ( speed > 0.001 ) speed = speed * acceleration_y;
+        else speed = 0; // should stop moving when too slow
+        setY(y - speed);
+        direction_x = 0.0;
+        direction_y = -1.0;
+        u = width * 3.5;
+    }
 }
 
-void Entity::jump(float elapsed) {
-        // only want single key press , no hold down jump
-    if ( !jumping ) {
-        
-        direction_x = 0.0;
-        direction_y = 1.0;
-        y = 0.5f;
-        jumping = true;
-        //cout << elapsed << "\n";
-    }
-    else {
-        jumping = false;
-    }
+void Entity::jump() {
+    setY(y + speed);
 }
 
 void Entity::resetPhysics() {
     
-    speed = 0.01f;
+    speed = 0.015f;
     
-    acceleration_x = 1.05f;
+    acceleration_x = 1.009f;
     acceleration_y = -9.8f / 100000.0f;
     
-    friction_x = 0.05f;
-    
-    velocity_x = 0.0f;
-    velocity_y = 0.0f;
+    friction_x = 0.98f;
 }
 
 void Entity::getCollision(const Entity& cWith) {
+    
+    float padding = 0.26f;
     
     float thisRight  = x + width  / 2.0f;
     float thisLeft   = x - width  / 2.0f;
@@ -172,16 +183,16 @@ void Entity::getCollision(const Entity& cWith) {
     float cWithTop    = cWith.y + cWith.height / 2.0f;
     float cWithBottom = cWith.y - cWith.height / 2.0f;
     
-    bool collidingLeft   = ( thisLeft > cWithRight );
-    bool collidingRight  = ( thisRight < cWithLeft );
-    bool collidingTop    = ( thisBottom > cWithTop );
-    bool collidingBottom = ( thisTop < cWithBottom );
+    bool collidingLeft   = ( thisLeft + padding > cWithRight + padding );
+    bool collidingRight  = ( thisRight + padding < cWithLeft + padding );
+    bool collidingTop    = ( thisBottom + padding > cWithTop - padding );
+    bool collidingBottom = ( thisTop - padding < cWithBottom + padding );
     
-    if ( collidingLeft ) colliding = false;
-    if ( collidingRight ) colliding = false;
-    if ( collidingTop ) colliding = false;
-    if ( collidingBottom ) colliding = false;
+    if ( ! collidingLeft ) colliding = false;
+    if ( ! collidingRight ) colliding = false;
+    if ( ! collidingTop ) colliding = false;
+    if ( ! collidingBottom ) colliding = false;
     
-    colliding = true;
+    else colliding = true;
     
 }

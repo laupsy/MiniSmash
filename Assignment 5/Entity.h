@@ -24,7 +24,9 @@ public:
     void setCoords(const float& newX, const float& newY);
     
     void moveLeft();
+    void constantLeft();
     void moveRight();
+    void constantRight();
     void moveUp();
     void moveDown();
     
@@ -33,7 +35,7 @@ public:
     
     void resetPhysics();
     
-    void jump(float elapsed);
+    void jump();
     
     void getCollision(const Entity& cWith);
     
@@ -50,15 +52,16 @@ public:
     float edgeTop = y + width / 2.0f;
     float edgeBottom = y - width / 2.0f;
     
-    float speed = 0.01f;
+    float speed = 0.015f;
     
     float direction_x = 0.0f;
     float direction_y = 0.0f;
     
-    float acceleration_x = 1.05f;
-    float acceleration_y = -9.8f / 100000.0f;
+    float acceleration_x = 1.009f;
+    float acceleration_y = 1.009f;
     
-    float friction_x = 0.05f;
+    float friction_x = 0.98f;
+    float friction_y = 0.99f;
     
     float velocity_x = 0.0f;
     float velocity_y = 0.0f;

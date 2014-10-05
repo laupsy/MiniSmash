@@ -160,144 +160,122 @@ void Game::setEntities() {
     
     Entity player = Entity(
                            LoadTexture("betty_0.png"),
-                           -0.8f, -0.2f, // x, y
+                           0.0f, 0.0f, // x, y
                            ( gridSize * 0 ) / spriteSheetSize, // x index
                            ( gridSize * 0 ) / spriteSheetSize, // y index
                            gridSize, // width
                            gridSize  // height
                            );
     
-    Entity staticObj = Entity(
-                              LoadTexture("george_0.png"),
-                              0.8f, 0.8f, // x, y
-                              ( gridSize * 0 ) / spriteSheetSize, // x index
-                              ( gridSize * 0 ) / spriteSheetSize, // y index
-                              gridSize, // width
-                              gridSize  // height
-                              );
-    
     Entity platform_1 = Entity(
                                LoadTexture("arne_sprites.png"),
-                               -0.868f, -0.868f, // x, y
-                               ( gridSize * 0 ) / spriteSheetSize, // x index
-                               ( gridSize * 0 ) / spriteSheetSize, // y index
-                               gridSize, // width
-                               gridSize  // height
+                               -0.918f, -0.918f, // x, y
+                               ( gridSize * 2.5) , // x index
+                               ( gridSize * 3) , // y index
+                               gridSize * 1.0, // width
+                               gridSize * 1.5 // height
                                );
     
     Entity platform_2 = Entity(
                                LoadTexture("arne_sprites.png"),
-                               -0.602f, -0.868f, // x, y
-                               ( gridSize * 1 ) / spriteSheetSize, // x index
-                               ( gridSize * 0 ) / spriteSheetSize, // y index
-                               gridSize, // width
-                               gridSize  // height
+                               -0.758f, -0.918f, // x, y
+                               ( gridSize * 2.5) , // x index
+                               ( gridSize * 3) , // y index
+                               gridSize * 1.0, // width
+                               gridSize * 1.5 // height
                                );
     
     Entity platform_3 = Entity(
                                LoadTexture("arne_sprites.png"),
-                               -0.333f, -0.868f, // x, y
-                               ( gridSize * 2 ) / spriteSheetSize, // x index
-                               ( gridSize * 0 ) / spriteSheetSize, // y index
-                               gridSize, // width
-                               gridSize  // height
+                               -0.598f, -0.918f, // x, y
+                               ( gridSize * 2.5) , // x index
+                               ( gridSize * 3) , // y index
+                               gridSize * 1.0, // width
+                               gridSize * 1.5 // height
                                );
     
     Entity platform_4 = Entity(
                                LoadTexture("arne_sprites.png"),
-                               -0.066f, -0.868f, // x, y
-                               ( gridSize * 3 ) / spriteSheetSize, // x index
-                               ( gridSize * 0 ) / spriteSheetSize, // y index
-                               gridSize, // width
-                               gridSize  // height
+                               -0.438f, -0.918f, // x, y
+                               ( gridSize * 2.5) , // x index
+                               ( gridSize * 3) , // y index
+                               gridSize * 1.0, // width
+                               gridSize * 1.5 // height
                                );
     
     Entity platform_5 = Entity(
                                LoadTexture("arne_sprites.png"),
-                               0.198f, -0.868f, // x, y
-                               ( gridSize * 3 ) / spriteSheetSize, // x index
-                               ( gridSize * 0 ) / spriteSheetSize, // y index
-                               gridSize, // width
-                               gridSize  // height
+                               -0.278f, -0.918f, // x, y
+                               ( gridSize * 2.5) , // x index
+                               ( gridSize * 3) , // y index
+                               gridSize * 1.0, // width
+                               gridSize * 1.5 // height
                                );
-    
     
     Entity platform_6 = Entity(
                                LoadTexture("arne_sprites.png"),
-                               0.467f, -0.868f, // x, y
-                               ( gridSize * 3 ) / spriteSheetSize, // x index
-                               ( gridSize * 0 ) / spriteSheetSize, // y index
-                               gridSize, // width
-                               gridSize  // height
+                               -0.118f, -0.918f, // x, y
+                               ( gridSize * 2.5) , // x index
+                               ( gridSize * 3) , // y index
+                               gridSize * 1.0, // width
+                               gridSize * 1.5 // height
                                );
-    
     
     Entity platform_7 = Entity(
                                LoadTexture("arne_sprites.png"),
-                               0.734f, -0.868f, // x, y
-                               ( gridSize * 3 ) / spriteSheetSize, // x index
-                               ( gridSize * 0 ) / spriteSheetSize, // y index
-                               gridSize, // width
-                               gridSize  // height
+                               0.042f, -0.918f, // x, y
+                               ( gridSize * 2.5) , // x index
+                               ( gridSize * 3) , // y index
+                               gridSize * 1.0, // width
+                               gridSize * 1.5 // height
                                );
-    
     
     Entity platform_8 = Entity(
                                LoadTexture("arne_sprites.png"),
-                               1.002f, -0.868f, // x, y
-                               ( gridSize * 3 ) / spriteSheetSize, // x index
-                               ( gridSize * 0 ) / spriteSheetSize, // y index
-                               gridSize, // width
-                               gridSize  // height
+                               0.202f, -0.918f, // x, y
+                               ( gridSize * 2.5) , // x index
+                               ( gridSize * 3) , // y index
+                               gridSize * 1.0, // width
+                               gridSize * 1.5 // height
                                );
     
     Entity platform_9 = Entity(
                                LoadTexture("arne_sprites.png"),
-                               -0.868f, 0.050f, // x, y
-                               ( gridSize * 3 ) / spriteSheetSize, // x index
-                               ( gridSize * 0 ) / spriteSheetSize, // y index
-                               gridSize, // width
-                               gridSize  // height
+                               0.362f, -0.918f, // x, y
+                               ( gridSize * 2.5) , // x index
+                               ( gridSize * 3) , // y index
+                               gridSize * 1.0, // width
+                               gridSize * 1.5 // height
                                );
     
     Entity platform_10 = Entity(
                                 LoadTexture("arne_sprites.png"),
-                                -0.602f, 0.050f, // x, y
-                                ( gridSize * 3 ) / spriteSheetSize, // x index
-                                ( gridSize * 0 ) / spriteSheetSize, // y index
-                                gridSize, // width
-                                gridSize  // height
+                                0.522f, -0.918f, // x, y
+                                ( gridSize * 2.5) , // x index
+                                ( gridSize * 3) , // y index
+                                gridSize * 1.0, // width
+                                gridSize * 1.5 // height
                                 );
     
     Entity platform_11 = Entity(
                                 LoadTexture("arne_sprites.png"),
-                                -0.333f, 0.050f, // x, y
-                                ( gridSize * 3 ) / spriteSheetSize, // x index
-                                ( gridSize * 0 ) / spriteSheetSize, // y index
-                                gridSize, // width
-                                gridSize  // height
+                                0.682f, -0.918f, // x, y
+                                ( gridSize * 2.5) , // x index
+                                ( gridSize * 3) , // y index
+                                gridSize * 1.0, // width
+                                gridSize * 1.5 // height
                                 );
     
     Entity platform_12 = Entity(
                                 LoadTexture("arne_sprites.png"),
-                                0.868f, 0.050f, // x, y
-                                ( gridSize * 3 ) / spriteSheetSize, // x index
-                                ( gridSize * 0 ) / spriteSheetSize, // y index
-                                gridSize, // width
-                                gridSize  // height
-                                );
-    
-    Entity platform_13 = Entity(
-                                LoadTexture("arne_sprites.png"),
-                                0.602f, 0.050f, // x, y
-                                ( gridSize * 3 ) / spriteSheetSize, // x index
-                                ( gridSize * 0 ) / spriteSheetSize, // y index
-                                gridSize, // width
-                                gridSize  // height
+                                1.526f, -0.918f, // x, y
+                                ( gridSize * 2.5) , // x index
+                                ( gridSize * 3) , // y index
+                                gridSize * 1.0, // width
+                                gridSize * 1.5 // height
                                 );
     
     entities.push_back(player);
-    entities.push_back(staticObj);
     entities.push_back(platform_1);
     entities.push_back(platform_2);
     entities.push_back(platform_3);
@@ -310,46 +288,47 @@ void Game::setEntities() {
     entities.push_back(platform_10);
     entities.push_back(platform_11);
     entities.push_back(platform_12);
-    entities.push_back(platform_13);
+    
 }
 
 void Game::renderLevel() {
-    
-    float ticks = (float)SDL_GetTicks()/1000.0f;
-    float elapsedGame = ticks - lastFrameTicks;
-    lastFrameTicks = ticks;
 
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
             done = true;
         }
-        else if ( event.key.keysym.scancode == SDL_SCANCODE_SPACE && !event.key.repeat ) {
-            entities[0].jump(elapsedGame);
-            entities[0].resetPhysics();
-
-        }
-        else if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) {
-            entities[0].moveRight();
-        }
-        else if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT ) {
-            entities[0].moveLeft();
-        }
-        else if ( event.type == SDL_KEYDOWN && !event.key.repeat ) {
-            cout << "key down!";
-        }
-        else if ( event.type == SDL_KEYUP && !event.key.repeat ) {
+        
+        else if ( event.type == SDL_KEYDOWN && !event.key.repeat && event.key.keysym.scancode != SDL_SCANCODE_SPACE ) {
             entities[0].resetPhysics();
         }
+        else if ( event.type == SDL_KEYUP ) {
+            if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT || event.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
+                entities[0].slowDown();
+            }
+        }
+    }
+    
+    if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT ) {
+        if ( !event.key.repeat ) entities[0].moveLeft();
+        else entities[0].constantLeft();
+    }
+    if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) {
+        if ( !event.key.repeat ) entities[0].moveRight();
+        else entities[0].constantRight();
+    }
+    if ( event.key.keysym.scancode == SDL_SCANCODE_SPACE && event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) {
+        entities[0].moveRight();
+        entities[0].jump();
     }
     
     for ( size_t i = 0; i < entities.size(); i++ ) {
         entities[i].Draw(mediumScale);
     }
+
+    entities[0].getCollision(entities[1]);
     
-    entities[0].getCollision(entities[2]);
+    entities[0].fall(elapsed);
     
-    if ( !entities[0].colliding  ) entities[0].fall(elapsed);
-    
-    cout << "Colliding: " << entities[0].colliding << ", Attempted direction: " << entities[0].direction_x << ", " << entities[0].direction_y << "\n";
+//    cout << "Colliding: " << entities[0].colliding << ", Attempted direction: " << entities[0].direction_x << ", " << entities[0].direction_y << "\n";
     
 }
