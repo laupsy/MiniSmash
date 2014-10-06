@@ -24,18 +24,23 @@ public:
     void setCoords(const float& newX, const float& newY);
     
     void moveLeft();
+    void constantLeft();
     void moveRight();
+    void constantRight();
     void moveUp();
     void moveDown();
     
-    void fall(float elapsed);
-    void slowDown();
+    void fall();
     
     void resetPhysics();
     
-    void jump(float elapsed);
+    void jump();
     
-    void getCollision(const Entity& cWith);
+    void offScreen();
+    
+    void checkVisibility();
+    
+    bool onGround();
     
     float width;
     float height;
@@ -50,15 +55,19 @@ public:
     float edgeTop = y + width / 2.0f;
     float edgeBottom = y - width / 2.0f;
     
-    float speed = 0.01f;
+    float speed = 0.005f;
+    float speed_x = 0.005f;
+    float speed_y = 0.15f;
+    float maxSpeed = 0.020f;
     
     float direction_x = 0.0f;
     float direction_y = 0.0f;
     
-    float acceleration_x = 1.05f;
-    float acceleration_y = -9.8f / 100000.0f;
+    float acceleration_x = 1.009f;
+    float acceleration_y = 1.0045f;
     
-    float friction_x = 0.05f;
+    float friction_x = 0.98f;
+    float friction_y = 0.9f;
     
     float velocity_x = 0.0f;
     float velocity_y = 0.0f;
@@ -70,8 +79,8 @@ public:
     bool visible = true;
     bool targetable = false;
     bool jumping = false;
-    bool colliding = false;
     bool atLadder = false;
+    bool floating = true;
     
 };
 

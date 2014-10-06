@@ -93,18 +93,41 @@ void Entity::setCoords(const float& newX, const float& newY) {
 //}
 
 void Entity::moveLeft() {
-    setX(x - speed);
-    direction_x = -1.0;
-    direction_y = 0.0;
-    u = width * 1;
+        if ( speed_x > 0.001 ) speed_x = speed_x * friction_x;
+        else speed_x = 0; // should stop moving when too slow
+        setX(x - speed_x);
+        direction_x = -1.0;
+        direction_y = 0.0;
+        u = width * 1;
+}
+
+void Entity::constantLeft() {
+        if ( speed_x < maxSpeed ) {
+            speed_x = speed_x * acceleration_x;
+        }
+        setX(x - speed_x);
+        direction_x = -1.0;
+        direction_y = 0.0;
+        u = width * 1;
 }
 
 void Entity::moveRight() {
-//    speed *= acceleration_x;
-    setX(x + speed );
-    direction_x = 1.0;
-    direction_y = 0.0;
-    u = width * 3.5;
+        if ( speed_x > 0.001 ) speed_x = speed_x * friction_x;
+        else speed_x = 0; // should stop moving when too slow
+        setX(x + speed_x);
+        direction_x = 1.0;
+        direction_y = 0.0;
+        u = width * 3.5;
+}
+
+void Entity::constantRight() {
+    if ( speed_x < maxSpeed ) {
+            speed_x = speed_x * acceleration_x;
+        }
+        setX(x + speed_x);
+        direction_x = 1.0;
+        direction_y = 0.0;
+        u = width * 3.5;
 }
 
 void Entity::moveUp() {
@@ -115,73 +138,63 @@ void Entity::moveUp() {
 }
 
 void Entity::moveDown() {
-        setY(y - speed);
-        direction_y = -1.0;
-        direction_x = 0.0;
-        u = width * 2.5;
-}
-
-void Entity::slowDown() {
-    speed *= friction_x;
-}
-
-void Entity::fall(float elapsed) {
-    velocity_y += acceleration_y;
-    y += velocity_y;
+    setY(y - speed);
     direction_y = -1.0;
-    cout << y << "\n";
+    direction_x = 0.0;
+    u = width * 2.5;
 }
 
-void Entity::jump(float elapsed) {
-        // only want single key press , no hold down jump
-    if ( !jumping ) {
-        
-        direction_x = 0.0;
-        direction_y = 1.0;
-        y = 0.5f;
+void Entity::fall() {
+    if ( floating ) {
+        speed = speed * acceleration_y;
+        setY(y - speed);
+        u = width * 3.5;
+        cout << "falling" << endl;
         jumping = true;
-        //cout << elapsed << "\n";
     }
     else {
-        jumping = false;
+        
     }
+}
+
+void Entity::jump() {
+    
+//        if ( direction_x == 1.0f ) {
+//            x += 0.0015f * friction_x;
+//            u = width * 3.5;
+//        }
+//        else {
+//            x -= 0.0015f * friction_x;
+//            u = width * 1;
+//        }
+//    if ( !jumping ) {
+        speed_y = speed_y * friction_y;
+        y += speed_y;
+//    }
 }
 
 void Entity::resetPhysics() {
     
-    speed = 0.01f;
+    speed = 0.005f;
+    speed_x = 0.005f;
+    speed_y = 0.15f;
     
-    acceleration_x = 1.05f;
-    acceleration_y = -9.8f / 100000.0f;
+    acceleration_x = 1.009f;
+    acceleration_y = 1.0045f;
     
-    friction_x = 0.05f;
-    
-    velocity_x = 0.0f;
-    velocity_y = 0.0f;
+    friction_x = 0.98f;
+    friction_y = 0.9f;
 }
 
-void Entity::getCollision(const Entity& cWith) {
-    
-    float thisRight  = x + width  / 2.0f;
-    float thisLeft   = x - width  / 2.0f;
-    float thisTop    = y + height / 2.0f;
-    float thisBottom = y - height / 2.0f;
-    
-    float cWithRight  = cWith.x + cWith.width  / 2.0f;
-    float cWithLeft   = cWith.x - cWith.width  / 2.0f;
-    float cWithTop    = cWith.y + cWith.height / 2.0f;
-    float cWithBottom = cWith.y - cWith.height / 2.0f;
-    
-    bool collidingLeft   = ( thisLeft > cWithRight );
-    bool collidingRight  = ( thisRight < cWithLeft );
-    bool collidingTop    = ( thisBottom > cWithTop );
-    bool collidingBottom = ( thisTop < cWithBottom );
-    
-    if ( collidingLeft ) colliding = false;
-    if ( collidingRight ) colliding = false;
-    if ( collidingTop ) colliding = false;
-    if ( collidingBottom ) colliding = false;
-    
-    colliding = true;
-    
+void Entity::offScreen() {
+    if ( x > 0.95f ) {
+        x = -0.95f;
+    }
+    else if ( x < -0.95f ) {
+        x = 0.95f;
+    }
+}
+
+void Entity::checkVisibility() {
+    if ( visible == false ) Draw(0.0f);
 }
