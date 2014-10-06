@@ -93,37 +93,41 @@ void Entity::setCoords(const float& newX, const float& newY) {
 //}
 
 void Entity::moveLeft() {
-    if ( speed > 0.001 ) speed = speed * friction_x;
-    else speed = 0; // should stop moving when too slow
-    setX(x - speed);
-    direction_x = -1.0;
-    direction_y = 0.0;
-    u = width * 1;
-    cout << speed << endl;
+        if ( speed > 0.001 ) speed = speed * friction_x;
+        else speed = 0; // should stop moving when too slow
+        setX(x - speed);
+        direction_x = -1.0;
+        direction_y = 0.0;
+        u = width * 1;
 }
 
 void Entity::constantLeft() {
-    speed = speed * acceleration_x;
-    setX(x - speed);
-    direction_x = -1.0;
-    direction_y = 0.0;
-    u = width * 1;
+        if ( speed < maxSpeed ) {
+            speed = speed * acceleration_x;
+        }
+        setX(x - speed);
+        direction_x = -1.0;
+        direction_y = 0.0;
+        u = width * 1;
 }
 
 void Entity::moveRight() {
-    if ( speed > 0.001 ) speed = speed * friction_x;
-    else speed = 0; // should stop moving when too slow
-    setX(x + speed);    direction_x = 1.0;
-    direction_y = 0.0;
-    u = width * 3.5;
+        if ( speed > 0.001 ) speed = speed * friction_x;
+        else speed = 0; // should stop moving when too slow
+        setX(x + speed);
+        direction_x = 1.0;
+        direction_y = 0.0;
+        u = width * 3.5;
 }
 
 void Entity::constantRight() {
-    speed = speed * acceleration_x;
-    setX(x + speed);
-    direction_x = -1.0;
-    direction_y = 0.0;
-    u = width * 3.5;
+    if ( speed < maxSpeed ) {
+            speed = speed * acceleration_x;
+        }
+        setX(x + speed);
+        direction_x = 1.0;
+        direction_y = 0.0;
+        u = width * 3.5;
 }
 
 void Entity::moveUp() {
@@ -134,29 +138,32 @@ void Entity::moveUp() {
 }
 
 void Entity::moveDown() {
-        setY(y - speed);
-        direction_y = -1.0;
-        direction_x = 0.0;
-        u = width * 2.5;
+    setY(y - speed);
+    direction_y = -1.0;
+    direction_x = 0.0;
+    u = width * 2.5;
 }
 
-void Entity::slowDown() {
-//    speed *= friction_x;
-}
-
-void Entity::fall(float elapsed) {
-    if ( !colliding ) {
-        if ( speed > 0.001 ) speed = speed * acceleration_y;
-        else speed = 0; // should stop moving when too slow
+void Entity::fall() {
+    if ( floating ) {
+        speed = speed * acceleration_y;
         setY(y - speed);
-        direction_x = 0.0;
-        direction_y = -1.0;
         u = width * 3.5;
     }
 }
 
 void Entity::jump() {
-    setY(y + speed);
+    
+//        if ( direction_x == 1.0f ) {
+//            x += 0.0015f * friction_x;
+//            u = width * 3.5;
+//        }
+//        else {
+//            x -= 0.0015f * friction_x;
+//            u = width * 1;
+//        }
+    
+        y += 0.04f;
 }
 
 void Entity::resetPhysics() {
@@ -164,35 +171,20 @@ void Entity::resetPhysics() {
     speed = 0.015f;
     
     acceleration_x = 1.009f;
-    acceleration_y = -9.8f / 100000.0f;
+    acceleration_y = 1.003f;
     
     friction_x = 0.98f;
 }
 
-void Entity::getCollision(const Entity& cWith) {
-    
-    float padding = 0.26f;
-    
-    float thisRight  = x + width  / 2.0f;
-    float thisLeft   = x - width  / 2.0f;
-    float thisTop    = y + height / 2.0f;
-    float thisBottom = y - height / 2.0f;
-    
-    float cWithRight  = cWith.x + cWith.width  / 2.0f;
-    float cWithLeft   = cWith.x - cWith.width  / 2.0f;
-    float cWithTop    = cWith.y + cWith.height / 2.0f;
-    float cWithBottom = cWith.y - cWith.height / 2.0f;
-    
-    bool collidingLeft   = ( thisLeft + padding > cWithRight + padding );
-    bool collidingRight  = ( thisRight + padding < cWithLeft + padding );
-    bool collidingTop    = ( thisBottom + padding > cWithTop - padding );
-    bool collidingBottom = ( thisTop - padding < cWithBottom + padding );
-    
-    if ( ! collidingLeft ) colliding = false;
-    if ( ! collidingRight ) colliding = false;
-    if ( ! collidingTop ) colliding = false;
-    if ( ! collidingBottom ) colliding = false;
-    
-    else colliding = true;
-    
+void Entity::offScreen() {
+    if ( x > 0.95f ) {
+        x = -0.95f;
+    }
+    else if ( x < -0.95f ) {
+        x = 0.95f;
+    }
+    else if ( y < -0.95f ) {
+        resetPhysics();
+        y = 0.95f;
+    }
 }

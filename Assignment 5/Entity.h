@@ -30,14 +30,15 @@ public:
     void moveUp();
     void moveDown();
     
-    void fall(float elapsed);
-    void slowDown();
+    void fall();
     
     void resetPhysics();
     
     void jump();
     
-    void getCollision(const Entity& cWith);
+    void offScreen();
+    
+    bool onGround();
     
     float width;
     float height;
@@ -53,12 +54,13 @@ public:
     float edgeBottom = y - width / 2.0f;
     
     float speed = 0.015f;
+    float maxSpeed = 0.020f;
     
     float direction_x = 0.0f;
     float direction_y = 0.0f;
     
     float acceleration_x = 1.009f;
-    float acceleration_y = 1.009f;
+    float acceleration_y = 1.003f;
     
     float friction_x = 0.98f;
     float friction_y = 0.99f;
@@ -68,13 +70,15 @@ public:
     
     float jumpSpeed = 0.2f;
     
+    int lives = 3;
+    
     GLuint textureID;
     
     bool visible = true;
     bool targetable = false;
-    bool jumping = false;
-    bool colliding = false;
+    bool canJump = false;
     bool atLadder = false;
+    bool floating = true;
     
 };
 

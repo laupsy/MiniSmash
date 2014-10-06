@@ -36,6 +36,11 @@ public:
     
     void inputEvents();
     
+    bool collision(const Entity& e1, const Entity& e2);
+    bool collidesBot(const Entity& e1, const Entity& e2);
+    bool collidesLeft(const Entity& e1, const Entity& e2);
+    bool collidesRight(const Entity& e1, const Entity& e2);
+    
     bool UpdateAndRender();
     
     GLuint LoadTexture(const char *image_path);
@@ -55,6 +60,8 @@ public:
     float gridSize = 48.0f / spriteSheetSize;
     
     int state;
+    int score;
+    int lives = 3;
     
     SDL_Event event;
     SDL_Window* displayWindow;

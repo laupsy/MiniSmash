@@ -34,10 +34,10 @@ void Game::Init() {
     SDL_GL_MakeCurrent(displayWindow, context);
     glMatrixMode(GL_MODELVIEW);
     glOrtho(-1.33, 1.33, -1.0, 1.0, -1.0, 1.0);
-    glClearColor(0.2, 0.5, 0.9, 1.0);
+    glClearColor(0.1, 0.1, 0.15, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
-    
     setEntities();
+
 }
 
 void Game::Render() {
@@ -60,7 +60,6 @@ void Game::Render() {
 }
 
 void Game::Update(float elapsed) {
-    
     
     switch (state) {
         case STATE_START:
@@ -142,21 +141,96 @@ void Game::renderStart() {
             done = true;
         }
         else if (event.key.keysym.scancode == SDL_SCANCODE_RETURN && !event.key.repeat) {
-            state = STATE_GAME_LEVEL;
-        }
+            state = STATE_GAME_LEVEL;        }
     }
-    
+
     DrawText(LoadTexture("pixel_font.png"),"HELLO.TESTING.",0.3,-0.4,0.001,0.05f,1.0f,1.0,1.0,1.0);
 }
 
+
+ // for individual items because jumping and freefall is not behaving as expected...
+
+bool Game::collision(const Entity& e1, const Entity& e2) {
+    
+                        // right edge of e1 is within 0.02 units of the left edge of e2
+    
+    bool collideRight = ( ( e1.x + e1.width/2.0 < ( e2.x - e2.width/2.0 - 0.005 ) )
+                       && ( e1.x + e1.width/2.0 > ( e2.x - e2.width/2.0 + 0.01 )));
+    
+                        // left edge of e1 is within 0.02 units of the right edge of e2
+    
+    bool collideLeft = ( ( e1.x - e1.width/2.0 > ( e2.x + e2.width/2.0 + 0.005 ) )
+                      && ( e1.x - e1.width/2.0 < ( e2.x + e2.width/2.0 - 0.005 )));
+    
+                        // bottom edge of e1 is within 0.02 units of the top edge of e2
+    
+    bool collideBottom = ( ( e1.y - e1.height/2.0 < ( e2.y + e2.height/2.0 + 0.005 ) )
+                        && ( e1.y - e1.height/2.0 > ( e2.y + e2.height/2.0 - 0.005 )));
+    
+                        // top edge of e1 is within 0.02 units of the bottom edge of e2
+    
+    bool collideTop = ( ( e1.y + e1.height/2.0 > ( e2.y - e2.height/2.0 + 0.005 ) )
+                     && ( e1.y + e1.height/2.0 < ( e2.y - e2.height/2.0 - 0.005 )));
+//    
+//    
+//    cout << "Collide right: " << collideRight << endl;
+//    cout << "Collide left: " << collideLeft << endl;
+//    cout << "Collide top: " << collideTop << endl;
+//    cout << "Collide bottom: " << collideBottom << endl;
+//    
+    
+    return collideRight && collideLeft && collideBottom && collideTop;
+}
+
+bool Game::collidesBot(const Entity& e1, const Entity& e2 ) {
+    return ( ( e1.y - e1.height/2.0 < ( e2.y + e2.height/2.0 + 0.005 ) )
+            && ( e1.y - e1.height/2.0 > ( e2.y + e2.height/2.0 - 0.005 ))
+            && ( e1.x + e1.width/2.0 <= ( e2.x + e2.width/2.0 + 0.115 ))
+            && ( e1.x - e1.width/2.0 >= ( e2.x - e2.width/2.0 - 0.115 )));
+}
+
+bool Game::collidesLeft(const Entity& e1, const Entity& e2 ) {
+    return ( ( e1.x - e1.width/2.0 < ( e2.x + e2.width/2.0 + 0.005 ) )
+            && ( e1.x - e1.width/2.0 > ( e2.x + e2.width/2.0 - 0.005 ))
+            && ( e1.y + e1.height/2.0 <= ( e2.y + e2.height/2.0 + 0.115 ))
+            && ( e1.y - e1.height/2.0 >= ( e2.y - e2.height/2.0 - 0.115 )));
+}
+
+bool Game::collidesRight(const Entity& e1, const Entity& e2 ) {
+    return ( ( e1.x + e1.width/2.0 > ( e2.x - e2.width/2.0 - 0.005 ) )
+            && ( e1.x + e1.width/2.0 < ( e2.x - e2.width/2.0 + 0.005 ))
+            && ( e1.y + e1.height/2.0 <= ( e2.y + e2.height/2.0 + 0.115 ))
+            && ( e1.y - e1.height/2.0 >= ( e2.y - e2.height/2.0 - 0.115 )));
+}
+
+//bool onPlatform(const Entity& e1) {
+//    bool top = ( e1.y < entities[)
+//}
+
 void Game::renderGameOver() {
     
+    
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
+            done = true;
+        }
+        else if (event.key.keysym.scancode == SDL_SCANCODE_S && !event.key.repeat) {
+            state = STATE_START;
+        }
+    }
+    entities.clear();
+    
+    DrawText(LoadTexture("pixel_font.png"),"GAME OVER.  PRESS S TO START OVER. ",-0.925,0.9,0.001,0.05f,1.0f,1.0,1.0,1.0);
 }
 
 void Game::setEntities() {
     
     //    Entity * e = new Entity(LoadTexture("betty_0.png"), 0.5f, -0.7f, -0.8f, 0.6f, 0.0/216.0, 96.0f/216.0);
     //    entities.push_back(e);
+    
+    float startX = -0.918f;
+    float nextX = 0.158f;
     
     Entity player = Entity(
                            LoadTexture("betty_0.png"),
@@ -167,144 +241,108 @@ void Game::setEntities() {
                            gridSize  // height
                            );
     
-    Entity platform_1 = Entity(
-                               LoadTexture("arne_sprites.png"),
-                               -0.918f, -0.918f, // x, y
-                               ( gridSize * 2.5) , // x index
-                               ( gridSize * 3) , // y index
-                               gridSize * 1.0, // width
-                               gridSize * 1.5 // height
-                               );
-    
-    Entity platform_2 = Entity(
-                               LoadTexture("arne_sprites.png"),
-                               -0.758f, -0.918f, // x, y
-                               ( gridSize * 2.5) , // x index
-                               ( gridSize * 3) , // y index
-                               gridSize * 1.0, // width
-                               gridSize * 1.5 // height
-                               );
-    
-    Entity platform_3 = Entity(
-                               LoadTexture("arne_sprites.png"),
-                               -0.598f, -0.918f, // x, y
-                               ( gridSize * 2.5) , // x index
-                               ( gridSize * 3) , // y index
-                               gridSize * 1.0, // width
-                               gridSize * 1.5 // height
-                               );
-    
-    Entity platform_4 = Entity(
-                               LoadTexture("arne_sprites.png"),
-                               -0.438f, -0.918f, // x, y
-                               ( gridSize * 2.5) , // x index
-                               ( gridSize * 3) , // y index
-                               gridSize * 1.0, // width
-                               gridSize * 1.5 // height
-                               );
-    
-    Entity platform_5 = Entity(
-                               LoadTexture("arne_sprites.png"),
-                               -0.278f, -0.918f, // x, y
-                               ( gridSize * 2.5) , // x index
-                               ( gridSize * 3) , // y index
-                               gridSize * 1.0, // width
-                               gridSize * 1.5 // height
-                               );
-    
-    Entity platform_6 = Entity(
-                               LoadTexture("arne_sprites.png"),
-                               -0.118f, -0.918f, // x, y
-                               ( gridSize * 2.5) , // x index
-                               ( gridSize * 3) , // y index
-                               gridSize * 1.0, // width
-                               gridSize * 1.5 // height
-                               );
-    
-    Entity platform_7 = Entity(
-                               LoadTexture("arne_sprites.png"),
-                               0.042f, -0.918f, // x, y
-                               ( gridSize * 2.5) , // x index
-                               ( gridSize * 3) , // y index
-                               gridSize * 1.0, // width
-                               gridSize * 1.5 // height
-                               );
-    
-    Entity platform_8 = Entity(
-                               LoadTexture("arne_sprites.png"),
-                               0.202f, -0.918f, // x, y
-                               ( gridSize * 2.5) , // x index
-                               ( gridSize * 3) , // y index
-                               gridSize * 1.0, // width
-                               gridSize * 1.5 // height
-                               );
-    
-    Entity platform_9 = Entity(
-                               LoadTexture("arne_sprites.png"),
-                               0.362f, -0.918f, // x, y
-                               ( gridSize * 2.5) , // x index
-                               ( gridSize * 3) , // y index
-                               gridSize * 1.0, // width
-                               gridSize * 1.5 // height
-                               );
-    
-    Entity platform_10 = Entity(
-                                LoadTexture("arne_sprites.png"),
-                                0.522f, -0.918f, // x, y
-                                ( gridSize * 2.5) , // x index
-                                ( gridSize * 3) , // y index
-                                gridSize * 1.0, // width
-                                gridSize * 1.5 // height
-                                );
-    
-    Entity platform_11 = Entity(
-                                LoadTexture("arne_sprites.png"),
-                                0.682f, -0.918f, // x, y
-                                ( gridSize * 2.5) , // x index
-                                ( gridSize * 3) , // y index
-                                gridSize * 1.0, // width
-                                gridSize * 1.5 // height
-                                );
-    
-    Entity platform_12 = Entity(
-                                LoadTexture("arne_sprites.png"),
-                                1.526f, -0.918f, // x, y
-                                ( gridSize * 2.5) , // x index
-                                ( gridSize * 3) , // y index
-                                gridSize * 1.0, // width
-                                gridSize * 1.5 // height
-                                );
-    
     entities.push_back(player);
-    entities.push_back(platform_1);
-    entities.push_back(platform_2);
-    entities.push_back(platform_3);
-    entities.push_back(platform_4);
-    entities.push_back(platform_5);
-    entities.push_back(platform_6);
-    entities.push_back(platform_7);
-    entities.push_back(platform_8);
-    entities.push_back(platform_9);
-    entities.push_back(platform_10);
-    entities.push_back(platform_11);
-    entities.push_back(platform_12);
+    player.lives = 3;
+                                 
+    // bottom row
+    
+    for ( int i = 0; i < 13; i++ ) {
+        Entity p = Entity(
+                          LoadTexture("arne_sprites.png"),
+                          startX + nextX * i, -0.890f, // x, y
+                          ( gridSize * 2.5) , // x index
+                          ( gridSize * 3) , // y index
+                          gridSize * 1.0, // width
+                          gridSize * 1.4 // height
+                          );
+        entities.push_back(p);
+    }
+    
+    startX = -0.918f;
+                                 
+    // middle left row
+    
+    for ( int i = 0; i < 4; i++ ) {
+        Entity p = Entity(
+                          LoadTexture("arne_sprites.png"),
+                          startX + nextX * i, -0.118f, // x, y
+                          ( gridSize * 2.5) , // x index
+                          ( gridSize * 3) , // y index
+                          gridSize * 1.0, // width
+                          gridSize * 1.4 // height
+                          );
+        entities.push_back(p);
+    }
+    
+    startX = 0.938f;
+    
+    // middle right row
+    
+    for ( int i = 0; i < 4; i++ ) {
+        Entity p = Entity(
+                          LoadTexture("arne_sprites.png"),
+                          startX - nextX * i, -0.118f, // x, y
+                          ( gridSize * 2.5) , // x index
+                          ( gridSize * 3) , // y index
+                          gridSize * 1.0, // width
+                          gridSize * 1.4 // height
+                          );
+        entities.push_back(p);
+    }
+    
+    startX = 0.938f;
+                                 
+    // top right row
+    
+    for ( int i = 0; i < 4; i++ ) {
+        Entity p = Entity(
+                          LoadTexture("arne_sprites.png"),
+                          startX - nextX * i, 0.618f, // x, y
+                          ( gridSize * 2.5) , // x index
+                          ( gridSize * 3) , // y index
+                          gridSize * 1.0, // width
+                          gridSize * 1.4 // height
+                          );
+        entities.push_back(p);
+    }
+    
+    Entity p = Entity(
+                      LoadTexture("characters_3.png"),
+                      -0.4f, -0.65f, // x, y
+                      ( gridSize * 0) , // x index
+                      ( gridSize * 3.5) , // y index
+                      gridSize * 0.5, // width
+                      gridSize * 1.0 // height
+                      );
+    entities.push_back(p);
     
 }
 
 void Game::renderLevel() {
-
+    
+    
+    for ( size_t i = 0; i < entities[0].lives; i++ ) {
+        
+        Entity life = Entity(
+                             LoadTexture("betty_0.png"),
+                             -0.75f + i/10.0, 0.9f, // x, y
+                             ( gridSize * 0 ) / spriteSheetSize, // x index
+                             ( gridSize * 0 ) / spriteSheetSize, // y index
+                             gridSize, // width
+                             gridSize  // height
+                             );
+        life.Draw(smallScale);
+    }
+    
+    DrawText(LoadTexture("pixel_font.png"),to_string(score),-0.925,0.9,0.001,0.05f,1.0f,1.0,1.0,1.0);
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
             done = true;
         }
-        
-        else if ( event.type == SDL_KEYDOWN && !event.key.repeat && event.key.keysym.scancode != SDL_SCANCODE_SPACE ) {
+        else if ( event.type == SDL_KEYDOWN && !event.key.repeat ) {
             entities[0].resetPhysics();
         }
         else if ( event.type == SDL_KEYUP ) {
-            if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT || event.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
-                entities[0].slowDown();
-            }
         }
     }
     
@@ -316,18 +354,57 @@ void Game::renderLevel() {
         if ( !event.key.repeat ) entities[0].moveRight();
         else entities[0].constantRight();
     }
-    if ( event.key.keysym.scancode == SDL_SCANCODE_SPACE && event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) {
-        entities[0].moveRight();
-        entities[0].jump();
+    if ( event.key.keysym.scancode == SDL_SCANCODE_A ) {
+        if ( !event.key.repeat ) entities[0].moveDown();
     }
-    
+    if ( event.key.keysym.scancode == SDL_SCANCODE_SPACE ) {
+        if ( !event.key.repeat ) entities[0].jump();
+    }
     for ( size_t i = 0; i < entities.size(); i++ ) {
         entities[i].Draw(mediumScale);
     }
-
-    entities[0].getCollision(entities[1]);
+    if ( collidesBot(entities[0],entities[1]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[2]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[3]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[4]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[5]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[6]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[7]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[8]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[9]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[10]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[11]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[12]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[13]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[14]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[15]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[16]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[17]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[18]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[19]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[20]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[21]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[22]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[23]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[24]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[25]) ) entities[0].floating = false;
     
-    entities[0].fall(elapsed);
+    else entities[0].floating = true;
+    
+    if ( collidesLeft(entities[0],entities[26]) || collidesRight(entities[0],entities[26])) {
+        score += 10;
+        entities[26].setCoords(-1.3,-1.3);
+    }
+    
+    entities[0].fall();
+    
+    entities[0].offScreen();
+    
+    if ( lives == 0 ) {
+        state = STATE_GAME_OVER;
+        entities[0].resetPhysics();
+        entities[0].floating = false;
+    }
     
 //    cout << "Colliding: " << entities[0].colliding << ", Attempted direction: " << entities[0].direction_x << ", " << entities[0].direction_y << "\n";
     
