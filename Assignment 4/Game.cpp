@@ -188,15 +188,15 @@ bool Game::collision(const Entity& e1, const Entity& e2) {
 }
 
 bool Game::collidesBot(const Entity& e1, const Entity& e2 ) {
-    return ( (   e1.y - e1.height/2.0 < ( e2.y + e2.height/2.0 + 0.005 ) )
-            && ( e1.y - e1.height/2.0 > ( e2.y + e2.height/2.0 - 0.005 ))
+    return ( (   e1.y - e1.height/2.0 < ( e2.y + e2.height/2.0 + 0.002 ) )
+            && ( e1.y - e1.height/2.0 > ( e2.y + e2.height/2.0 - e2.height ))
             && ( e1.x + e1.width/2.0 <= ( e2.x + e2.width/2.0 + 0.115 ))
             && ( e1.x - e1.width/2.0 >= ( e2.x - e2.width/2.0 - 0.115 )));
 }
 
 bool Game::collidesTop(const Entity& e1, const Entity& e2 ) {
-    return ( (   e1.y + e1.height/2.0 < ( e2.y - e2.height/2.0 - 0.005 ) )
-            && ( e1.y + e1.height/2.0 > ( e2.y - e2.height/2.0 + 0.005 ))
+    return ( (   e1.y + e1.height/2.0 < ( e2.y - e2.height/2.0 - 0.002 ) )
+            && ( e1.y + e1.height/2.0 > ( e2.y - e2.height/2.0 + e2.height ))
             && ( e1.x + e1.width/2.0 <= ( e2.x + e2.width/2.0 + 0.115 ))
             && ( e1.x - e1.width/2.0 >= ( e2.x - e2.width/2.0 - 0.115 )));
 }
@@ -429,6 +429,14 @@ void Game::renderLevel() {
     }
     if ( event.key.keysym.scancode == SDL_SCANCODE_SPACE ) {
         if ( !event.key.repeat ) entities[0].jump();
+        if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT ) {
+            if ( !event.key.repeat ) entities[0].moveLeft();
+            else entities[0].constantLeft();
+        }
+        if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) {
+            if ( !event.key.repeat ) entities[0].moveRight();
+            else entities[0].constantRight();
+        }
     }
     for ( size_t i = 0; i < entities.size(); i++ ) {
         entities[i].Draw(mediumScale);
@@ -471,21 +479,21 @@ void Game::renderLevel() {
     entities[28].constantLeft();
     entities[28].offScreen();
     
-    // lose life if bump head!
-    
-    if ( collidesTop(entities[0],entities[13]) ) cout << "bump" << endl;
-    if ( collidesTop(entities[0],entities[14]) ) cout << "bump" << endl;
-    if ( collidesTop(entities[0],entities[15]) ) cout << "bump" << endl;
-    if ( collidesTop(entities[0],entities[16]) ) cout << "bump" << endl;
-    if ( collidesTop(entities[0],entities[17]) ) cout << "bump" << endl;
-    if ( collidesTop(entities[0],entities[18]) ) cout << "bump" << endl;
-    if ( collidesTop(entities[0],entities[19]) ) cout << "bump" << endl;
-    if ( collidesTop(entities[0],entities[20]) ) cout << "bump" << endl;
-    if ( collidesTop(entities[0],entities[21]) ) cout << "bump" << endl;
-    if ( collidesTop(entities[0],entities[22]) ) cout << "bump" << endl;
-    if ( collidesTop(entities[0],entities[23]) ) cout << "bump" << endl;
-    if ( collidesTop(entities[0],entities[24]) ) cout << "bump" << endl;
-    if ( collidesTop(entities[0],entities[25]) ) cout << "bump" << endl;
+//    // lose life if bump head!
+//    
+//    if ( collidesTop(entities[0],entities[13]) ) cout << "bump" << endl;
+//    if ( collidesTop(entities[0],entities[14]) ) cout << "bump" << endl;
+//    if ( collidesTop(entities[0],entities[15]) ) cout << "bump" << endl;
+//    if ( collidesTop(entities[0],entities[16]) ) cout << "bump" << endl;
+//    if ( collidesTop(entities[0],entities[17]) ) cout << "bump" << endl;
+//    if ( collidesTop(entities[0],entities[18]) ) cout << "bump" << endl;
+//    if ( collidesTop(entities[0],entities[19]) ) cout << "bump" << endl;
+//    if ( collidesTop(entities[0],entities[20]) ) cout << "bump" << endl;
+//    if ( collidesTop(entities[0],entities[21]) ) cout << "bump" << endl;
+//    if ( collidesTop(entities[0],entities[22]) ) cout << "bump" << endl;
+//    if ( collidesTop(entities[0],entities[23]) ) cout << "bump" << endl;
+//    if ( collidesTop(entities[0],entities[24]) ) cout << "bump" << endl;
+//    if ( collidesTop(entities[0],entities[25]) ) cout << "bump" << endl;
     
     if ( collidesLeft(entities[0],entities[26]) || collidesRight(entities[0],entities[26])) {
         score += 10;

@@ -55,19 +55,19 @@ public:
     float edgeTop = y + width / 2.0f;
     float edgeBottom = y - width / 2.0f;
     
-    float speed = 0.005f;
-    float speed_x = 0.005f;
-    float speed_y = 0.15f;
+    float speed = 0.01f;
+    float speed_x = 0.015f;
+    float speed_y = 0.015f;
     float maxSpeed = 0.020f;
     
     float direction_x = 0.0f;
     float direction_y = 0.0f;
     
     float acceleration_x = 1.009f;
-    float acceleration_y = 1.0045f;
+    float acceleration_y = 1.0098f;
     
     float friction_x = 0.98f;
-    float friction_y = 0.9f;
+    float friction_y = 0.89f;
     
     float velocity_x = 0.0f;
     float velocity_y = 0.0f;

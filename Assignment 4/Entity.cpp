@@ -160,30 +160,38 @@ void Entity::fall() {
 void Entity::jump() {
     
 //        if ( direction_x == 1.0f ) {
-//            x += 0.0015f * friction_x;
-//            u = width * 3.5;
+//            if ( speed_x > 0.001 ) speed_x = speed_x * 0.9999;
+//            else speed_x = 0; // should stop moving when too slow
+//            setX(x + speed_x);
+//            direction_x = 1.0;
+//            direction_y = 0.0;
 //        }
 //        else {
-//            x -= 0.0015f * friction_x;
-//            u = width * 1;
+//            if ( speed_x > 0.001 ) speed_x = speed_x * 0.9999;
+//            else speed_x = 0; // should stop moving when too slow
+//            setX(x - speed_x);
+//            direction_x = 1.0;
+//            direction_y = 0.0;
 //        }
 //    if ( !jumping ) {
-        speed_y = speed_y * friction_y;
-        y += speed_y;
+//        speed_y = speed_y * acceleration_y;
+        y += 0.030f;
+        x += 0.003f * direction_x;
+    
 //    }
 }
 
 void Entity::resetPhysics() {
     
-    speed = 0.005f;
-    speed_x = 0.005f;
-    speed_y = 0.15f;
+    speed = 0.01f;
+    speed_x = 0.015f;
+    speed_y = 0.015f;
     
     acceleration_x = 1.009f;
-    acceleration_y = 1.0045f;
+    acceleration_y = 1.0098f;
     
     friction_x = 0.98f;
-    friction_y = 0.9f;
+    friction_y = 0.89f;
 }
 
 void Entity::offScreen() {
