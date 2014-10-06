@@ -189,14 +189,14 @@ bool Game::collision(const Entity& e1, const Entity& e2) {
 
 bool Game::collidesBot(const Entity& e1, const Entity& e2 ) {
     return ( (   e1.y - e1.height/2.0 < ( e2.y + e2.height/2.0 + 0.002 ) )
-            && ( e1.y - e1.height/2.0 > ( e2.y + e2.height/2.0 - e2.height ))
+            && ( e1.y - e1.height/2.0 > ( e2.y + e2.height/2.0 - e2.height * 1.005 ))
             && ( e1.x + e1.width/2.0 <= ( e2.x + e2.width/2.0 + 0.115 ))
             && ( e1.x - e1.width/2.0 >= ( e2.x - e2.width/2.0 - 0.115 )));
 }
 
 bool Game::collidesTop(const Entity& e1, const Entity& e2 ) {
     return ( (   e1.y + e1.height/2.0 < ( e2.y - e2.height/2.0 - 0.002 ) )
-            && ( e1.y + e1.height/2.0 > ( e2.y - e2.height/2.0 + e2.height ))
+            && ( e1.y + e1.height/2.0 > ( e2.y - e2.height/2.0 + e2.height * 1.005 ))
             && ( e1.x + e1.width/2.0 <= ( e2.x + e2.width/2.0 + 0.115 ))
             && ( e1.x - e1.width/2.0 >= ( e2.x - e2.width/2.0 - 0.115 )));
 }
@@ -263,7 +263,7 @@ void Game::setEntities() {
                                  
     // bottom row
     
-    for ( int i = 0; i < 4; i++ ) {
+    for ( int i = 0; i < 8; i++ ) {
         Entity p = Entity(
                           LoadTexture("arne_sprites.png"),
                           startX + nextX * i, -0.900f, // x, y
@@ -337,56 +337,37 @@ void Game::setEntities() {
         entities.push_back(p);
     }
     
-    Entity p = Entity(
-                      LoadTexture("characters_3.png"),
-                      -0.4f, -0.65f, // x, y
-                      ( gridSize * 0) , // x index
-                      ( gridSize * 3.5) , // y index
-                      gridSize * 0.5, // width
-                      gridSize * 1.0 // height
-                      );
-    entities.push_back(p);
+    startX = 0.938f;
     
-    Entity p1 = Entity(
-                       LoadTexture("characters_3.png"),
-                       -0.8f, -0.65f, // x, y
-                       ( gridSize * 0) , // x index
-                       ( gridSize * 3.5) , // y index
-                       gridSize * 0.5, // width
-                       gridSize * 1.0 // height
-                       );
-    entities.push_back(p1);
+    // top right row
     
-    Entity p2 = Entity(
-                       LoadTexture("characters_3.png"),
-                       -0.7f, 0.35f, // x, y
-                       ( gridSize * 0) , // x index
-                       ( gridSize * 3.5) , // y index
-                       gridSize * 0.5, // width
-                       gridSize * 1.0 // height
-                       );
-    entities.push_back(p2);
+    for ( int i = 0; i < 14; i++ ) {
+        Entity p = Entity(
+                          LoadTexture("characters_3.png"),
+                          -0.4f, -0.65f, // x, y
+                          ( gridSize * 0) , // x index
+                          ( gridSize * 3.5) , // y index
+                          gridSize * 0.5, // width
+                          gridSize * 1.0 // height
+                          );
+        entities.push_back(p);
+    }
     
-    Entity p3 = Entity(
-                       LoadTexture("characters_3.png"),
-                       -0.4f, -0.35f, // x, y
-                       ( gridSize * 0) , // x index
-                       ( gridSize * 3.5) , // y index
-                       gridSize * 0.5, // width
-                       gridSize * 1.0 // height
-                       );
-    entities.push_back(p3);
+    startX = 0.938f;
     
-    Entity p4 = Entity(
-                       LoadTexture("characters_3.png"),
-                       -0.2f, -0.55f, // x, y
-                       ( gridSize * 1) , // x index
-                       ( gridSize * 3.5) , // y index
-                       gridSize * 0.5, // width
-                       gridSize * 1.0 // height
-                       );
-    entities.push_back(p4);
+    // top right row
     
+    for ( int i = 0; i < 14; i++ ) {
+        Entity p = Entity(
+                          LoadTexture("characters_3.png"),
+                          0.1f, 0.15f, // x, y
+                          ( gridSize * 0) , // x index
+                          ( gridSize * 3.5) , // y index
+                          gridSize * 0.5, // width
+                          gridSize * 1.0 // height
+                          );
+        entities.push_back(p);
+    }
 }
 
 void Game::renderLevel() {
@@ -440,7 +421,24 @@ void Game::renderLevel() {
     }
     for ( size_t i = 0; i < entities.size(); i++ ) {
         entities[i].Draw(mediumScale);
+        if ( entities[i].visible == false ) {
+            entities[i].y = 15.0;
+            entities[i].u = 0.0f;
+            entities[i].v = 0.0f;
+        }
     }
+    
+    //    for ( size_t i = 0; i < entities.size(); i++ ) {
+    //        entities[i].Draw(mediumScale);
+    //        for ( size_t j = 0; j < entities.size(); j++ ) {
+    //            if ( entities[i].solid && !entities[j].solid) {
+    ////                cout << "sup" << endl;
+    //                if ( collidesBot(entities[j],entities[i]) ) entities[j].floating = false;
+    //                if ( entities[j].floating == false ) entities[j].jumping = false;
+    //                else entities[j].floating = true;
+    //            }
+    //        }
+    //    }
     
     if ( collidesBot(entities[0],entities[1]) ) entities[0].floating = false;
     else if ( collidesBot(entities[0],entities[2]) ) entities[0].floating = false;
@@ -467,17 +465,51 @@ void Game::renderLevel() {
     else if ( collidesBot(entities[0],entities[23]) ) entities[0].floating = false;
     else if ( collidesBot(entities[0],entities[24]) ) entities[0].floating = false;
     else if ( collidesBot(entities[0],entities[25]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[26]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[27]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[28]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[29]) ) entities[0].floating = false;
+    else if ( collidesBot(entities[0],entities[30]) ) entities[0].floating = false;
     
     else entities[0].floating = true;
     
     if ( entities[0].floating == false ) entities[0].jumping = false;
     
-    entities[26].constantRight();
-    entities[26].offScreen();
-    entities[27].constantLeft();
-    entities[27].offScreen();
-    entities[28].constantLeft();
-    entities[28].offScreen();
+    for ( size_t i = 28; i < entities.size(); i++ ) {
+        
+        // Make them look like they're slithering
+        
+        if ( collidesLeft(entities[0],entities[i]) || collidesRight(entities[0],entities[i])) {
+            score += 10;
+            entities[i].visible = false;
+            entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+            entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+        }
+        
+        if ( (rand()% 10 + 1) % 2 == 0 ) {
+            
+            if ( entities[i].x > 0.95f ) {
+                entities[i].x = -0.95f;
+            }
+            if ( entities[i].x < -0.95f ) {
+                entities[i].x = 0.95f;
+            }
+            if ( entities[i].y > 0.95f ) {
+                entities[i].y = -0.95f;
+            }
+            if ( entities[i].y < -0.95f ) {
+                entities[i].y = 0.95f;
+            }
+            
+            entities[i].x += 0.01f;
+            entities[i].y += 0.01f;
+        }
+        else if ( (rand()% 10 + 1) % 2 != 0 ) {
+            entities[i].x += 0.01f;
+            entities[i].y -= 0.01f;
+        }
+        entities[i].offScreen();
+    }
     
 //    // lose life if bump head!
 //    
@@ -494,49 +526,49 @@ void Game::renderLevel() {
 //    if ( collidesTop(entities[0],entities[23]) ) cout << "bump" << endl;
 //    if ( collidesTop(entities[0],entities[24]) ) cout << "bump" << endl;
 //    if ( collidesTop(entities[0],entities[25]) ) cout << "bump" << endl;
-    
-    if ( collidesLeft(entities[0],entities[26]) || collidesRight(entities[0],entities[26])) {
-        score += 10;
-        entities[26].setCoords(2.0,2.0);
-        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
-        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
-    }
-    
-    if ( collidesLeft(entities[0],entities[27]) || collidesRight(entities[0],entities[27])) {
-        score += 10;
-        entities[27].setCoords(-2.0,-2.0);
-        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
-        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
-    }
-    
-    if ( collidesLeft(entities[0],entities[28]) || collidesRight(entities[0],entities[28])) {
-        score += 10;
-        entities[28].setCoords(-2.0,-2.0);
-        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
-        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
-    }
-    
-    if ( collidesLeft(entities[0],entities[29]) || collidesRight(entities[0],entities[29])) {
-        score += 10;
-        entities[29].setCoords(-2.0,-2.0);
-        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
-        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
-    }
-    
-    if ( collidesLeft(entities[0],entities[30]) || collidesRight(entities[0],entities[30])) {
-        score += 10;
-        entities[30].setCoords(-2.0,-2.0);
-        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
-        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
-    }
-    
-    if ( collidesLeft(entities[0],entities[31]) || collidesRight(entities[0],entities[31])) {
-        score += 10;
-        entities[31].setCoords(-2.0,-2.0);
-        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
-        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
-    }
-    
+//    
+//    if ( collidesLeft(entities[0],entities[26]) || collidesRight(entities[0],entities[26])) {
+//        score += 10;
+//        entities[26].setCoords(2.0,2.0);
+//        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+//        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+//    }
+//    
+//    if ( collidesLeft(entities[0],entities[27]) || collidesRight(entities[0],entities[27])) {
+//        score += 10;
+//        entities[27].setCoords(-2.0,-2.0);
+//        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+//        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+//    }
+//    
+//    if ( collidesLeft(entities[0],entities[28]) || collidesRight(entities[0],entities[28])) {
+//        score += 10;
+//        entities[28].setCoords(-2.0,-2.0);
+//        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+//        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+//    }
+//    
+//    if ( collidesLeft(entities[0],entities[29]) || collidesRight(entities[0],entities[29])) {
+//        score += 10;
+//        entities[29].setCoords(-2.0,-2.0);
+//        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+//        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+//    }
+//    
+//    if ( collidesLeft(entities[0],entities[30]) || collidesRight(entities[0],entities[30])) {
+//        score += 10;
+//        entities[30].setCoords(-2.0,-2.0);
+//        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+//        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+//    }
+//    
+//    if ( collidesLeft(entities[0],entities[31]) || collidesRight(entities[0],entities[31])) {
+//        score += 10;
+//        entities[31].setCoords(-2.0,-2.0);
+//        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+//        entities[0].u = ( gridSize * 2 ) / spriteSheetSize;
+//    }
+//    
     entities[0].fall();
     entities[0].offScreen();
     

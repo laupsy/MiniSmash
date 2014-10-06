@@ -56,14 +56,14 @@ public:
     float edgeBottom = y - width / 2.0f;
     
     float speed = 0.01f;
-    float speed_x = 0.015f;
+    float speed_x = 0.020f;
     float speed_y = 0.015f;
-    float maxSpeed = 0.020f;
+    float maxSpeed = 0.035f;
     
     float direction_x = 0.0f;
     float direction_y = 0.0f;
     
-    float acceleration_x = 1.009f;
+    float acceleration_x = 1.029f;
     float acceleration_y = 1.0098f;
     
     float friction_x = 0.98f;
@@ -81,6 +81,7 @@ public:
     bool jumping = false;
     bool atLadder = false;
     bool floating = true;
+    bool solid = true;
     
 };
 

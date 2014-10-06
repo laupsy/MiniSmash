@@ -17,6 +17,7 @@
 #include <SDL_image.h>
 #include <iostream>
 #include <vector>
+#include <Math.h>
 #include "Entity.h"
 
 using namespace std;
@@ -58,7 +59,7 @@ public:
     float largeScale = 0.6f;
     
     float spriteSheetSize = 216.0f;
-    float gridSize = 48.0f / spriteSheetSize;
+    float gridSize = (48.0f / spriteSheetSize) * 0.99;
     
     int state;
     int score = 0;

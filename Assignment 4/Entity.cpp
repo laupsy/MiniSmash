@@ -150,7 +150,6 @@ void Entity::fall() {
         setY(y - speed);
         u = width * 3.5;
         cout << "falling" << endl;
-        jumping = true;
     }
     else {
         
@@ -184,10 +183,10 @@ void Entity::jump() {
 void Entity::resetPhysics() {
     
     speed = 0.01f;
-    speed_x = 0.015f;
+    speed_x = 0.020f;
     speed_y = 0.015f;
     
-    acceleration_x = 1.009f;
+    acceleration_x = 1.029f;
     acceleration_y = 1.0098f;
     
     friction_x = 0.98f;
