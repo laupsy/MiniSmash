@@ -27,8 +27,8 @@
 
 #define LEVEL_HEIGHT 16
 #define LEVEL_WIDTH 22
-#define SPRITE_COUNT_X 16
-#define SPRITE_COUNT_Y 22
+#define SPRITE_COUNT_X 10
+#define SPRITE_COUNT_Y 1
 #define TILE_SIZE 0.2f
 #define FIXED_TIMESTEP 0.0166666f
 #define MAX_TIMESTEPS 6
@@ -60,7 +60,7 @@ public:
     bool readLayerData(std::ifstream &stream);
     bool readEntityData(std::ifstream &stream);
     
-    void placeEntity(const string& type, float placeX, float placeY);
+    void placeEntity(float placeX, float placeY);
     
     GLuint LoadTexture(const char *image_path);
     void DrawText( GLuint textTexture, string text, float x, float y, float spacing, float size, float r, float g, float b, float a );
@@ -69,7 +69,7 @@ public:
     
     Entity * player;
     
-    unsigned char** levelData;
+    unsigned char ** levelData = new unsigned char*[1000];
     
     bool done;
     

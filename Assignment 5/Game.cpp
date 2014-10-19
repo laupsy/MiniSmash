@@ -3,6 +3,7 @@
 
 // Call order:
 //      Game constructor
+//          Init
 //          ReadLevel
 //              ReadHeader
 //              ReadLayerData
@@ -124,13 +125,18 @@ void Game::RenderLevel() {
     
     //    cout << mapWidth << endl;
     
-    for ( size_t y = 0; y < mapHeight; y++ ) {
-        for ( size_t x = 0; x < mapWidth; x++ ) {
-            if ( levelData[y][x] != 0 ) { // if bad access code here it means the while loop in readLayerData failing
-                float u = (float)(((int)levelData[y][x]) % SPRITE_COUNT_X) / (float) SPRITE_COUNT_X;
-                float v = (float)(((int)levelData[y][x]) / SPRITE_COUNT_X) / (float) SPRITE_COUNT_Y;
-                float spriteWidth = 1.0f/(float)SPRITE_COUNT_X;
-                float spriteHeight = 1.0f/(float)SPRITE_COUNT_Y;
+  //  levelData[0][0] = '3';
+    
+  //  cout << "Level data: " << *levelData[0] << endl;
+    
+    for ( size_t y = 0; y < 1; y++ ) {
+        for ( size_t x = 0; x < 1; x++ ) {
+            
+            if ( levelData[y][x] != 0 ) { // why bad access code..
+                float u = (float)(((int)levelData[y][x]) % SPRITE_COUNT_X) / (float)SPRITE_COUNT_X;
+                float v = (float)(((int)levelData[y][x]) / SPRITE_COUNT_X) / (float)SPRITE_COUNT_Y;
+                float spriteWidth = 1.0f / (float)SPRITE_COUNT_X;
+                float spriteHeight = 1.0f / (float)SPRITE_COUNT_Y;
                 
                 vertexData.insert(vertexData.end(), {
                     TILE_SIZE * x, -TILE_SIZE * y,
@@ -235,6 +241,7 @@ bool Game::readLayerData(std::ifstream &stream) {
     while ( getline(stream, line) ) {
         
         if ( line == "" ) { break; }
+        
         istringstream sStream(line);
         string key, value;
         getline(sStream, key, '=');
@@ -244,6 +251,9 @@ bool Game::readLayerData(std::ifstream &stream) {
             
             for ( size_t y = 0; y < mapHeight; y++ ) {
                 
+                // access code violation here now
+                
+                cout << "Y is : " << y << " and mapHeight is : " << mapHeight << endl;
                 getline(stream, line);
                 istringstream lineStream(line);
                 string tile;
@@ -254,8 +264,12 @@ bool Game::readLayerData(std::ifstream &stream) {
                 
                 for ( size_t x = 0; x < mapWidth; x++ ) {
                     
-                    getline(lineStream, tile, ','); // each index is separated by a comma
+                    cout << "X is : " << x << " and mapWidth is : " << mapWidth << endl;
+                    
+                    getline(lineStream, tile, ',');
                     unsigned char val = (unsigned char)atoi(tile.c_str());
+                    
+                    cout << "val is : " << &val << endl;
                     
                     // this fixes the index (bc it is 1 extra in the txt file)
                     if ( val > 0 ) levelData[y][x] = val - 1;
@@ -296,7 +310,7 @@ bool Game::readEntityData(std::ifstream &stream) {
             float placeX = atoi(xPosition.c_str())/16*TILE_SIZE;
             float placeY = atoi(yPosition.c_str())/16*-TILE_SIZE;
             
-            placeEntity(type, placeX, placeY);
+            placeEntity(placeX, placeY);
             
         }
         
@@ -309,14 +323,20 @@ bool Game::readEntityData(std::ifstream &stream) {
 void Game::ReadLevel() {
     
     // Load the file
-    ifstream infile("NYUCodebase/map.txt");
+    ifstream infile("Maps/map.txt");
     string line;
     // Loop through file
-    while ( getline(infile, line) ) {
-
+    
+    
+    // check if exists bc returning false RN
+    
+//    if (infile) cout << "exists" << endl;
+    
+    while ( getline(infile, line) ) { // why is this false..
+        cout << "This is a line" << line << endl;
         // Identify header
         if ( line == "[header]" ) {
-            cout << "reading haeder" << endl;
+            cout << "reading header" << endl;
             if ( !readHeader(infile) ) {
                 // if the header portion is empty then stop trying to fill the array bc that means the entire file is empty
                 return;
@@ -329,7 +349,7 @@ void Game::ReadLevel() {
             readLayerData(infile);
         }
         
-        else if ( line == "[Object Layer 1]" ) {
+        else if ( line == "[ObjectsLayer]" ) {
             cout << "reading obj" << endl;
             // calls PlaceEntity based on results, which contain type and location
             readEntityData(infile);
@@ -339,7 +359,7 @@ void Game::ReadLevel() {
     
 }
 
-void Game::placeEntity(const string& type, float placeX, float placeY) {
+void Game::placeEntity(float placeX, float placeY) {
 
         // Create entity
         // Add entity to vector
