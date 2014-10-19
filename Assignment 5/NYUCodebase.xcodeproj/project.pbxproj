@@ -18,6 +18,7 @@
 		6D5AC2D219AE6A1E004CB1BF /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5AC2D119AE6A1E004CB1BF /* SDL2_image.framework */; };
 		CDB9400F19DF8CA9002C7602 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB9400D19DF8CA9002C7602 /* Game.cpp */; };
 		CDB9401219DF8ED9002C7602 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB9401019DF8ED9002C7602 /* Entity.cpp */; };
+		CDFDF1BD19F3F0B80022FA2F /* SheetSprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDFDF1BB19F3F0B80022FA2F /* SheetSprite.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,8 @@
 		CDB9400E19DF8CA9002C7602 /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Game.h; path = ../Game.h; sourceTree = "<group>"; };
 		CDB9401019DF8ED9002C7602 /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = SOURCE_ROOT; };
 		CDB9401119DF8ED9002C7602 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = SOURCE_ROOT; };
+		CDFDF1BB19F3F0B80022FA2F /* SheetSprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SheetSprite.cpp; sourceTree = "<group>"; };
+		CDFDF1BC19F3F0B80022FA2F /* SheetSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SheetSprite.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +143,8 @@
 			children = (
 				6D5A86B919AE5C710066C1FD /* main.cpp */,
 				CDB9400D19DF8CA9002C7602 /* Game.cpp */,
+				CDFDF1BB19F3F0B80022FA2F /* SheetSprite.cpp */,
+				CDFDF1BC19F3F0B80022FA2F /* SheetSprite.h */,
 				CDB9400E19DF8CA9002C7602 /* Game.h */,
 				CDB9401019DF8ED9002C7602 /* Entity.cpp */,
 				CDB9401119DF8ED9002C7602 /* Entity.h */,
@@ -243,6 +248,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDFDF1BD19F3F0B80022FA2F /* SheetSprite.cpp in Sources */,
 				6D5A86BA19AE5C710066C1FD /* main.cpp in Sources */,
 				CDB9401219DF8ED9002C7602 /* Entity.cpp in Sources */,
 				CDB9400F19DF8CA9002C7602 /* Game.cpp in Sources */,
