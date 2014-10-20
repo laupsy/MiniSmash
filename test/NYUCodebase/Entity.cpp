@@ -16,7 +16,7 @@ Entity::Entity(GLuint textureID, float u, float v, float x, float y, bool isStat
 textureID(textureID),u(u),v(v),x(x),y(y),isStatic(isStatic) {
     width = 36.0f/360.0f;
     height = 36.0f/360.0f;
-    speed = 1.5f;
+    speed = 2.5f;
     velocity_x = speed;
     acceleration_x = 1.1f;
     friction_x = 0.99f;
@@ -24,7 +24,7 @@ textureID(textureID),u(u),v(v),x(x),y(y),isStatic(isStatic) {
 }
 
 void Entity::Reset() {
-    speed = 1.5f;
+    speed = 2.5f;
     velocity_x = speed;
     acceleration_x = 0.5f;
     friction_x = 0.99f;
@@ -35,11 +35,10 @@ Entity::~Entity() {
     delete this;
 }
 
-void Entity::MoveHoriz(float elapsed) {
-    velocity_x = lerp(velocity_x, 0.0f, elapsed * friction_x);
-    x += ( velocity_x * elapsed ) * dir_x;
+void Entity::MoveHoriz() {
+    velocity_x = lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
+    x += ( velocity_x * FIXED_TIMESTEP ) * dir_x;
 }
-
 void Entity::Draw(float scale) {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -67,11 +66,13 @@ void Entity::Update(float elapsed) {
             if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT || event.key.keysym.scancode == SDL_SCANCODE_LEFT ) {
                 if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) dir_x = 1.0f;
                 else dir_x = -1.0f;
-                MoveHoriz(elapsed);
+                MoveHoriz();
             }
         }
         else if ( event.type == SDL_KEYUP ) {
             Reset();
         }
+    }
+    if ( true ) {
     }
 }

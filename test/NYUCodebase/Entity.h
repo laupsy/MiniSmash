@@ -28,7 +28,7 @@ public:
     void Reset();
     void Draw(float scale);
     void Update(float elapsed);
-    void MoveHoriz(float elapsed);
+    void MoveHoriz();
     
     float lerp(float v0, float v1, float t);
     
