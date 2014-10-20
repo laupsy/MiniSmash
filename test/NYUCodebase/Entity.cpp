@@ -16,19 +16,27 @@ Entity::Entity(GLuint textureID, float u, float v, float x, float y, bool isStat
 textureID(textureID),u(u),v(v),x(x),y(y),isStatic(isStatic) {
     width = 36.0f/360.0f;
     height = 36.0f/360.0f;
-    speed = 2.5f;
+    speed = 1.5f;
     velocity_x = speed;
+    velocity_y = speed;
     acceleration_x = 1.1f;
+    acceleration_y = 1.1f;
     friction_x = 0.99f;
+    friction_y = 0.99f;
     dir_x = 1.0f;
+    dir_y = 1.0f;
 }
 
 void Entity::Reset() {
-    speed = 2.5f;
+    speed = 1.5f;
     velocity_x = speed;
-    acceleration_x = 0.5f;
+    velocity_y = speed;
+    acceleration_x = 1.1f;
+    acceleration_y = 1.1f;
     friction_x = 0.99f;
+    friction_y = 0.99f;
     dir_x = 1.0f;
+    dir_y = 1.0f;
 }
 
 Entity::~Entity() {
@@ -39,6 +47,48 @@ void Entity::MoveHoriz() {
     velocity_x = lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
     x += ( velocity_x * FIXED_TIMESTEP ) * dir_x;
 }
+
+void Entity::Fall() {
+    velocity_y = lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
+    velocity_y += acceleration_y * FIXED_TIMESTEP;
+    y -= velocity_y * FIXED_TIMESTEP;
+}
+
+void Entity::CheckCollision(Entity * e) {
+    // Check on x-axis
+    
+    bool leftLargerThanRight = e->x - e->width/2.0f > x + width/2.0f;
+    bool rightSmallerThanLeft = e->x + e->width/2.0f < x - width/2.0f;
+    bool bottomHigherThanTop = e->y + e->width/2.0f > y + height/2.0f;
+    bool topLowerThanBottom = e->y + e->width/2.0f < y - height/2.0f;
+    
+    if ( !leftLargerThanRight && !rightSmallerThanLeft && !bottomHigherThanTop && !topLowerThanBottom ) {
+        isColliding = true;
+    }
+    else {
+        isColliding = false;
+    }
+    // Check on y-axis
+}
+
+void Entity::Update(float elapsed) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if ( event.type == SDL_KEYDOWN ) {
+            if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT || event.key.keysym.scancode == SDL_SCANCODE_LEFT ) {
+                if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) dir_x = 1.0f;
+                else dir_x = -1.0f;
+                MoveHoriz();
+            }
+        }
+        else if ( event.type == SDL_KEYUP ) {
+            Reset();
+        }
+    }
+    if ( !isStatic ) Fall();
+    if ( isColliding ) isStatic = true;
+}
+
 void Entity::Draw(float scale) {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -57,22 +107,4 @@ void Entity::Draw(float scale) {
     glDisableClientState(GL_COLOR_ARRAY);
     glDrawArrays(GL_QUADS, 0, 4);
     glDisable(GL_TEXTURE_2D);
-}
-
-void Entity::Update(float elapsed) {
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        if ( event.type == SDL_KEYDOWN ) {
-            if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT || event.key.keysym.scancode == SDL_SCANCODE_LEFT ) {
-                if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) dir_x = 1.0f;
-                else dir_x = -1.0f;
-                MoveHoriz();
-            }
-        }
-        else if ( event.type == SDL_KEYUP ) {
-            Reset();
-        }
-    }
-    if ( true ) {
-    }
 }

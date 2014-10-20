@@ -42,7 +42,14 @@ void Game::Init() {
 }
 
 void Game::Update(float elapsed) {
-    for ( size_t i = 0; i < entities.size(); i++ ) entities[i]->Update(elapsed);
+    for ( size_t i = 0; i < entities.size(); i++ ) {
+        entities[i]->Update(elapsed);
+        if ( !entities[i]->isStatic ) {
+            for ( size_t j = entities.size(); j > 0; j-- ) {
+                entities[i]->CheckCollision(entities[j]);
+            }
+        }
+    }
 }
 
 void Game::FixedUpdate() {
