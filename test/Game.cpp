@@ -69,7 +69,8 @@ void Game::FixedUpdate() {
                     entities[i]->Fall();
         
         // do the lerp thing
-        
+        entities[i]->velocity_x = lerp(entities[i]->velocity_x, 0.0f, elapsed * entities[i]->friction_x);
+        entities[i]->velocity_y = lerp(entities[i]->velocity_y, 0.0f, elapsed * entities[i]->friction_y);
         
         if ( !entities[i]->isStatic ) { // is it static?
             for ( size_t j = 0; j < entities.size(); j++ ) {
