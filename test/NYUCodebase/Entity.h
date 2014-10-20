@@ -30,12 +30,12 @@ public:
     void Update(float elapsed);
     void MoveHoriz();
     void Fall();
-    void CheckCollision(Entity * e);
+    bool CheckCollision(Entity * e);
     
     float lerp(float v0, float v1, float t);
     
     float u,v,x,y,width,height,dir_x,dir_y;
     float velocity_x,velocity_y,speed,acceleration_x,acceleration_y,friction_x,friction_y;
     GLuint textureID;
-    bool isStatic,isColliding;
+    bool isStatic,collidesLeft,collidesRight,collidesTop,collidesBottom;
 };

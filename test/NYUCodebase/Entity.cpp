@@ -19,20 +19,24 @@ textureID(textureID),u(u),v(v),x(x),y(y),isStatic(isStatic) {
     speed = 1.5f;
     velocity_x = speed;
     velocity_y = speed;
-    acceleration_x = 1.1f;
-    acceleration_y = 1.1f;
+    acceleration_x = 1.5f;
+    acceleration_y = 1.5f;
     friction_x = 0.99f;
     friction_y = 0.99f;
     dir_x = 1.0f;
     dir_y = 1.0f;
+    collidesLeft = false;
+    collidesRight = false;
+    collidesTop = false;
+    collidesBottom = false;
 }
 
 void Entity::Reset() {
     speed = 1.5f;
     velocity_x = speed;
     velocity_y = speed;
-    acceleration_x = 1.1f;
-    acceleration_y = 1.1f;
+    acceleration_x = 1.5f;
+    acceleration_y = 1.5f;
     friction_x = 0.99f;
     friction_y = 0.99f;
     dir_x = 1.0f;
@@ -49,26 +53,26 @@ void Entity::MoveHoriz() {
 }
 
 void Entity::Fall() {
-    velocity_y = lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
-    velocity_y += acceleration_y * FIXED_TIMESTEP;
-    y -= velocity_y * FIXED_TIMESTEP;
+    if ( !isColliding ) {
+        velocity_y = lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
+        velocity_y += acceleration_y * FIXED_TIMESTEP;
+        y -= velocity_y * FIXED_TIMESTEP;
+    }
 }
 
-void Entity::CheckCollision(Entity * e) {
-    // Check on x-axis
+bool Entity::CheckCollision(Entity * e) {
     
-    bool leftLargerThanRight = e->x - e->width/2.0f > x + width/2.0f;
-    bool rightSmallerThanLeft = e->x + e->width/2.0f < x - width/2.0f;
-    bool bottomHigherThanTop = e->y + e->width/2.0f > y + height/2.0f;
-    bool topLowerThanBottom = e->y + e->width/2.0f < y - height/2.0f;
+    bool leftLargerThanRight = x - width/2.0f > e->x + e->width/2.0f;
+    bool rightSmallerThanLeft = x + width/2.0f < e->x - e->width/2.0f;
+    bool bottomHigherThanTop = y + height/2.0f > e->y + e->height/2.0f;
+    bool topLowerThanBottom = y + height/2.0f < e->y - e->height/2.0f;
     
-    if ( !leftLargerThanRight && !rightSmallerThanLeft && !bottomHigherThanTop && !topLowerThanBottom ) {
-        isColliding = true;
-    }
-    else {
-        isColliding = false;
-    }
-    // Check on y-axis
+    if ( leftLargerThanRight ) return false;
+    if ( rightSmallerThanLeft ) return false;
+    if ( bottomHigherThanTop ) return false;
+    if ( topLowerThanBottom ) return false;
+    
+    return true;
 }
 
 void Entity::Update(float elapsed) {
@@ -85,8 +89,8 @@ void Entity::Update(float elapsed) {
             Reset();
         }
     }
+    
     if ( !isStatic ) Fall();
-    if ( isColliding ) isStatic = true;
 }
 
 void Entity::Draw(float scale) {
