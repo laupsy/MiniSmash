@@ -49,8 +49,15 @@ void Game::FixedUpdate() {
     
     for ( size_t i = 0; i < entities.size(); i++ ) {
         entities[i]->FixedUpdate();
-        if ( &entities[0] != &entities[i] ) {
-            entities[0]->CheckCollision(entities[i]);
+        if ( !entities[i]->isStatic ) {
+            for ( size_t j = 0; j < entities.size(); j++ ) {
+                if ( &entities[i] != &entities[j]) {
+                    if ( entities[i]->CheckCollision(entities[j]) ) {
+                        // this is where you do the penetration thing from the slides to check from which direction it collided from?
+                        // determine penetration on x/y axis, check to see from which direction it collided from, and then modify the x/y value so that it's not on top of the thing
+                    }
+                }
+            }
         }
     }
 }
