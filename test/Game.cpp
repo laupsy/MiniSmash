@@ -49,12 +49,53 @@ void Game::FixedUpdate() {
     
     for ( size_t i = 0; i < entities.size(); i++ ) {
         entities[i]->FixedUpdate();
-        if ( !entities[i]->isStatic ) {
+        
+        if ( !entities[i]->isStatic ) { // is it static?
             for ( size_t j = 0; j < entities.size(); j++ ) {
-                if ( &entities[i] != &entities[j]) {
-                    if ( entities[i]->CheckCollision(entities[j]) ) {
+                if ( &entities[i] != &entities[j]) { // are they the same entity?
+                    if ( entities[i]->CheckCollision(entities[j]) ) { // are they colliding?
                         // this is where you do the penetration thing from the slides to check from which direction it collided from?
                         // determine penetration on x/y axis, check to see from which direction it collided from, and then modify the x/y value so that it's not on top of the thing
+                        float x_distance = fabs( entities[j]->x - entities[i]->x );
+                        float x_penetration = fabs( x_distance - entities[i]->width/2 - entities[j]->width/2 );
+                        // check where it collided from
+                        if ( entities[i]->x > entities[j]->x ) {
+                            // i collided on its left side (aka the left side is what collides)
+                            // adjust position to slightly to the right
+                            entities[i]->x += x_penetration + 0.1f;
+                            entities[i]->collidesLeft = true;
+                        }
+                        else if ( entities[i]->x < entities[j]->x ) {
+                            // i collided on its right side
+                            // adjust position to slightly to the left
+                            entities[i]->x -= x_penetration + 0.1f;
+                            entities[i]->collidesRight = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        
+        
+        if ( !entities[i]->isStatic ) { // is it static?
+            for ( size_t j = 0; j < entities.size(); j++ ) {
+                if ( &entities[i] != &entities[j]) { // are they the same entity?
+                    if ( entities[i]->CheckCollision(entities[j]) ) { // are they colliding?
+                        // check y-axis
+                        float y_distance = fabs( entities[j]->y - entities[i]->y );
+                        float y_penetration = fabs( y_distance - entities[i]->height/2 - entities[j]->height/2 );
+                        // check where it collided from
+                        if ( entities[i]->y > entities[j]->y ) {
+                            // i collided on its bottom side
+                            // adjust position slightly up
+                            entities[i]->y += y_penetration + 0.1f;
+                        }
+                        else if ( entities[i]->y < entities[j]->y ) {
+                            // i collided on its top side
+                            // adjust position sligtly down
+                            entities[i]->y -= y_penetration + 0.1f;
+                        }
                     }
                 }
             }
