@@ -48,7 +48,28 @@ void Game::Update(float elapsed) {
 void Game::FixedUpdate() {
     
     for ( size_t i = 0; i < entities.size(); i++ ) {
+        
+        // Sets collision, makes objects move
         entities[i]->FixedUpdate();
+        
+        // Stop movement if colliding
+        if ( entities[i]->collidesLeft || entities[i]->collidesRight ) entities[i]->velocity_x = 0.0f;
+        if ( entities[i]->collidesTop || entities[i]->collidesBottom ) entities[i]->velocity_y = 0.0f;
+        
+        entities[i]->collidesLeft = false;
+        entities[i]->collidesRight = false;
+        entities[i]->collidesBottom = false;
+        entities[i]->collidesTop = false;
+        
+        // makes the entities fall
+        
+        if ( ( !entities[i]->collidesBottom ||
+               !entities[i]->collidesTop ) &&
+               !entities[i]->isStatic )
+                    entities[i]->Fall();
+        
+        // do the lerp thing
+        
         
         if ( !entities[i]->isStatic ) { // is it static?
             for ( size_t j = 0; j < entities.size(); j++ ) {
@@ -62,23 +83,19 @@ void Game::FixedUpdate() {
                         if ( entities[i]->x > entities[j]->x ) {
                             // i collided on its left side (aka the left side is what collides)
                             // adjust position to slightly to the right
-                            entities[i]->x += x_penetration + 0.1f;
+                            entities[i]->x -= x_penetration + 0.1f;
                             entities[i]->collidesLeft = true;
                         }
                         else if ( entities[i]->x < entities[j]->x ) {
                             // i collided on its right side
                             // adjust position to slightly to the left
-                            entities[i]->x -= x_penetration + 0.1f;
+                            entities[i]->x += x_penetration + 0.1f;
                             entities[i]->collidesRight = true;
                         }
                     }
                 }
             }
-        }
-
-        
-        
-        if ( !entities[i]->isStatic ) { // is it static?
+            
             for ( size_t j = 0; j < entities.size(); j++ ) {
                 if ( &entities[i] != &entities[j]) { // are they the same entity?
                     if ( entities[i]->CheckCollision(entities[j]) ) { // are they colliding?
@@ -89,12 +106,14 @@ void Game::FixedUpdate() {
                         if ( entities[i]->y > entities[j]->y ) {
                             // i collided on its bottom side
                             // adjust position slightly up
-                            entities[i]->y += y_penetration + 0.1f;
+                            entities[i]->y -= y_penetration + 0.1f;
+                            entities[i]->collidesBottom = true;
                         }
                         else if ( entities[i]->y < entities[j]->y ) {
                             // i collided on its top side
                             // adjust position sligtly down
-                            entities[i]->y -= y_penetration + 0.1f;
+                            entities[i]->y += y_penetration + 0.1f;
+                            entities[i]->collidesTop = true;
                         }
                     }
                 }
