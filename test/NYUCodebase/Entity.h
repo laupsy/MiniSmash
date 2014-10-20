@@ -27,7 +27,7 @@ public:
     
     void Reset();
     void Draw(float scale);
-    void Update(float elapsed);
+    void FixedUpdate();
     void MoveHoriz();
     void Fall();
     bool CheckCollision(Entity * e);

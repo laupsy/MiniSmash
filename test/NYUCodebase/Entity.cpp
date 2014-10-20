@@ -53,11 +53,11 @@ void Entity::MoveHoriz() {
 }
 
 void Entity::Fall() {
-    if ( !isColliding ) {
+ //   if ( !isColliding ) {
         velocity_y = lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
         velocity_y += acceleration_y * FIXED_TIMESTEP;
         y -= velocity_y * FIXED_TIMESTEP;
-    }
+   // }
 }
 
 bool Entity::CheckCollision(Entity * e) {
@@ -75,7 +75,7 @@ bool Entity::CheckCollision(Entity * e) {
     return true;
 }
 
-void Entity::Update(float elapsed) {
+void Entity::FixedUpdate() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if ( event.type == SDL_KEYDOWN ) {

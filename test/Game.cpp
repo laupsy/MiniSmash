@@ -42,20 +42,17 @@ void Game::Init() {
 }
 
 void Game::Update(float elapsed) {
-    for ( size_t i = 0; i < entities.size(); i++ ) {
-        entities[i]->Update(elapsed);
-        if ( &entities[0] != &entities[i] ) {
-            entities[0]->CheckCollision(entities[i]);
-        }
-    }
+    
 }
 
 void Game::FixedUpdate() {
     
-    // Call FixedUpdate per entity
-    // Check and update information about entities states (eg colliding jumping static visible)
-    // Updating physics must also update by fixed timestep (eg something = something * FIXED_TIMESTEP)
-    
+    for ( size_t i = 0; i < entities.size(); i++ ) {
+        entities[i]->FixedUpdate();
+        if ( &entities[0] != &entities[i] ) {
+            entities[0]->CheckCollision(entities[i]);
+        }
+    }
 }
 
 void Game::Render() {
@@ -80,7 +77,14 @@ bool Game::UpdateAndRender() {
     
     float fixedElapsed = elapsed + timeLeftOver;
     
-    if ( fixedElapsed > FIXED_TIMESTEP * MAX_TIMESTEPS ) fixedElapsed = FIXED_TIMESTEP * MAX_TIMESTEPS;
+    if ( fixedElapsed > FIXED_TIMESTEP * MAX_TIMESTEPS ) {
+        fixedElapsed = FIXED_TIMESTEP * MAX_TIMESTEPS;
+    }
+    
+    while ( fixedElapsed >= FIXED_TIMESTEP ) {
+        fixedElapsed -= FIXED_TIMESTEP;
+        FixedUpdate();
+    }
     
     // Update and render
     Update(elapsed);
