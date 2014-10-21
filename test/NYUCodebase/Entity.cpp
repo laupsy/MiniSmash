@@ -18,7 +18,7 @@ Entity::Entity(GLuint textureID, float u, float v, float x, float y, bool isStat
 textureID(textureID),u(u),v(v),x(x),y(y),isStatic(isStatic) {
     width = 36.0f/360.0f;
     height = 36.0f/360.0f;
-    speed = 2.0f;
+    speed = 6.0f;
     velocity_x = speed;
     velocity_y = speed;
     acceleration_x = 1.5f;
@@ -35,13 +35,14 @@ textureID(textureID),u(u),v(v),x(x),y(y),isStatic(isStatic) {
 }
 
 void Entity::Reset() {
-    speed = 2.0f;
+    speed = 6.0f;
     velocity_x = speed;
     velocity_y = speed;
     acceleration_x = 1.5f;
     acceleration_y = 1.5f;
     friction_x = 0.99f;
-    friction_y = 0.99f;}
+    friction_y = 0.99f;
+}
 
 Entity::~Entity() {
     delete this;
@@ -66,7 +67,7 @@ bool Entity::CheckCollision(Entity * e) {
     
     bool leftLargerThanRight = x - width/2.0f > e->x + e->width/2.0f;
     bool rightSmallerThanLeft = x + width/2.0f < e->x - e->width/2.0f;
-    bool bottomHigherThanTop = y + height/2.0f > e->y + e->height/2.0f;
+    bool bottomHigherThanTop = y - height/2.0f > e->y + e->height/2.0f;
     bool topLowerThanBottom = y + height/2.0f < e->y - e->height/2.0f;
     
     if ( leftLargerThanRight ) return false;

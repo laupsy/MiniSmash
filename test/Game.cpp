@@ -101,7 +101,7 @@ void Game::CheckCollisionY(Entity * e) {
                 if ( e->y > entities[j]->y ) {
                     // i collided on its top side
                     // adjust position slightly up
-                    e->y -= y_penetration - OFFSET;
+                    e->y += y_penetration - OFFSET;
                     e->collidesTop = true;
                 }
                 else if ( e->y < entities[j]->y ) {
