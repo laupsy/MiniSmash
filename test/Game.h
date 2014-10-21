@@ -24,6 +24,12 @@ public:
     
     void placeEntity(float placeX, float placeY);
     
+    void EventsFromCollision(Entity * e);
+    void SetCollisionToFalse(Entity * e);
+    void Fall(Entity * e);
+    void CheckCollisionX(Entity * e);
+    void CheckCollisionY(Entity * e);
+    
     GLuint LoadTexture(const char *image_path);
     void DrawText( GLuint textTexture, string text, float x, float y, float spacing, float size, float r, float g, float b, float a );
     
