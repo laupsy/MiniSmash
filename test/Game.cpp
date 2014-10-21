@@ -40,22 +40,18 @@ void Game::EventsFromCollision(Entity * e) {
     // Stop movement if colliding
     if ( e->collidesLeft ) {
         e->velocity_x = 0.0f;
-        e->acceleration_x = 0.0f;
         cout << "colliding left" << endl;
     }
     if ( e->collidesRight ) {
         e->velocity_x = 0.0f;
-        e->acceleration_x = 0.0f;
         cout << "colliding right" << endl;
     }
     if ( e->collidesTop ) {
         e->velocity_y = 0.0f;
-        e->acceleration_y = 0.0f;
         cout << "colliding top" << endl;
     }
     if ( e->collidesBottom ) {
         e->velocity_y = 0.0f;
-        e->acceleration_y = 0.0f;
         cout << "colliding bot" << endl;
     }
 }
@@ -105,7 +101,7 @@ void Game::CheckCollisionY(Entity * e) {
                 if ( e->y > entities[j]->y ) {
                     // i collided on its top side
                     // adjust position slightly up
-                    e->y -= y_penetration + OFFSET;
+                    e->y -= y_penetration - OFFSET;
                     e->collidesTop = true;
                 }
                 else if ( e->y < entities[j]->y ) {
@@ -113,6 +109,7 @@ void Game::CheckCollisionY(Entity * e) {
                     // adjust position sligtly down
                     e->y += y_penetration + OFFSET;
                     e->collidesBottom = true;
+                    e->jumping = false;
                 }
             }
         }
@@ -129,12 +126,13 @@ void Game::FixedUpdate() {
         entities[i]->FixedUpdate();
         EventsFromCollision(entities[i]);
         SetCollisionToFalse(entities[i]);
+        
         entities[i]->velocity_x = lerp(entities[i]->velocity_x, 0.0f, elapsed * entities[i]->friction_x);
         entities[i]->velocity_y = lerp(entities[i]->velocity_y, 0.0f, elapsed * entities[i]->friction_y);
         
         if ( !entities[i]->isStatic ) {
             Fall(entities[i]);
-            CheckCollisionX(entities[i]);
+            //CheckCollisionX(entities[i]);
             CheckCollisionY(entities[i]);
         }
     }
@@ -160,6 +158,17 @@ bool Game::UpdateAndRender() {
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
             done = true;
+        }
+        else if (event.type == SDL_KEYDOWN) {
+            if ( event.key.keysym.scancode == SDL_SCANCODE_SPACE ) {
+                entities[0]->Jump();
+                entities[0]->jumping = true;
+            }
+            if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT || event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) {
+                if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT ) entities[0]->dir_x = -1.0f;
+                else if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) entities[0]->dir_x = 1.0f;
+                entities[0]->MoveHoriz();
+            }
         }
     }
     
@@ -189,11 +198,6 @@ void Game::RenderLevel() {
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
             done = true;
-        }
-        else if (event.type == SDL_KEYDOWN) {
-            if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
-                cout << "Jump" << endl;
-            }
         }
     }
 }

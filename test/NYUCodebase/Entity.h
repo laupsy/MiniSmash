@@ -17,9 +17,9 @@
 #define SPRITE_COUNT_X 10
 #define SPRITE_COUNT_Y 1
 #define TILE_SIZE 0.2f
-#define FIXED_TIMESTEP 0.00166666f
+#define FIXED_TIMESTEP 0.0166666f
 #define MAX_TIMESTEPS 6
-#define OFFSET 0.0001f
+#define OFFSET 0.001f
 
 class Entity {
 public:
@@ -39,5 +39,5 @@ public:
     float u,v,x,y,width,height,dir_x,dir_y;
     float velocity_x,velocity_y,speed,acceleration_x,acceleration_y,friction_x,friction_y;
     GLuint textureID;
-    bool isStatic,collidesLeft,collidesRight,collidesTop,collidesBottom;
+    bool isStatic,collidesLeft,collidesRight,collidesTop,collidesBottom,jumping;
 };

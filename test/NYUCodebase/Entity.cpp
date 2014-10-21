@@ -18,7 +18,7 @@ Entity::Entity(GLuint textureID, float u, float v, float x, float y, bool isStat
 textureID(textureID),u(u),v(v),x(x),y(y),isStatic(isStatic) {
     width = 36.0f/360.0f;
     height = 36.0f/360.0f;
-    speed = 1.5f;
+    speed = 2.0f;
     velocity_x = speed;
     velocity_y = speed;
     acceleration_x = 1.5f;
@@ -31,27 +31,26 @@ textureID(textureID),u(u),v(v),x(x),y(y),isStatic(isStatic) {
     collidesRight = false;
     collidesTop = false;
     collidesBottom = false;
+    jumping = false;
 }
 
 void Entity::Reset() {
-    speed = 1.5f;
+    speed = 2.0f;
     velocity_x = speed;
     velocity_y = speed;
     acceleration_x = 1.5f;
     acceleration_y = 1.5f;
     friction_x = 0.99f;
-    friction_y = 0.99f;
-    dir_x = 1.0f;
-    dir_y = 1.0f;
-}
+    friction_y = 0.99f;}
 
 Entity::~Entity() {
     delete this;
 }
 
 void Entity::MoveHoriz() {
-    velocity_x = lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
+    velocity_x = 0.01f + lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
     x += ( velocity_x * FIXED_TIMESTEP ) * dir_x;
+    cout << velocity_x << endl;
 }
 
 void Entity::Fall() {
@@ -60,7 +59,7 @@ void Entity::Fall() {
 }
 
 void Entity::Jump() {
-    y += 0.5f;
+    if (!jumping) y += 0.5f;
 }
 
 bool Entity::CheckCollision(Entity * e) {
