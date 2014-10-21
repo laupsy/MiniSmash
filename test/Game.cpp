@@ -34,15 +34,14 @@ void Game::Init() {
     Entity * player = new Entity(LoadTexture("laurasfirstsprite.png"), 36.0f/360.0f, 0.0f, 0.0f, 0.0f, false);
     entities.push_back(player);
     
-    for ( size_t i = 0; i < 20; i++ ) {
-        Entity * block = new Entity(LoadTexture("laurasfirstsprite.png"), 144.0f/360.0f, 0.0f/360.0f, -1.3f+i/6.5f, -0.5f, true);
+    for ( size_t i = 0; i < 15; i++ ) {
+        Entity * block = new Entity(LoadTexture("laurasfirstsprite.png"), 144.0f/360.0f, 0.0f/360.0f, -1.3f+i/10.0f, -0.5f, true);
         entities.push_back(block);
     }
     
 }
 
 void Game::Update(float elapsed) {
-    
 }
 
 void Game::FixedUpdate() {
@@ -53,22 +52,49 @@ void Game::FixedUpdate() {
         entities[i]->FixedUpdate();
         
         // Stop movement if colliding
-        if ( entities[i]->collidesLeft || entities[i]->collidesRight ) entities[i]->velocity_x = 0.0f;
-        if ( entities[i]->collidesTop || entities[i]->collidesBottom ) entities[i]->velocity_y = 0.0f;
+        if ( entities[i]->collidesLeft ) {
+            entities[i]->velocity_x = 0.0f;
+            entities[i]->acceleration_x = 0.0f;
+            cout << "colliding left" << endl;
+        }
+        if ( entities[i]->collidesRight ) {
+            entities[i]->velocity_x = 0.0f;
+            entities[i]->acceleration_x = 0.0f;
+            cout << "colliding right" << endl;
+        }
+        if ( entities[i]->collidesTop ) {
+            entities[i]->velocity_y = 0.0f;
+            entities[i]->acceleration_y = 0.0f;
+            cout << "colliding top" << endl;
+        }
+        if ( entities[i]->collidesBottom ) {
+            entities[i]->velocity_y = 0.0f;
+            entities[i]->acceleration_y = 0.0f;
+            cout << "colliding bot" << endl;
+        }
         
         entities[i]->collidesLeft = false;
         entities[i]->collidesRight = false;
-        entities[i]->collidesBottom = false;
         entities[i]->collidesTop = false;
+        entities[i]->collidesBottom = false;
         
         // makes the entities fall
         
-        if ( ( !entities[i]->collidesBottom ||
-               !entities[i]->collidesTop ) &&
-               !entities[i]->isStatic )
-                    entities[i]->Fall();
+        if ( !entities[i]->isStatic ) {
+            entities[i]->velocity_y += entities[i]->acceleration_y * FIXED_TIMESTEP;
+            entities[i]->y -= entities[i]->velocity_y * FIXED_TIMESTEP;
+        }
+        
+//        if ( ( !entities[i]->collidesBottom ||
+//               !entities[i]->collidesTop ) &&
+//               !entities[i]->isStatic )
+//                    entities[i]->Fall();
+//        
+//        if ( !entities[i]->isStatic )
+//            entities[i]->Fall();
         
         // do the lerp thing
+        
         entities[i]->velocity_x = lerp(entities[i]->velocity_x, 0.0f, elapsed * entities[i]->friction_x);
         entities[i]->velocity_y = lerp(entities[i]->velocity_y, 0.0f, elapsed * entities[i]->friction_y);
         
@@ -78,19 +104,19 @@ void Game::FixedUpdate() {
                     if ( entities[i]->CheckCollision(entities[j]) ) { // are they colliding?
                         // this is where you do the penetration thing from the slides to check from which direction it collided from?
                         // determine penetration on x/y axis, check to see from which direction it collided from, and then modify the x/y value so that it's not on top of the thing
-                        float x_distance = fabs( entities[j]->x - entities[i]->x );
+                        float x_distance = fabs( entities[i]->x - entities[j]->x );
                         float x_penetration = fabs( x_distance - entities[i]->width/2 - entities[j]->width/2 );
                         // check where it collided from
                         if ( entities[i]->x > entities[j]->x ) {
                             // i collided on its left side (aka the left side is what collides)
                             // adjust position to slightly to the right
-                            entities[i]->x -= x_penetration + 0.1f;
+                            entities[i]->x -= x_penetration + 0.0001f;
                             entities[i]->collidesLeft = true;
                         }
                         else if ( entities[i]->x < entities[j]->x ) {
                             // i collided on its right side
                             // adjust position to slightly to the left
-                            entities[i]->x += x_penetration + 0.1f;
+                            entities[i]->x -= x_penetration + 0.0001f;
                             entities[i]->collidesRight = true;
                         }
                     }
@@ -101,24 +127,25 @@ void Game::FixedUpdate() {
                 if ( &entities[i] != &entities[j]) { // are they the same entity?
                     if ( entities[i]->CheckCollision(entities[j]) ) { // are they colliding?
                         // check y-axis
-                        float y_distance = fabs( entities[j]->y - entities[i]->y );
+                        float y_distance = fabs( entities[i]->y - entities[j]->y );
                         float y_penetration = fabs( y_distance - entities[i]->height/2 - entities[j]->height/2 );
                         // check where it collided from
                         if ( entities[i]->y > entities[j]->y ) {
-                            // i collided on its bottom side
+                            // i collided on its top side
                             // adjust position slightly up
-                            entities[i]->y -= y_penetration + 0.1f;
-                            entities[i]->collidesBottom = true;
+                            entities[i]->y -= y_penetration + OFFSET;
+                            entities[i]->collidesTop = true;
                         }
                         else if ( entities[i]->y < entities[j]->y ) {
-                            // i collided on its top side
+                            // i collided on its bottom side
                             // adjust position sligtly down
-                            entities[i]->y += y_penetration + 0.1f;
-                            entities[i]->collidesTop = true;
+                            entities[i]->y += y_penetration + OFFSET;
+                            entities[i]->collidesBottom = true;
                         }
                     }
                 }
             }
+            //cout << entities[i]->velocity_y << endl;
         }
     }
 }
@@ -142,6 +169,14 @@ bool Game::UpdateAndRender() {
     float ticks = (float)SDL_GetTicks()/1000.0f;
     float elapsed = ticks - lastFrameTicks;
     lastFrameTicks = ticks;
+
+    SDL_Event event;
+    
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
+            done = true;
+        }
+    }
     
     float fixedElapsed = elapsed + timeLeftOver;
     
@@ -163,12 +198,17 @@ bool Game::UpdateAndRender() {
 
 void Game::RenderLevel() {
     
-    for ( size_t i = 0; i < entities.size(); i++ ) entities[i]->Draw(1.0f);
+    for ( size_t i = 0; i < entities.size(); i++ ) entities[i]->Draw(0.5f);
     
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
             done = true;
+        }
+        else if (event.type == SDL_KEYDOWN) {
+            if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {
+                cout << "Jump" << endl;
+            }
         }
     }
 }

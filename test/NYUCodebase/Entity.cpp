@@ -8,6 +8,8 @@
 
 #include "Entity.h"
 
+using namespace std;
+
 float Entity::lerp(float v0, float v1, float t) {
     return (1.0-t)*v0 + t*v1;
 }
@@ -57,6 +59,10 @@ void Entity::Fall() {
     y -= velocity_y * FIXED_TIMESTEP;
 }
 
+void Entity::Jump() {
+    y += 0.5f;
+}
+
 bool Entity::CheckCollision(Entity * e) {
     
     bool leftLargerThanRight = x - width/2.0f > e->x + e->width/2.0f;
@@ -72,21 +78,7 @@ bool Entity::CheckCollision(Entity * e) {
     return true;
 }
 
-void Entity::FixedUpdate() {
-    
-    SDL_Event event;
-    
-    while (SDL_PollEvent(&event)) {
-        if ( event.type == SDL_KEYDOWN ) {
-            if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT || event.key.keysym.scancode == SDL_SCANCODE_LEFT ) {
-                if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) dir_x = 1.0f;
-                else dir_x = -1.0f;
-                MoveHoriz();
-            }
-        }
-        else if ( event.type == SDL_KEYUP ) Reset();
-    }
-}
+void Entity::FixedUpdate() {}
 
 void Entity::Draw(float scale) {
     glEnable(GL_TEXTURE_2D);
