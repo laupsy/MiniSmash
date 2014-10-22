@@ -40,19 +40,19 @@ void Game::EventsFromCollision(Entity * e) {
     // Stop movement if colliding
     if ( e->collidesLeft ) {
         e->velocity_x = 0.0f;
-        cout << "colliding left" << endl;
+      //  cout << "colliding left" << endl;
     }
     if ( e->collidesRight ) {
         e->velocity_x = 0.0f;
-        cout << "colliding right" << endl;
+      //  cout << "colliding right" << endl;
     }
     if ( e->collidesTop ) {
         e->velocity_y = 0.0f;
-        cout << "colliding top" << endl;
+      //  cout << "colliding top" << endl;
     }
     if ( e->collidesBottom ) {
         e->velocity_y = 0.0f;
-        cout << "colliding bot" << endl;
+      //  cout << "colliding bot" << endl;
     }
 }
 void Game::SetCollisionToFalse(Entity * e) {
@@ -103,13 +103,13 @@ void Game::CheckCollisionY(Entity * e) {
                     // adjust position slightly up
                     e->y += y_penetration - OFFSET;
                     e->collidesTop = true;
+                    e->jumping = false;
                 }
                 else if ( e->y < entities[j]->y ) {
                     // i collided on its bottom side
                     // adjust position sligtly down
                     e->y += y_penetration + OFFSET;
                     e->collidesBottom = true;
-                    e->jumping = false;
                 }
             }
         }
@@ -124,6 +124,7 @@ void Game::FixedUpdate() {
     for ( size_t i = 0; i < entities.size(); i++ ) {
         
         entities[i]->FixedUpdate();
+        
         EventsFromCollision(entities[i]);
         SetCollisionToFalse(entities[i]);
         

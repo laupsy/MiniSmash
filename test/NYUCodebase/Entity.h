@@ -17,9 +17,10 @@
 #define SPRITE_COUNT_X 10
 #define SPRITE_COUNT_Y 1
 #define TILE_SIZE 0.2f
-#define FIXED_TIMESTEP 0.00166666f
+#define FIXED_TIMESTEP 0.0166666f
 #define MAX_TIMESTEPS 6
 #define OFFSET 0.001f
+#define JUMP_HEIGHT 50.0f
 
 class Entity {
 public:
