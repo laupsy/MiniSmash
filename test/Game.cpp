@@ -127,7 +127,7 @@ float lerp(float v0, float v1, float t) {
 void Game::FixedUpdate() {
     
     for ( size_t i = 0; i < entities.size(); i++ ) {
-        
+        x
         entities[i]->FixedUpdate();
         
         EventsFromCollision(entities[i]);
