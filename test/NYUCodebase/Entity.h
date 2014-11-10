@@ -22,6 +22,10 @@
 #define OFFSET 0.001f
 #define JUMP_HEIGHT 50.0f
 
+#define VELOCITY 1.4f
+#define ACCELERATION 9.8f
+#define FRICTION 0.99f
+
 class Entity {
 public:
     Entity(GLuint textureID, float u, float v, float x, float y, bool isStatic);
@@ -31,7 +35,7 @@ public:
     void Draw(float scale);
     void FixedUpdate();
     void MoveHoriz();
-    void Fall();
+    void Fall(float elapsed);
     void Jump();
     bool CheckCollision(Entity * e);
     

@@ -18,13 +18,13 @@ Entity::Entity(GLuint textureID, float u, float v, float x, float y, bool isStat
 textureID(textureID),u(u),v(v),x(x),y(y),isStatic(isStatic) {
     width = 36.0f/360.0f;
     height = 36.0f/360.0f;
-    speed = 5.0f;
+    speed = VELOCITY;
     velocity_x = speed;
     velocity_y = speed;
-    acceleration_x = 1.8f;
-    acceleration_y = 1.1f;
-    friction_x = 0.99f;
-    friction_y = 0.99f;
+    acceleration_x = ACCELERATION;
+    acceleration_y = ACCELERATION;
+    friction_x = FRICTION;
+    friction_y = FRICTION;
     dir_x = 1.0f;
     dir_y = 1.0f;
     collidesLeft = false;
@@ -35,13 +35,13 @@ textureID(textureID),u(u),v(v),x(x),y(y),isStatic(isStatic) {
 }
 
 void Entity::Reset() {
-    speed = 5.0f;
+    speed = VELOCITY;
     velocity_x = speed;
     velocity_y = speed;
-    acceleration_x = 1.8f;
-    acceleration_y = 1.1f;
-    friction_x = 0.99f;
-    friction_y = 0.99f;
+    acceleration_x = ACCELERATION;
+    acceleration_y = ACCELERATION;
+    friction_x = FRICTION;
+    friction_y = FRICTION;
 }
 
 Entity::~Entity() {
@@ -49,13 +49,13 @@ Entity::~Entity() {
 }
 
 void Entity::MoveHoriz() {
-    velocity_x = 0.01f + lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
-    x += ( velocity_x * FIXED_TIMESTEP ) * dir_x;
+    velocity_x += ACCELERATION * FIXED_TIMESTEP;
+    x += velocity_x * FIXED_TIMESTEP * dir_x;
 }
 
-void Entity::Fall() {
+void Entity::Fall(float elapsed) {
     velocity_y += acceleration_y * FIXED_TIMESTEP;
-    y += velocity_y * FIXED_TIMESTEP;
+    y -= velocity_y * FIXED_TIMESTEP;
 }
 
 void Entity::Jump() {

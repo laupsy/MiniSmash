@@ -69,21 +69,26 @@ void Game::CheckCollisionX(Entity * e) {
     for ( size_t j = 0; j < entities.size(); j++ ) {
         if ( &e != &entities[j]) { // are they the same entity?
             if ( e->CheckCollision(entities[j]) ) { // are they colliding?
+                
                 // this is where you do the penetration thing from the slides to check from which direction it collided from?
                 // determine penetration on x/y axis, check to see from which direction it collided from, and then modify the x/y value so that it's not on top of the thing
+                
                 float x_distance = fabs( e->x - entities[j]->x );
                 float x_penetration = fabs( x_distance - e->width/2 - entities[j]->width/2 );
+                
                 // check where it collided from
+                
                 if ( e->x > entities[j]->x ) {
                     // i collided on its left side (aka the left side is what collides)
                     // adjust position to slightly to the right
-                    e->x -= x_penetration + 0.0001f;
+                    e->x -= x_penetration + OFFSET;
                     e->collidesLeft = true;
                 }
+                
                 else if ( e->x < entities[j]->x ) {
                     // i collided on its right side
                     // adjust position to slightly to the left
-                    e->x -= x_penetration + 0.0001f;
+                    e->x -= x_penetration + OFFSET;
                     e->collidesRight = true;
                 }
             }
@@ -128,13 +133,38 @@ void Game::FixedUpdate() {
         EventsFromCollision(entities[i]);
         SetCollisionToFalse(entities[i]);
         
-        entities[i]->velocity_x = lerp(entities[i]->velocity_x, 0.0f, elapsed * entities[i]->friction_x);
-        entities[i]->velocity_y = lerp(entities[i]->velocity_y, 0.0f, elapsed * entities[i]->friction_y);
+    //    entities[i]->velocity_x = lerp(entities[i]->velocity_x, 0.0f, elapsed * entities[i]->friction_x);
+    //    entities[i]->velocity_y = lerp(entities[i]->velocity_y, 0.0f, elapsed * entities[i]->friction_y);
         
         if ( !entities[i]->isStatic ) {
-            Fall(entities[i]);
+            //Fall(entities[i]);
             //CheckCollisionX(entities[i]);
             CheckCollisionY(entities[i]);
+            entities[i]->Fall(elapsed);
+        }
+    }
+    
+    SDL_Event event;
+    
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
+            done = true;
+        }
+        else if (event.type == SDL_KEYDOWN) {
+            if ( event.key.keysym.scancode == SDL_SCANCODE_SPACE ) {
+                entities[0]->Jump();
+                entities[0]->jumping = true;
+            }
+            if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT || event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) {
+                if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT ) entities[0]->dir_x = -1.0f;
+                else if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) entities[0]->dir_x = 1.0f;
+                entities[0]->MoveHoriz();
+            }
+        }
+        else if (event.type == SDL_KEYUP) {
+            for ( size_t i = 0; i < entities.size(); i++ ) {
+                entities[i]->Reset();
+            }
         }
     }
 }
@@ -153,25 +183,6 @@ bool Game::UpdateAndRender() {
     float ticks = (float)SDL_GetTicks()/1000.0f;
     float elapsed = ticks - lastFrameTicks;
     lastFrameTicks = ticks;
-
-    SDL_Event event;
-    
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
-            done = true;
-        }
-        else if (event.type == SDL_KEYDOWN) {
-            if ( event.key.keysym.scancode == SDL_SCANCODE_SPACE ) {
-                entities[0]->Jump();
-                entities[0]->jumping = true;
-            }
-            if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT || event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) {
-                if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT ) entities[0]->dir_x = -1.0f;
-                else if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) entities[0]->dir_x = 1.0f;
-                entities[0]->MoveHoriz();
-            }
-        }
-    }
     
     float fixedElapsed = elapsed + timeLeftOver;
     
