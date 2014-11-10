@@ -11,78 +11,64 @@
 using namespace std;
 
 float Entity::lerp(float v0, float v1, float t) {
-    return (1.0-t)*v0 + t*v1;
+    return (1.0-t) * v0 + t * v1;
 }
 
-Entity::Entity(GLuint textureID, float u, float v, float x, float y, bool isStatic):
-textureID(textureID),u(u),v(v),x(x),y(y),isStatic(isStatic) {
-    width = 36.0f/360.0f;
-    height = 36.0f/360.0f;
-    speed = VELOCITY;
-    velocity_x = speed;
-    velocity_y = speed;
-    acceleration_x = ACCELERATION;
-    acceleration_y = ACCELERATION;
-    friction_x = FRICTION;
-    friction_y = FRICTION;
-    dir_x = 1.0f;
-    dir_y = 1.0f;
+Entity::Entity(GLuint textureID, float u, float v, float x, float y):
+textureID(textureID),u(u),v(v),x(x),y(y) {
+    width = SIZE;
+    height = SIZE;
+    velocity_x = VELOCITY_X;
+    velocity_y = VELOCITY_Y;
+    acceleration_x = ACCELERATION_X;
+    acceleration_y = ACCELERATION_Y;
+    friction_x = FRICTION_X;
+    friction_y = FRICTION_Y;
     collidesLeft = false;
     collidesRight = false;
     collidesTop = false;
     collidesBottom = false;
-    jumping = false;
-}
-
-void Entity::Reset() {
-    speed = VELOCITY;
-    velocity_x = speed;
-    velocity_y = speed;
-    acceleration_x = ACCELERATION;
-    acceleration_y = ACCELERATION;
-    friction_x = FRICTION;
-    friction_y = FRICTION;
+    isStatic = true;
 }
 
 Entity::~Entity() {
     delete this;
 }
 
-void Entity::MoveHoriz() {
-    velocity_x += ACCELERATION * FIXED_TIMESTEP;
-    x += velocity_x * FIXED_TIMESTEP * dir_x;
+void Entity::FixedUpdate() {
+    Entity::Go();
 }
 
-void Entity::Fall(float elapsed) {
-    velocity_y += acceleration_y * FIXED_TIMESTEP;
-    y -= velocity_y * FIXED_TIMESTEP;
+void Entity::ResetX() {
+    dir_x = 0.0f;
+    velocity_x = VELOCITY_X;
+    acceleration_x = ACCELERATION_X;
+    friction_x = FRICTION_X;
 }
 
-void Entity::Jump() {
-    if (!jumping) {
-        velocity_y = JUMP_HEIGHT + lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_x);
-        y += ( velocity_y * FIXED_TIMESTEP ) * dir_y;
-//        velocity_x = JUMP_HEIGHT + lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
-//        x += ( velocity_x * FIXED_TIMESTEP ) * dir_x;
+void Entity::ResetY() {
+    dir_y = 0.0f;
+    velocity_y = VELOCITY_Y;
+    acceleration_y = ACCELERATION_Y;
+    friction_y = FRICTION_Y;
+}
+
+void Entity::Go() {
+    if(!isStatic) {
+        velocity_x = lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
+        velocity_y = lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
+        
+        velocity_x += acceleration_x * FIXED_TIMESTEP;
+        velocity_y += acceleration_y * FIXED_TIMESTEP;
+        
+        x += velocity_x * FIXED_TIMESTEP * dir_x;
+        y += velocity_y * FIXED_TIMESTEP * dir_y;
     }
 }
 
-bool Entity::CheckCollision(Entity * e) {
-    
-    bool leftLargerThanRight = x - width/2.0f > e->x + e->width/2.0f;
-    bool rightSmallerThanLeft = x + width/2.0f < e->x - e->width/2.0f;
-    bool bottomHigherThanTop = y - height/2.0f > e->y + e->height/2.0f;
-    bool topLowerThanBottom = y + height/2.0f < e->y - e->height/2.0f;
-    
-    if ( leftLargerThanRight ) return false;
-    if ( rightSmallerThanLeft ) return false;
-    if ( bottomHigherThanTop ) return false;
-    if ( topLowerThanBottom ) return false;
-    
-    return true;
+void Entity::MakeLivingEntity() {
+    isStatic = false;
 }
-
-void Entity::FixedUpdate() {}
 
 void Entity::Draw(float scale) {
     glEnable(GL_TEXTURE_2D);

@@ -25,101 +25,16 @@ void Game::Init() {
     glClearColor(0.55, 0.76, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     
-    Entity * player = new Entity(LoadTexture("laurasfirstsprite.png"), 36.0f/360.0f, 0.0f, 0.0f, 0.0f, false);
+    Entity * player = new Entity(LoadTexture("laurasfirstsprite.png"), 36.0f/360.0f, 0.0f, 0.0f, 0.0f);
+    player->MakeLivingEntity();
     entities.push_back(player);
     
     for ( size_t i = 0; i < 15; i++ ) {
-        Entity * block = new Entity(LoadTexture("laurasfirstsprite.png"), 144.0f/360.0f, 0.0f/360.0f, -1.3f+i/10.0f, -0.5f, true);
+        Entity * block = new Entity(LoadTexture("laurasfirstsprite.png"), 144.0f/360.0f, 0.0f/360.0f, -1.3f+i/10.0f, -0.5f);
         entities.push_back(block);
     }
-    
 }
-void Game::Update(float elapsed) {
-}
-void Game::EventsFromCollision(Entity * e) {
-    // Stop movement if colliding
-    if ( e->collidesLeft ) {
-        e->velocity_x = 0.0f;
-      //  cout << "colliding left" << endl;
-    }
-    if ( e->collidesRight ) {
-        e->velocity_x = 0.0f;
-      //  cout << "colliding right" << endl;
-    }
-    if ( e->collidesTop ) {
-        e->velocity_y = 0.0f;
-      //  cout << "colliding top" << endl;
-    }
-    if ( e->collidesBottom ) {
-        e->velocity_y = 0.0f;
-      //  cout << "colliding bot" << endl;
-    }
-}
-void Game::SetCollisionToFalse(Entity * e) {
-    e->collidesLeft = false;
-    e->collidesRight = false;
-    e->collidesTop = false;
-    e->collidesBottom = false;
-}
-void Game::Fall(Entity * e) {
-    e->velocity_y += e->acceleration_y * FIXED_TIMESTEP;
-    e->y -= e->velocity_y * FIXED_TIMESTEP;
-}
-void Game::CheckCollisionX(Entity * e) {
-    for ( size_t j = 0; j < entities.size(); j++ ) {
-        if ( &e != &entities[j]) { // are they the same entity?
-            if ( e->CheckCollision(entities[j]) ) { // are they colliding?
-                
-                // this is where you do the penetration thing from the slides to check from which direction it collided from?
-                // determine penetration on x/y axis, check to see from which direction it collided from, and then modify the x/y value so that it's not on top of the thing
-                
-                float x_distance = fabs( e->x - entities[j]->x );
-                float x_penetration = fabs( x_distance - e->width/2 - entities[j]->width/2 );
-                
-                // check where it collided from
-                
-                if ( e->x > entities[j]->x ) {
-                    // i collided on its left side (aka the left side is what collides)
-                    // adjust position to slightly to the right
-                    e->x -= x_penetration + OFFSET;
-                    e->collidesLeft = true;
-                }
-                
-                else if ( e->x < entities[j]->x ) {
-                    // i collided on its right side
-                    // adjust position to slightly to the left
-                    e->x -= x_penetration + OFFSET;
-                    e->collidesRight = true;
-                }
-            }
-        }
-    }
-}
-void Game::CheckCollisionY(Entity * e) {
-    for ( size_t j = 0; j < entities.size(); j++ ) {
-        if ( &e != &entities[j]) { // are they the same entity?
-            if ( e->CheckCollision(entities[j]) ) { // are they colliding?
-                // check y-axis
-                float y_distance = fabs( e->y - entities[j]->y );
-                float y_penetration = fabs( y_distance - e->height/2 - entities[j]->height/2 );
-                // check where it collided from
-                if ( e->y > entities[j]->y ) {
-                    // i collided on its top side
-                    // adjust position slightly up
-                    e->y += y_penetration - OFFSET;
-                    e->collidesTop = true;
-                    e->jumping = false;
-                }
-                else if ( e->y < entities[j]->y ) {
-                    // i collided on its bottom side
-                    // adjust position sligtly down
-                    e->y += y_penetration + OFFSET;
-                    e->collidesBottom = true;
-                }
-            }
-        }
-    }
-}
+void Game::Update(float elapsed) {}
 float lerp(float v0, float v1, float t) {
     return (1.0-t)*v0 + t*v1;
 }
@@ -127,58 +42,21 @@ float lerp(float v0, float v1, float t) {
 void Game::FixedUpdate() {
     
     for ( size_t i = 0; i < entities.size(); i++ ) {
-        x
+        
         entities[i]->FixedUpdate();
         
-        EventsFromCollision(entities[i]);
-        SetCollisionToFalse(entities[i]);
-        
-    //    entities[i]->velocity_x = lerp(entities[i]->velocity_x, 0.0f, elapsed * entities[i]->friction_x);
-    //    entities[i]->velocity_y = lerp(entities[i]->velocity_y, 0.0f, elapsed * entities[i]->friction_y);
-        
-        if ( !entities[i]->isStatic ) {
-            //Fall(entities[i]);
-            //CheckCollisionX(entities[i]);
-            CheckCollisionY(entities[i]);
-            entities[i]->Fall(elapsed);
-        }
-    }
-    
-    SDL_Event event;
-    
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
-            done = true;
-        }
-        else if (event.type == SDL_KEYDOWN) {
-            if ( event.key.keysym.scancode == SDL_SCANCODE_SPACE ) {
-                entities[0]->Jump();
-                entities[0]->jumping = true;
-            }
-            if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT || event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) {
-                if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT ) entities[0]->dir_x = -1.0f;
-                else if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) entities[0]->dir_x = 1.0f;
-                entities[0]->MoveHoriz();
-            }
-        }
-        else if (event.type == SDL_KEYUP) {
-            for ( size_t i = 0; i < entities.size(); i++ ) {
-                entities[i]->Reset();
-            }
-        }
     }
 }
 
 void Game::Render() {
     glClear(GL_COLOR_BUFFER_BIT);
-    // Render each entity
-    // Call RenderLevel.  This will render the level aka build the world
     RenderLevel();
-    
     SDL_GL_SwapWindow(displayWindow);
 }
 
 bool Game::UpdateAndRender() {
+    
+    Entity * player = entities[0];
 
     float ticks = (float)SDL_GetTicks()/1000.0f;
     float elapsed = ticks - lastFrameTicks;
@@ -195,6 +73,34 @@ bool Game::UpdateAndRender() {
         FixedUpdate();
     }
     
+    SDL_Event event;
+    
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE)
+            done = true;
+        
+        
+        if ( event.key.keysym.scancode == SDL_SCANCODE_LEFT ) {
+            player->dir_x = -1.0f;
+            if (event.type == SDL_KEYUP)
+                player->ResetX();
+        }
+        
+        if ( event.key.keysym.scancode == SDL_SCANCODE_RIGHT ) {
+            player->dir_x = 1.0f;
+            if (event.type == SDL_KEYUP)
+                player->ResetX();
+        }
+
+        else if (event.type == SDL_KEYDOWN ) {
+            
+            if ( event.key.keysym.scancode == SDL_SCANCODE_SPACE )
+                player->dir_y = 1.0f;
+            
+            cout << player->dir_x << endl;
+        }
+    }
+    
     // Update and render
     Update(elapsed);
     Render();
@@ -204,7 +110,8 @@ bool Game::UpdateAndRender() {
 
 void Game::RenderLevel() {
     
-    for ( size_t i = 0; i < entities.size(); i++ ) entities[i]->Draw(0.5f);
+    for ( size_t i = 0; i < entities.size(); i++ )
+        entities[i]->Draw(0.5f);
     
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -220,21 +127,6 @@ void Game::RenderStart() {
 void Game::RenderGameOver() {
 }
 
-bool Game::readHeader(std::ifstream &stream) {
-    return true;
-}
-
-bool Game::readLayerData(std::ifstream &stream) {
-    return true;
-}
-
-bool Game::readEntityData(std::ifstream &stream) {
-    return true;
-}
-
-void Game::placeEntity(float placeX, float placeY) {
-}
-
 GLuint Game::LoadTexture(const char *image_path) {
     SDL_Surface *surface = IMG_Load(image_path);
     GLuint textureID;
@@ -246,7 +138,6 @@ GLuint Game::LoadTexture(const char *image_path) {
     SDL_FreeSurface(surface);
     return textureID;
 }
-
 void Game::DrawText( GLuint textTexture, string text, float x, float y, float spacing, float size, float r, float g, float b, float a ) {
     glBindTexture(GL_TEXTURE_2D, textTexture);
     glEnable(GL_TEXTURE_2D);
