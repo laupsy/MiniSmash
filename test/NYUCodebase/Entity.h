@@ -9,20 +9,22 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <SDL_mixer.h>
 
 #include <Math.h>
 
 #define FIXED_TIMESTEP 0.0166666f
 #define MAX_TIMESTEPS 6
-#define OFFSET 0.001f
+#define OFFSET 0.01f
 
 #define SIZE  36.0f/360.0f
-#define VELOCITY_X 7.0f
-#define VELOCITY_Y 7.0f
-#define ACCELERATION_X 0.1f
-#define ACCELERATION_Y -5.0f
+#define VELOCITY_X 1.0f
+#define VELOCITY_Y 0.0f
+#define ACCELERATION_X 1.5f
+#define ACCELERATION_Y -1.5f // gravity
 #define FRICTION_X 0.99999f
 #define FRICTION_Y 0.99999f
+#define SCALE 0.8f
 
 class Entity {
 public:
@@ -32,8 +34,8 @@ public:
     void Draw(float scale);
     void FixedUpdate();
     void Go();
-    void Stop();
     void MakeLivingEntity();
+    void Jump();
     void ResetX();
     void ResetY();
     

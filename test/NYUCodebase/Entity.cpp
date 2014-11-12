@@ -10,10 +10,6 @@
 
 using namespace std;
 
-float Entity::lerp(float v0, float v1, float t) {
-    return (1.0-t) * v0 + t * v1;
-}
-
 Entity::Entity(GLuint textureID, float u, float v, float x, float y):
 textureID(textureID),u(u),v(v),x(x),y(y) {
     width = SIZE;
@@ -28,54 +24,42 @@ textureID(textureID),u(u),v(v),x(x),y(y) {
     collidesRight = false;
     collidesTop = false;
     collidesBottom = false;
-    isStatic = true;
+    isStatic = false;
+}
+
+float Entity::lerp(float v0, float v1, float t) {
+    // used with natural movement
+    return (1.0-t)*v0 + t*v1;
 }
 
 Entity::~Entity() {
     delete this;
 }
 
-void Entity::FixedUpdate() {
-    Entity::Go();
-}
-
-void Entity::ResetX() {
-    dir_x = 0.0f;
-    velocity_x = VELOCITY_X;
-    acceleration_x = ACCELERATION_X;
-    friction_x = FRICTION_X;
-}
-
-void Entity::ResetY() {
-    dir_y = 0.0f;
-    velocity_y = VELOCITY_Y;
-    acceleration_y = ACCELERATION_Y;
-    friction_y = FRICTION_Y;
-}
-
 void Entity::Go() {
-    if(!isStatic) {
-        velocity_x = lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
-        velocity_y = lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
-        
-        velocity_x += acceleration_x * FIXED_TIMESTEP;
-        velocity_y += acceleration_y * FIXED_TIMESTEP;
-        
-        x += velocity_x * FIXED_TIMESTEP * dir_x;
-        y += velocity_y * FIXED_TIMESTEP * dir_y;
-    }
+    // x movement
+    velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
+    velocity_x += acceleration_x * FIXED_TIMESTEP;
+    x += velocity_x * FIXED_TIMESTEP;
+    // y movement
+    velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
+    velocity_y += acceleration_y * FIXED_TIMESTEP;
+    y += velocity_y * FIXED_TIMESTEP;
 }
 
-void Entity::MakeLivingEntity() {
-    isStatic = false;
-}
+//void Entity::MakeLivingEntity() {
+//    isStatic = false;
+//}
 
 void Entity::Draw(float scale) {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, textureID);
+    
+    
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    glPushMatrix();
     glTranslatef(x, y, 0.0);
+    
     GLfloat quad[] = { -width*scale, height*scale, -width*scale, -height*scale, width*scale, -height*scale,
         width*scale, height*scale };
     glVertexPointer(2, GL_FLOAT, 0, quad);
@@ -88,4 +72,9 @@ void Entity::Draw(float scale) {
     glDisableClientState(GL_COLOR_ARRAY);
     glDrawArrays(GL_QUADS, 0, 4);
     glDisable(GL_TEXTURE_2D);
+    
+    // POP
+    
+    glPopMatrix();
 }
+

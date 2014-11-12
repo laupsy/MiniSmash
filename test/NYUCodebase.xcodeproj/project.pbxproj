@@ -16,6 +16,8 @@
 		6D5A86E319AE5CD10066C1FD /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5A86E219AE5CD10066C1FD /* SDL2.framework */; };
 		6D5AC2D019AE6280004CB1BF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5AC2CF19AE6280004CB1BF /* OpenGL.framework */; };
 		6D5AC2D219AE6A1E004CB1BF /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D5AC2D119AE6A1E004CB1BF /* SDL2_image.framework */; };
+		CD094F601A13D223009B097E /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD094F5F1A13D223009B097E /* SDL2_mixer.framework */; };
+		CD094F611A13D223009B097E /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD094F5F1A13D223009B097E /* SDL2_mixer.framework */; };
 		CD3F725319F4B82400C74F8F /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD3F725119F4B82400C74F8F /* Entity.cpp */; };
 		CDB9400F19DF8CA9002C7602 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB9400D19DF8CA9002C7602 /* Game.cpp */; };
 /* End PBXBuildFile section */
@@ -45,6 +47,7 @@
 		6D5A86E219AE5CD10066C1FD /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		6D5AC2CF19AE6280004CB1BF /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		6D5AC2D119AE6A1E004CB1BF /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
+		CD094F5F1A13D223009B097E /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = ../../../../../Library/Frameworks/SDL2_mixer.framework; sourceTree = "<group>"; };
 		CD3F725119F4B82400C74F8F /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
 		CD3F725219F4B82400C74F8F /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		CDB9400D19DF8CA9002C7602 /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Game.cpp; path = ../Game.cpp; sourceTree = "<group>"; };
@@ -57,6 +60,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D5AC2D019AE6280004CB1BF /* OpenGL.framework in Frameworks */,
+				CD094F601A13D223009B097E /* SDL2_mixer.framework in Frameworks */,
 				6D5A86AE19AE5C710066C1FD /* Cocoa.framework in Frameworks */,
 				6D5A86E319AE5CD10066C1FD /* SDL2.framework in Frameworks */,
 				6D5AC2D219AE6A1E004CB1BF /* SDL2_image.framework in Frameworks */,
@@ -67,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD094F611A13D223009B097E /* SDL2_mixer.framework in Frameworks */,
 				6D5A86CE19AE5C710066C1FD /* Cocoa.framework in Frameworks */,
 				6D5A86CD19AE5C710066C1FD /* XCTest.framework in Frameworks */,
 			);
@@ -96,6 +101,7 @@
 		6D5A86AC19AE5C710066C1FD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CD094F5F1A13D223009B097E /* SDL2_mixer.framework */,
 				6D5AC2D119AE6A1E004CB1BF /* SDL2_image.framework */,
 				6D5AC2CF19AE6280004CB1BF /* OpenGL.framework */,
 				6D5A86E219AE5CD10066C1FD /* SDL2.framework */,
@@ -372,6 +378,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/Library/Frameworks/SDL2_image.framework/Versions/A/Headers,
 					/Library/Frameworks/SDL2.framework/Versions/A/Headers,
+					/Library/Frameworks/SDL2_mixer.framework/Versions/A/Headers,
 				);
 				INFOPLIST_FILE = "NYUCodebase/NYUCodebase-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -410,6 +417,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NYUCodebase/NYUCodebase-Prefix.pch";
@@ -432,6 +440,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NYUCodebase/NYUCodebase-Prefix.pch";

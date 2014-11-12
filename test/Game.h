@@ -10,6 +10,9 @@ public:
     ~Game();
     
     void Init();
+    void LoadObjects();
+    void Loop();
+    
     void Update(float elapsed);
     void FixedUpdate();
     void Render();
@@ -18,11 +21,7 @@ public:
     void RenderGameOver();
     bool UpdateAndRender();
     
-    bool readHeader(std::ifstream &stream);
-    bool readLayerData(std::ifstream &stream);
-    bool readEntityData(std::ifstream &stream);
-    
-    void placeEntity(float placeX, float placeY);
+    void InitMusic();
     
     void EventsFromCollision(Entity * e);
     void SetCollisionToFalse(Entity * e);
@@ -35,6 +34,8 @@ public:
     
     vector<Entity*> entities;
     
+    Entity * player;
+    
     bool done;
     
     int mapWidth;
@@ -44,10 +45,14 @@ public:
     float lastFrameTicks;
     float timeLeftOver;
     
-    const Uint8 *keys;
+    vector<float> vertexData;
+    vector<float> texCoordData;
+    
+    Mix_Music *music;
     
     GLuint mainSpriteTexture;
     SDL_Event event;
     SDL_Window* displayWindow;
+    
     
 };
