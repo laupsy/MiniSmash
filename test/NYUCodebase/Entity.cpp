@@ -37,6 +37,11 @@ Entity::~Entity() {
 }
 
 void Entity::Go() {
+    
+    // reset acceleration from floating
+    acceleration_x = ACCELERATION_X;
+    acceleration_y = ACCELERATION_Y;
+    
     // x movement
     velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
     velocity_x += acceleration_x * FIXED_TIMESTEP;
@@ -47,17 +52,61 @@ void Entity::Go() {
     y += velocity_y * FIXED_TIMESTEP;
 }
 
-//void Entity::MakeLivingEntity() {
-//    isStatic = false;
-//}
+void Entity::Float() {
+    
+//    // this looks dumb.. look into perlin noise thing
+//    
+//    float floatVal = ((rand() % 100 ));
+//    
+//    // prevent one sign from taking over and making entity constantly rise/fall
+//    
+//    if ( ( velocity_y > 1.5f && floatVal > 0.0f ) || ( velocity_y < -1.5f && floatVal < 0.0f ) ) floatVal *= -1;
+//    
+//    cout << "Float Val: " << floatVal << endl;
+//    
+////    velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
+////    velocity_x += floatVal * FIXED_TIMESTEP;
+////    x += velocity_x * FIXED_TIMESTEP;
+//    
+//    velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
+//    velocity_y += floatVal * FIXED_TIMESTEP;
+//    y += velocity_y * FIXED_TIMESTEP;
+//    
+//    cout << velocity_x << endl;
+//    cout << velocity_y << endl << endl;
+    
+    cout << velocity_y << endl;
+    
+    // make floating less jerky
+    
+    if ( velocity_y >= 0.2f ) {
+        acceleration_y = -0.5f;
+        acceleration_x = -0.5f;
+        velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
+    }
+    
+    else if ( velocity_y < -0.2f ) {
+        acceleration_x = 1.5f;
+        acceleration_y = 1.5f;
+    }
+    
+    velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
+    
+    velocity_y += acceleration_y * FIXED_TIMESTEP;
+    y += velocity_y * FIXED_TIMESTEP;
+    velocity_x += acceleration_y * FIXED_TIMESTEP;
+    x += velocity_x * FIXED_TIMESTEP;
+    
+}
 
 void Entity::Draw(float scale) {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, textureID);
     
-    
     glMatrixMode(GL_MODELVIEW);
+    
     glPushMatrix();
+    
     glTranslatef(x, y, 0.0);
     
     GLfloat quad[] = { -width*scale, height*scale, -width*scale, -height*scale, width*scale, -height*scale,

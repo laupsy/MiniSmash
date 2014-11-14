@@ -13,8 +13,66 @@ Game::Game() {
 void Game::LoadObjects() {
     // initialize the player
     player = new Entity(LoadTexture("laurasfirstsprite.png"), 36.0f/360.0f, 0.0f, 0.0f, 0.0f);
+    // start player as floating
+    player->floating = true;
     // get map from txt file
+    //readLevel();
+    //buildTiles();
+    placeEntities(blockForeground);
+    placeEntities(blockBackground);
+    placeEntities(pinkPuff);
+    placeEntities(bluePuff);
+    placeEntities(cloudForeground);
+    placeEntities(cloudBackground);
     ///////
+}
+
+void Game::placeEntities(int whichEntity) {
+    
+    int amt;
+    
+    if ( whichEntity == blockForeground)
+        amt = 15;
+    else if ( whichEntity == blockBackground)
+        amt = 5;
+    else if ( whichEntity == pinkPuff )
+        amt = 100;
+    else if ( whichEntity == bluePuff )
+        amt = 34;
+    else if ( whichEntity == cloudForeground )
+        amt = 25;
+    else if ( whichEntity == cloudBackground )
+        amt = 15;
+    else
+        amt = 0;
+    
+    for ( size_t i = 0; i < amt; i++ ) {
+        
+        if ( whichEntity == blockForeground ) {
+            
+            // generate random positions
+            float randXLoc = (rand() % 133 - 66.5)/100.0;
+            float randYLoc = (rand() % 133 - 66.5)/100.0;
+            
+            float offset = 0.15;
+            
+            // dont let blocks overlap
+            for ( size_t i = 0; i < entities.size(); i++ ) {
+                while ( entities[i]->x <= randXLoc + offset && entities[i]->x > randXLoc - offset ) {
+                    randXLoc += offset;
+                    randYLoc += offset;
+                }
+//                while ( entities[i]->y <= randYLoc + offset && entities[i]->y > randYLoc - offset ) {
+//                    randXLoc += offset;
+//                    randYLoc += offset;
+//                }
+            }
+            
+            Entity * block = new Entity(LoadTexture("laurasfirstsprite.png"), SIZE * whichEntity, 0.0f, randXLoc, randYLoc);
+            entities.push_back(block);
+            
+        }
+    }
 }
 
 void Game::Loop() {
@@ -28,6 +86,10 @@ void Game::Loop() {
 
 Game::~Game() {
     // delete all objects
+    delete player;
+    for ( size_t i = 0; i < entities.size(); i++ ) {
+        delete entities[i];
+    }
     ///////
     // stop all music and sounds
     Mix_FreeMusic(music);
@@ -63,11 +125,14 @@ void Game::Update(float elapsed) {
     
     // keyboard stuff
     if ( keys[SDL_SCANCODE_LEFT] )
-        player->velocity_x = -1.0f;
+        player->velocity_x = VELOCITY_X * -1;
     else if ( keys[SDL_SCANCODE_RIGHT] )
-        player->velocity_x = 1.0f;
+        player->velocity_x = VELOCITY_X;
+    else if ( keys[SDL_SCANCODE_UP] )
+        player->floating = true;
     else
         player->velocity_x = 0.0f;
+        
     // jumping
     if ( keys[SDL_SCANCODE_SPACE] ) {
         // check if colliding on bot
@@ -75,16 +140,28 @@ void Game::Update(float elapsed) {
         // check if already jumping
         /////
         // jump
-        player->velocity_y = 1.0f;
+        ///// get a good speed to feel natural
+        player->velocity_y = 3.0f;
         // play jump sound
-        /////
-
+        /////￼
+        glLoadIdentity();
+        glPushMatrix();
+        glRotatef(15.0 * player->velocity_x,1.0,0.0,0.0);
+        glRotatef(15.0 * player->velocity_x,0.0,1.0,0.0);
+        glRotatef(15.0 * player->velocity_x,0.0,0.0,1.0);
+        glPopMatrix();
+        // glScalef(1.0, -1.0, 1.0); this would be cool for like a reverse gravity mode
     }
+    
     // sdl event thing
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE)
             done = true;
+        if ( event.type == SDL_KEYDOWN && !keys[SDL_SCANCODE_UP] ) {
+            player->floating = false;
+            cout << "should stop floating" << endl;
+        }
     }
 }
 
@@ -107,6 +184,7 @@ void Game::FixedUpdate() {
     //// after a certain speed stretch player
     //// squish player if crash
     //// confetti on success (anything classified as success event will receive a bool)
+    //////// make particle gen function and for this randomize colors from an array of colors (roygbv) and scale particles?
     //// always apply particle trail when running
     //// player effect when selected (during champ select)
     //// squish and resize player when land from jump
@@ -114,20 +192,35 @@ void Game::FixedUpdate() {
     //// bullets have particle trail
     ///////
     // move the player with fixed timestep
-    player->Go();
+    if ( !player->floating ) player->Go();
+    else player->Float();
     ///////
     // check player collision
+    /////// reset scale/rotation on collision with bot
     ///////
+    /////// check if colliding with speed boost
+    /////// check if colliding with object that causes death
+    /////// check if colliding with other player
+    /////// check if colliding with platform
+    /////// check if colliding with bullet
+    /////// check if colliding with finish line
+    ////////// check order of collision with finish line (eg if player1 collides w finish line before player2, player1 wins)
     // run any AI eg enemies
     ///////
 }
 
 void Game::Render() {
     glClear(GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
     // Render the level (things includes drawing stuff
     player->Draw(SCALE);
+    for ( size_t i = 0; i < entities.size(); i++ ) {
+        entities[i]->Draw(SCALE);
+    }
     ///////
     // Lock camera onto player
+    ////// will need to change camera position so that both players are always visible
+    ///////// do this after all single-player game stuff is set, then add second player and go from there?
     ///////
     SDL_GL_SwapWindow(displayWindow);
 }
@@ -210,3 +303,125 @@ void Game::DrawText( GLuint textTexture, string text, float x, float y, float sp
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
+
+//void Game::buildTiles() {
+//    // insert all leveldata information into vertextData and texCoordData
+//    ///////
+//    // translate call here will be commented out when centering camera to player
+//    ///////
+//    glLoadIdentity();
+//    glTranslatef(-TILE_SIZE * mapWidth / 2, TILE_SIZE * mapHeight / 2, 0.0f);
+//    ///////
+//    glBindTexture(GL_TEXTURE_2D, LoadTexture("laurasfirstsprite.png"));
+//    glEnable(GL_TEXTURE_2D);
+//    glEnable(GL_BLEND);
+//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    for ( int y = 0; y < LEVEL_HEIGHT; y++ ) {
+//        for ( int x = 0; x < LEVEL_WIDTH; x++ ) {
+//            
+//            float u = (float)(((int)levelData[y][x]) % SPRITE_COUNT_X) / (float) SPRITE_COUNT_X;
+//            float v = (float)(((int)levelData[y][x]) % SPRITE_COUNT_X) / (float) SPRITE_COUNT_Y;
+//            
+//            float spriteWidth = 1.0 / (float) SPRITE_COUNT_X;
+//            float spriteHeight = 1.0 / (float) SPRITE_COUNT_Y;
+//            
+//            vertexData.insert(vertexData.end(), {
+//                TILE_SIZE * x, -TILE_SIZE * y,
+//                TILE_SIZE * x, (-TILE_SIZE * y)-TILE_SIZE,
+//                (TILE_SIZE * x)+TILE_SIZE, (-TILE_SIZE * y)-TILE_SIZE,
+//                (TILE_SIZE * x)+TILE_SIZE, -TILE_SIZE * y
+//            });
+//            
+//            texCoordData.insert(texCoordData.end(), { u, v,
+//                u, v + (spriteHeight),
+//                u + spriteWidth, v + (spriteHeight),
+//                u + spriteWidth, v
+//            });
+//        }
+//    }
+//    glVertexPointer(2, GL_FLOAT, 0, vertexData.data());
+//    glEnableClientState(GL_VERTEX_ARRAY);
+//    glTexCoordPointer(2, GL_FLOAT, 0, texCoordData.data());
+//    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+//    glDrawArrays(GL_QUADS, 0, vertexData.size()/2);
+//}
+//
+//void Game::buildLevel() {
+//    //memcpy(levelData, level1Data, LEVEL_HEIGHT*LEVEL_WIDTH);
+//}
+//
+//void Game::readLevel() {
+//    string mapWidthTemp, mapHeightTemp, tileWidthTemp, tileHeightTemp;
+//    // open file
+//    ifstream mapFile;
+//    mapFile.open("map.txt");
+//    string line;
+//    // loop through file
+//    // separate each aspect of the file
+//    if ( mapFile.is_open() ) {
+//        while ( !mapFile.eof() ) {
+//            getline(mapFile, line);
+//            if ( line == "[header]") {
+//                // traverse through all items under header until linebreak
+//                ///////
+//                while ( getline(mapFile, line) ) {
+//                    if ( line == "" ) break;
+//                    else {
+//                        // separate strings by equal sign
+//                        //////
+//                        istringstream sStream(line);
+//                        string key, value;
+//                        getline(sStream, key, '=');
+//                        getline(sStream, value);
+//                        if ( key == "width" )
+//                            mapWidth = atoi(value.c_str());
+//                        else if ( key == "height" )
+//                            mapHeight = atoi(value.c_str());
+//                        else if ( key == "tilewidth" )
+//                            tileWidth = atoi(value.c_str());
+//                        else if ( key == "tileheight" )
+//                            tileHeight = atoi(value.c_str());
+//                    }
+//                }
+//            }
+//            //else if ( line == "[tilesets]" ) {}
+//            else if ( line == "[layer]" ) {
+//                while ( getline(mapFile, line) ) {
+//                    if ( line == "" ) break;
+//                    else {
+//                        istringstream sStream(line);
+//                        string key, value;
+//                        getline(sStream, key, '=');
+//                        getline(sStream, value);
+//                        if ( key == "data") {
+//                            // remember to do it in reverse
+//                            ///////
+//                            for ( int y = 0; y < mapHeight; y++ ) {
+//                                getline(mapFile, line);
+//                                istringstream lineStream(line);
+//                                string tile;
+//                                for ( int x = 0; x < mapWidth; x++ ) {
+//                                    getline(lineStream, tile, ',');
+//                                    int val = (unsigned char)atoi(tile.c_str());
+//                                    if ( val > 0 ){
+//                                        levelData[y][x] = val - 1;
+//                                        cout << levelData[y][x] << endl;
+//                                    }
+//                                    else {
+//                                        levelData[y][x] = 0;
+//                                        //cout << levelData[y][x] << endl;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    
+//    //    cout << mapWidth << endl;
+//    //    cout << mapHeight << endl;
+//    //    cout << tileWidth << endl;
+//    //    cout << tileHeight << endl;
+//}

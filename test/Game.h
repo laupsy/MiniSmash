@@ -21,6 +21,11 @@ public:
     void RenderGameOver();
     bool UpdateAndRender();
     
+   // void buildLevel();
+   // void buildTiles();
+   // void readLevel();
+    void placeEntities(int whichEntity);
+    
     void InitMusic();
     
     void EventsFromCollision(Entity * e);
@@ -38,15 +43,32 @@ public:
     
     bool done;
     
-    int mapWidth;
-    int mapHeight;
+//    int mapWidth;
+//    int mapHeight;
+//    int tileWidth;
+//    int tileHeight;
     
     float elapsed;
     float lastFrameTicks;
     float timeLeftOver;
     
+    float playerStanding = 1.0f;
+    float playerWalkingRight = 2.0f;
+    float playerWalkingLeft = 3.0f;
+    float blockForeground = 4.0f;
+    float blockBackground = 5.0f;
+    float cloudForeground = 6.0f;
+    float cloudBackground = 7.0f;
+    float pinkPuff = 8.0f;
+    float bluePuff = 9.0f;
+
+    
+    GLuint spriteSheet;
+    
     vector<float> vertexData;
     vector<float> texCoordData;
+    
+//    unsigned char levelData[LEVEL_HEIGHT][LEVEL_WIDTH];
     
     Mix_Music *music;
     
