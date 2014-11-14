@@ -52,6 +52,7 @@ public:
     float lastFrameTicks;
     float timeLeftOver;
     
+    float playerFloating = 0.0f;
     float playerStanding = 1.0f;
     float playerWalkingRight = 2.0f;
     float playerWalkingLeft = 3.0f;

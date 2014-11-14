@@ -12,8 +12,8 @@ using namespace std;
 
 Entity::Entity(GLuint textureID, float u, float v, float x, float y):
 textureID(textureID),u(u),v(v),x(x),y(y) {
-    width = SIZE;
-    height = SIZE;
+    width = SIZE*1.01;
+    height = SIZE*1.3;
     velocity_x = VELOCITY_X;
     velocity_y = VELOCITY_Y;
     acceleration_x = ACCELERATION_X;
@@ -46,10 +46,12 @@ void Entity::Go() {
     velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
     velocity_x += acceleration_x * FIXED_TIMESTEP;
     x += velocity_x * FIXED_TIMESTEP;
+    
     // y movement
     velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
     velocity_y += acceleration_y * FIXED_TIMESTEP;
     y += velocity_y * FIXED_TIMESTEP;
+    
 }
 
 void Entity::Float() {
@@ -75,19 +77,19 @@ void Entity::Float() {
 //    cout << velocity_x << endl;
 //    cout << velocity_y << endl << endl;
     
-    cout << velocity_y << endl;
-    
     // make floating less jerky
+    
+    // should move slower on x axis when floating
     
     if ( velocity_y >= 0.2f ) {
         acceleration_y = -0.5f;
-        acceleration_x = -0.5f;
+        acceleration_x = -0.1f;
         velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
     }
     
     else if ( velocity_y < -0.2f ) {
-        acceleration_x = 1.5f;
-        acceleration_y = 1.5f;
+        acceleration_x = 0.1f;
+        acceleration_y = 0.5f;
     }
     
     velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);

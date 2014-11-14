@@ -12,7 +12,7 @@ Game::Game() {
 
 void Game::LoadObjects() {
     // initialize the player
-    player = new Entity(LoadTexture("laurasfirstsprite.png"), 36.0f/360.0f, 0.0f, 0.0f, 0.0f);
+    player = new Entity(LoadTexture("laurasfirstsprite.png"), 36.0f/360.0f, 0.0f, -1.0f, 0.0f);
     // start player as floating
     player->floating = true;
     // get map from txt file
@@ -123,25 +123,63 @@ void Game::Update(float elapsed) {
     // init keyboard
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     
-    // keyboard stuff
-    if ( keys[SDL_SCANCODE_LEFT] )
-        player->velocity_x = VELOCITY_X * -1;
-    else if ( keys[SDL_SCANCODE_RIGHT] )
-        player->velocity_x = VELOCITY_X;
-    else if ( keys[SDL_SCANCODE_UP] )
+    // regular movement
+    if ( keys[SDL_SCANCODE_LEFT] ) {
+        player->u = SIZE * playerWalkingLeft;
+        if ( player->floating )
+            player->velocity_x = VELOCITY_X * -1 / 10;
+        else
+            player->velocity_x = VELOCITY_X * -1;
+    }
+    else if ( keys[SDL_SCANCODE_RIGHT] ) {
+        player->u = SIZE * playerWalkingRight;
+        if ( player->floating )
+            player->velocity_x = VELOCITY_X / 10;
+        else
+            player->velocity_x = VELOCITY_X;
+    }
+    else if ( keys[SDL_SCANCODE_DOWN] ) {
+        if ( player->floating ) {
+            player->velocity_y += VELOCITY_Y * -1 / 100;
+            player->velocity_x = VELOCITY_X/10;
+        }
+    }
+    else if ( keys[SDL_SCANCODE_UP] ) {
+        if ( player->floating ) {
+            player->velocity_y += VELOCITY_Y / 100;
+            player->velocity_x = VELOCITY_X/10;
+        }
+    }
+    else if ( keys[SDL_SCANCODE_F] ) {
+        player->velocity_y = -0.5f;
         player->floating = true;
+    }
     else
         player->velocity_x = 0.0f;
-        
+    
+    // sprite
+    if ( player->floating )
+        player->u = SIZE * playerFloating;
+    else {
+        if ( player->velocity_x < 0 )
+            player->u = SIZE * playerWalkingLeft;
+        else if ( player->velocity_x > 0 )
+            player->u = SIZE * playerWalkingRight;
+        else
+            player->u = SIZE * playerStanding;
+    }
+    
     // jumping
     if ( keys[SDL_SCANCODE_SPACE] ) {
+        
+        player->floating = false;
         // check if colliding on bot
         /////
         // check if already jumping
         /////
         // jump
         ///// get a good speed to feel natural
-        player->velocity_y = 3.0f;
+        player->velocity_y = 2.0f;
         // play jump sound
         /////￼
         glLoadIdentity();
@@ -158,10 +196,6 @@ void Game::Update(float elapsed) {
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE)
             done = true;
-        if ( event.type == SDL_KEYDOWN && !keys[SDL_SCANCODE_UP] ) {
-            player->floating = false;
-            cout << "should stop floating" << endl;
-        }
     }
 }
 

@@ -17,14 +17,14 @@
 #define MAX_TIMESTEPS 6
 #define OFFSET 0.01f
 
-#define SIZE  36.0f/359.5f
-#define VELOCITY_X 1.5f
-#define VELOCITY_Y 0.0f
+#define SIZE  36.0f/361.0f
+#define VELOCITY_X 1.0f
+#define VELOCITY_Y 1.0f
 #define ACCELERATION_X 1.5f
-#define ACCELERATION_Y -9.8f // gravity
+#define ACCELERATION_Y -4.0f // gravity
 #define FRICTION_X 0.99999f
 #define FRICTION_Y 0.99999f
-#define SCALE 0.8f
+#define SCALE 0.5f
 
 class Entity {
 public:
