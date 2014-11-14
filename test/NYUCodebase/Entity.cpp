@@ -12,8 +12,8 @@ using namespace std;
 
 Entity::Entity(GLuint textureID, float u, float v, float x, float y):
 textureID(textureID),u(u),v(v),x(x),y(y) {
-    width = SIZE*1.01;
-    height = SIZE*1.3;
+    width = SIZE;
+    height = SIZE*1.05;
     velocity_x = VELOCITY_X;
     velocity_y = VELOCITY_Y;
     acceleration_x = ACCELERATION_X;
@@ -99,6 +99,10 @@ void Entity::Float() {
     velocity_x += acceleration_y * FIXED_TIMESTEP;
     x += velocity_x * FIXED_TIMESTEP;
     
+}
+
+bool Entity::IsColliding(vector<Entity*> entities) {
+    return collidesBottom || collidesTop || collidesLeft || collidesRight || collidesBottom;
 }
 
 void Entity::Draw(float scale) {

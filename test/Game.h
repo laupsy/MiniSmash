@@ -38,6 +38,8 @@ public:
     void DrawText( GLuint textTexture, string text, float x, float y, float spacing, float size, float r, float g, float b, float a );
     
     vector<Entity*> entities;
+    vector<Entity*> bg;
+    vector<Entity*> clouds;
     
     Entity * player;
     

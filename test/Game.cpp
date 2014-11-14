@@ -12,18 +12,25 @@ Game::Game() {
 
 void Game::LoadObjects() {
     // initialize the player
-    player = new Entity(LoadTexture("laurasfirstsprite.png"), 36.0f/360.0f, 0.0f, -1.0f, 0.0f);
+    player = new Entity(LoadTexture("laurasfirstsprite.png"), 36.0f/360.0f, 0.0f, -1.0f, -0.2f);
     // start player as floating
     player->floating = true;
     // get map from txt file
     //readLevel();
     //buildTiles();
-    placeEntities(blockForeground);
+    Entity * rainbowStart = new Entity(LoadTexture("laurasfirstsprite.png"), SIZE * 0.0f, SIZE * 1.2, -0.58f, 0.0f);
+    rainbowStart->height = SIZE * 8.75;
+    rainbowStart->width = SIZE * 5.8;
+    entities.push_back(rainbowStart);
+    
     placeEntities(blockBackground);
+    placeEntities(cloudBackground);
+    
+    //placeEntities(cloudForeground);
+    placeEntities(blockForeground);
+    
     placeEntities(pinkPuff);
     placeEntities(bluePuff);
-    placeEntities(cloudForeground);
-    placeEntities(cloudBackground);
     ///////
 }
 
@@ -31,10 +38,12 @@ void Game::placeEntities(int whichEntity) {
     
     int amt;
     
+    float randXLoc, randYLoc, offset;
+    
     if ( whichEntity == blockForeground)
-        amt = 15;
+        amt = 75;
     else if ( whichEntity == blockBackground)
-        amt = 5;
+        amt = 10;
     else if ( whichEntity == pinkPuff )
         amt = 100;
     else if ( whichEntity == bluePuff )
@@ -51,10 +60,10 @@ void Game::placeEntities(int whichEntity) {
         if ( whichEntity == blockForeground ) {
             
             // generate random positions
-            float randXLoc = (rand() % 133 - 66.5)/100.0;
-            float randYLoc = (rand() % 133 - 66.5)/100.0;
+            randXLoc = (rand() % 500)/100.0;
+            randYLoc = (rand() % 200 - 100)/100.0;
             
-            float offset = 0.15;
+            offset = 0.15;
             
             // dont let blocks overlap
             for ( size_t i = 0; i < entities.size(); i++ ) {
@@ -62,15 +71,58 @@ void Game::placeEntities(int whichEntity) {
                     randXLoc += offset;
                     randYLoc += offset;
                 }
-//                while ( entities[i]->y <= randYLoc + offset && entities[i]->y > randYLoc - offset ) {
-//                    randXLoc += offset;
-//                    randYLoc += offset;
-//                }
             }
             
             Entity * block = new Entity(LoadTexture("laurasfirstsprite.png"), SIZE * whichEntity, 0.0f, randXLoc, randYLoc);
             entities.push_back(block);
+        }
+        
+        else if ( whichEntity == blockBackground ) {
             
+            // generate random positions
+            randXLoc = (rand() % 500 - 250)/100.0;
+            randYLoc = (rand() % 200 - 100)/100.0;
+            
+            offset = 0.05;
+            
+            // dont let blocks overlap
+            for ( size_t i = 0; i < bg.size(); i++ ) {
+                while ( bg[i]->x <= randXLoc + offset && bg[i]->x > randXLoc - offset ) {
+                    randXLoc += offset;
+                    randYLoc += offset;
+                }
+                //                while ( entities[i]->y <= randYLoc + offset && entities[i]->y > randYLoc - offset ) {
+                //                    randXLoc += offset;
+                //                    randYLoc += offset;
+                //                }
+            }
+            
+            Entity * blockbg = new Entity(LoadTexture("laurasfirstsprite.png"), SIZE * whichEntity, 0.0f, randXLoc, randYLoc);
+            bg.push_back(blockbg);
+        }
+        
+        else if ( whichEntity == cloudForeground ) {
+            
+            // generate random positions
+            randXLoc = (rand() % 500 - 250)/100.0;
+            randYLoc = (rand() % 100 - 50)/100.0;
+            
+            offset = 0.2;
+            
+            // dont let blocks overlap
+            for ( size_t i = 0; i < clouds.size(); i++ ) {
+                while ( clouds[i]->x <= randXLoc + offset && clouds[i]->x > randXLoc - offset ) {
+                    randXLoc += offset;
+                    randYLoc += offset;
+                }
+                //                while ( entities[i]->y <= randYLoc + offset && entities[i]->y > randYLoc - offset ) {
+                //                    randXLoc += offset;
+                //                    randYLoc += offset;
+                //                }
+            }
+            
+            Entity * cloud = new Entity(LoadTexture("laurasfirstsprite.png"), SIZE * whichEntity, 0.0f, randXLoc, randYLoc);
+            clouds.push_back(cloud);
         }
     }
 }
@@ -109,7 +161,7 @@ void Game::Init() {
     glMatrixMode(GL_PROJECTION);
     glOrtho(-1.33, 1.33, -1.0, 1.0, -1.0, 1.0);
     // window color
-    glClearColor(0.55, 0.76, 1.0, 1.0);
+    glClearColor(0.15, 0.36, 0.7, 1.0);
     // reset frame
     glClear(GL_COLOR_BUFFER_BIT);
     // init music
@@ -191,6 +243,10 @@ void Game::Update(float elapsed) {
         // glScalef(1.0, -1.0, 1.0); this would be cool for like a reverse gravity mode
     }
     
+    // collision response
+    if ( player->IsColliding(entities) )
+        player->floating = false;
+    
     // sdl event thing
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -247,10 +303,19 @@ void Game::Render() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
     // Render the level (things includes drawing stuff
-    player->Draw(SCALE);
+    for ( size_t k = 0; k < clouds.size(); k++ ) {
+        clouds[k]->Draw(SCALE);
+    }
+    for ( size_t j = 0; j < bg.size(); j++ ) {
+        bg[j]->Draw(SCALE);
+    }
     for ( size_t i = 0; i < entities.size(); i++ ) {
         entities[i]->Draw(SCALE);
     }
+    
+    // draw player last so not overlapped by solids
+    player->Draw(SCALE);
+
     ///////
     // Lock camera onto player
     ////// will need to change camera position so that both players are always visible
