@@ -12,16 +12,21 @@ Game::Game() {
 
 void Game::LoadObjects() {
     // initialize the player
-    player = new Entity(LoadTexture("laurasfirstsprite.png"), 36.0f/360.0f, 0.0f, -1.0f, -0.2f);
+    player = new Entity(LoadTexture("laurassecondsprite.png"), TILEWIDTH * 0.0, TILEHEIGHT * 0.0, -1.0f, -0.2f);
     // start player as floating
     player->floating = true;
     // get map from txt file
     //readLevel();
     //buildTiles();
-    Entity * rainbowStart = new Entity(LoadTexture("laurasfirstsprite.png"), SIZE * 0.0f, SIZE * 1.2, -0.58f, 0.0f);
-    rainbowStart->height = SIZE * 8.75;
-    rainbowStart->width = SIZE * 5.8;
-    entities.push_back(rainbowStart);
+//    Entity * rainbowStart = new Entity(LoadTexture("laurasfirstsprite.png"), SIZE * 0.0f, SIZE * 1.2, -0.58f, 0.0f);
+//    rainbowStart->height = SIZE * 8.75;
+//    rainbowStart->width = SIZE * 5.8;
+//    entities.push_back(rainbowStart);
+    
+//    for ( size_t i = 0; i < 50; i++ ) {
+//        Entity * raindrop = new Entity(LoadTexture("laurasfirstsprite.png"), SIZE * 1.0f, SIZE * 1, -0.58f, 0.0f);
+//        rain.push_back(raindrop);
+//    }
     
     placeEntities(blockBackground);
     placeEntities(cloudBackground);
@@ -73,7 +78,7 @@ void Game::placeEntities(int whichEntity) {
                 }
             }
             
-            Entity * block = new Entity(LoadTexture("laurasfirstsprite.png"), SIZE * whichEntity, 0.0f, randXLoc, randYLoc);
+            Entity * block = new Entity(LoadTexture("laurasfirstsprite.png"), TILEWIDTH * whichEntity, 0.0f, randXLoc, randYLoc);
             entities.push_back(block);
         }
         
@@ -97,7 +102,7 @@ void Game::placeEntities(int whichEntity) {
                 //                }
             }
             
-            Entity * blockbg = new Entity(LoadTexture("laurasfirstsprite.png"), SIZE * whichEntity, 0.0f, randXLoc, randYLoc);
+            Entity * blockbg = new Entity(LoadTexture("laurasfirstsprite.png"), TILEWIDTH * whichEntity, 0.0f, randXLoc, randYLoc);
             bg.push_back(blockbg);
         }
         
@@ -121,7 +126,7 @@ void Game::placeEntities(int whichEntity) {
                 //                }
             }
             
-            Entity * cloud = new Entity(LoadTexture("laurasfirstsprite.png"), SIZE * whichEntity, 0.0f, randXLoc, randYLoc);
+            Entity * cloud = new Entity(LoadTexture("laurasfirstsprite.png"), TILEWIDTH * whichEntity, 0.0f, randXLoc, randYLoc);
             clouds.push_back(cloud);
         }
     }
@@ -159,9 +164,9 @@ void Game::Init() {
     // window stuff
     glViewport(0,0,800,600);
     glMatrixMode(GL_PROJECTION);
-    glOrtho(-1.33, 1.33, -1.0, 1.0, -1.0, 1.0);
+    glOrtho(-2.33, 2.33, -1.0, 1.0, -1.0, 1.0);
     // window color
-    glClearColor(0.15, 0.36, 0.7, 1.0);
+    glClearColor(0.2, 0.22, 0.26, 1.0);
     // reset frame
     glClear(GL_COLOR_BUFFER_BIT);
     // init music
@@ -177,14 +182,14 @@ void Game::Update(float elapsed) {
     
     // regular movement
     if ( keys[SDL_SCANCODE_LEFT] ) {
-        player->u = SIZE * playerWalkingLeft;
+        player->u = TILEWIDTH * playerWalkingLeft;
         if ( player->floating )
             player->velocity_x = VELOCITY_X * -1 / 10;
         else
             player->velocity_x = VELOCITY_X * -1;
     }
     else if ( keys[SDL_SCANCODE_RIGHT] ) {
-        player->u = SIZE * playerWalkingRight;
+        player->u = TILEWIDTH * playerWalkingRight;
         if ( player->floating )
             player->velocity_x = VELOCITY_X / 10;
         else
@@ -211,14 +216,14 @@ void Game::Update(float elapsed) {
     
     // sprite
     if ( player->floating )
-        player->u = SIZE * playerFloating;
+        player->u = TILEWIDTH * playerFloating;
     else {
         if ( player->velocity_x < 0 )
-            player->u = SIZE * playerWalkingLeft;
+            player->u = TILEWIDTH * playerWalkingLeft;
         else if ( player->velocity_x > 0 )
-            player->u = SIZE * playerWalkingRight;
+            player->u = TILEWIDTH * playerWalkingRight;
         else
-            player->u = SIZE * playerStanding;
+            player->u = TILEWIDTH * playerStanding;
     }
     
     // jumping
@@ -312,6 +317,9 @@ void Game::Render() {
     for ( size_t i = 0; i < entities.size(); i++ ) {
         entities[i]->Draw(SCALE);
     }
+    for ( size_t h = 0; h < rain.size(); h++ ) {
+        rain[h]->Draw(SCALE);
+    }
     
     // draw player last so not overlapped by solids
     player->Draw(SCALE);
@@ -322,6 +330,10 @@ void Game::Render() {
     ///////// do this after all single-player game stuff is set, then add second player and go from there?
     ///////
     SDL_GL_SwapWindow(displayWindow);
+}
+
+void Game::Rain() {
+    
 }
 
 bool Game::UpdateAndRender() {

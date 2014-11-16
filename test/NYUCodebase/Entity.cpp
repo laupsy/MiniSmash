@@ -12,8 +12,8 @@ using namespace std;
 
 Entity::Entity(GLuint textureID, float u, float v, float x, float y):
 textureID(textureID),u(u),v(v),x(x),y(y) {
-    width = SIZE;
-    height = SIZE*1.05;
+    width = TILEWIDTH * 0.98;
+    height = TILEHEIGHT * 0.98;
     velocity_x = VELOCITY_X;
     velocity_y = VELOCITY_Y;
     acceleration_x = ACCELERATION_X;

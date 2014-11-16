@@ -1,5 +1,6 @@
 
 #include "Entity.h"
+#include "Shape.h"
 
 using namespace std;
 
@@ -26,6 +27,8 @@ public:
    // void readLevel();
     void placeEntities(int whichEntity);
     
+    void Rain();
+    
     void InitMusic();
     
     void EventsFromCollision(Entity * e);
@@ -40,6 +43,7 @@ public:
     vector<Entity*> entities;
     vector<Entity*> bg;
     vector<Entity*> clouds;
+    vector<Entity*> rain;
     
     Entity * player;
     
@@ -54,6 +58,10 @@ public:
     float lastFrameTicks;
     float timeLeftOver;
     
+    // Y AXIS
+    float girl = 0.0f;
+    float cat = 1.0f;
+    // X AXIS
     float playerFloating = 0.0f;
     float playerStanding = 1.0f;
     float playerWalkingRight = 2.0f;

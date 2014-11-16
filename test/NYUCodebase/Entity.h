@@ -17,7 +17,8 @@
 #define MAX_TIMESTEPS 6
 #define OFFSET 0.01f
 
-#define SIZE  0.09863f
+#define TILEWIDTH  72.0f/600.0f
+#define TILEHEIGHT 72.0f/454.0f
 #define VELOCITY_X 1.0f
 #define VELOCITY_Y 1.0f
 #define ACCELERATION_X 1.5f
