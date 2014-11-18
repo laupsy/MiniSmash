@@ -47,6 +47,8 @@ public:
     
     Entity * player;
     
+    const char * spriteSheet = "laurassecondsprite.png";
+    
     bool done;
     
 //    int mapWidth;
@@ -59,22 +61,19 @@ public:
     float timeLeftOver;
     
     // Y AXIS
-    float girl = 0.0f;
-    float cat = 1.0f;
+    float cat = 0.0f;
+    float rabbit = 1.0f;
     // X AXIS
     float playerFloating = 0.0f;
-    float playerStanding = 1.0f;
-    float playerWalkingRight = 2.0f;
-    float playerWalkingLeft = 3.0f;
-    float blockForeground = 4.0f;
-    float blockBackground = 5.0f;
-    float cloudForeground = 6.0f;
-    float cloudBackground = 7.0f;
-    float pinkPuff = 8.0f;
-    float bluePuff = 9.0f;
-
-    
-    GLuint spriteSheet;
+    float playerWalkingRight = 1.0f;
+    float playerWalkingLeft = 2.0f;
+    float playerStanding = 3.0f;
+    float blockForeground = 0.0f;
+    float blockBackground = 1.0f;
+    float cloudForeground = 5.0f;
+    float cloudBackground = 6.0f;
+    float pinkPuff = 7.0f;
+    float bluePuff = 7.0f;
     
     vector<float> vertexData;
     vector<float> texCoordData;

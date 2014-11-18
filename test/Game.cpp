@@ -12,7 +12,7 @@ Game::Game() {
 
 void Game::LoadObjects() {
     // initialize the player
-    player = new Entity(LoadTexture("laurassecondsprite.png"), TILEWIDTH * 0.0, TILEHEIGHT * 0.0, -1.0f, -0.2f);
+    player = new Entity(LoadTexture(spriteSheet), TILEWIDTH * playerFloating, TILEHEIGHT * rabbit, -1.0f, -0.2f);
     // start player as floating
     player->floating = true;
     // get map from txt file
@@ -46,7 +46,7 @@ void Game::placeEntities(int whichEntity) {
     float randXLoc, randYLoc, offset;
     
     if ( whichEntity == blockForeground)
-        amt = 75;
+        amt = 25;
     else if ( whichEntity == blockBackground)
         amt = 10;
     else if ( whichEntity == pinkPuff )
@@ -65,69 +65,23 @@ void Game::placeEntities(int whichEntity) {
         if ( whichEntity == blockForeground ) {
             
             // generate random positions
-            randXLoc = (rand() % 500)/100.0;
-            randYLoc = (rand() % 200 - 100)/100.0;
+            randXLoc =  ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2 ) / 10.0f; // convert to float
+            if ( ( rand() % 10 ) % 2 == 0 ) randYLoc = -0.4f;
+            else randYLoc = 0.4f;
             
-            offset = 0.15;
-            
-            // dont let blocks overlap
-            for ( size_t i = 0; i < entities.size(); i++ ) {
-                while ( entities[i]->x <= randXLoc + offset && entities[i]->x > randXLoc - offset ) {
+            // prevent overlap
+            offset = (rand() % 10 ) / 10.0f + TILEWIDTH;
+            if ( entities.size() > 0 ) {
+                Entity * prevEntity = entities[entities.size() - 1];
+                if ( prevEntity->x < randXLoc + offset && prevEntity->x > randXLoc - offset )
                     randXLoc += offset;
-                    randYLoc += offset;
-                }
             }
             
-            Entity * block = new Entity(LoadTexture("laurasfirstsprite.png"), TILEWIDTH * whichEntity, 0.0f, randXLoc, randYLoc);
-            entities.push_back(block);
-        }
-        
-        else if ( whichEntity == blockBackground ) {
-            
-            // generate random positions
-            randXLoc = (rand() % 500 - 250)/100.0;
-            randYLoc = (rand() % 200 - 100)/100.0;
-            
-            offset = 0.05;
-            
-            // dont let blocks overlap
-            for ( size_t i = 0; i < bg.size(); i++ ) {
-                while ( bg[i]->x <= randXLoc + offset && bg[i]->x > randXLoc - offset ) {
-                    randXLoc += offset;
-                    randYLoc += offset;
-                }
-                //                while ( entities[i]->y <= randYLoc + offset && entities[i]->y > randYLoc - offset ) {
-                //                    randXLoc += offset;
-                //                    randYLoc += offset;
-                //                }
+            for ( int i = 0; i < 3; i++ ) {
+                Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH * whichEntity, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH * i, randYLoc);
+                entities.push_back(block);
             }
             
-            Entity * blockbg = new Entity(LoadTexture("laurasfirstsprite.png"), TILEWIDTH * whichEntity, 0.0f, randXLoc, randYLoc);
-            bg.push_back(blockbg);
-        }
-        
-        else if ( whichEntity == cloudForeground ) {
-            
-            // generate random positions
-            randXLoc = (rand() % 500 - 250)/100.0;
-            randYLoc = (rand() % 100 - 50)/100.0;
-            
-            offset = 0.2;
-            
-            // dont let blocks overlap
-            for ( size_t i = 0; i < clouds.size(); i++ ) {
-                while ( clouds[i]->x <= randXLoc + offset && clouds[i]->x > randXLoc - offset ) {
-                    randXLoc += offset;
-                    randYLoc += offset;
-                }
-                //                while ( entities[i]->y <= randYLoc + offset && entities[i]->y > randYLoc - offset ) {
-                //                    randXLoc += offset;
-                //                    randYLoc += offset;
-                //                }
-            }
-            
-            Entity * cloud = new Entity(LoadTexture("laurasfirstsprite.png"), TILEWIDTH * whichEntity, 0.0f, randXLoc, randYLoc);
-            clouds.push_back(cloud);
         }
     }
 }

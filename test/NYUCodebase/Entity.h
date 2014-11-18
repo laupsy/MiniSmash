@@ -27,6 +27,8 @@
 #define FRICTION_Y 0.99999f
 #define SCALE 0.6f
 
+#define LEVELWIDTH 7
+
 class Entity {
 public:
     Entity(GLuint textureID, float u, float v, float x, float y);
