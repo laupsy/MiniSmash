@@ -27,7 +27,7 @@
 #define FRICTION_Y 0.99999f
 #define SCALE 0.6f
 
-#define LEVELWIDTH 7
+#define LEVELWIDTH 10
 
 class Entity {
 public:

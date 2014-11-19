@@ -80,6 +80,8 @@ public:
     //    unsigned char levelData[LEVEL_HEIGHT][LEVEL_WIDTH];
     
     Mix_Music *music;
+    Mix_Music *storm;
+    Mix_Chunk *thunder;
     
     GLuint mainSpriteTexture;
     SDL_Event event;

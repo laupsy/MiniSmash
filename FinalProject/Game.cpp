@@ -16,8 +16,8 @@ void Game::LoadObjects() {
     player = new Entity(LoadTexture(spriteSheet), TILEWIDTH * playerFloating, TILEHEIGHT * cat, -1.0f, -0.2f);
     
     // create raindrops
-    for ( int i = 0; i < 50; i++ ) {
-        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 2.0, -1.0f + i /10.0, -1.33f + (rand() % 20 )/10.0);
+    for ( int i = 0; i < 500; i++ ) {
+        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 2.0, -1.33f + i / 25.0, -1.33f + (rand() % 20 )/10.0);
         rain.push_back(raindrop);
     }
     
@@ -70,7 +70,7 @@ void Game::placeEntities(int whichEntity) {
                     randXLoc += offset;
             }
             
-            for ( int i = 0; i < 6; i++ ) {
+            for ( int i = 0; i < 5; i++ ) {
                 Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH * whichEntity, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH * i, randYLoc);
                 entities.push_back(block);
             }
@@ -160,9 +160,10 @@ void Game::Init() {
     // reset frame
     glClear(GL_COLOR_BUFFER_BIT);
     // init music
-    music = Mix_LoadMUS("music.mp3");
+    music = Mix_LoadMUS("battlestargalactica_roslinandadama.mp3");
+    thunder = Mix_LoadWAV("thunder.wav");
     // play music
-    //Mix_PlayMusic(music, -1);
+    Mix_PlayMusic(music, -1);
 }
 
 void Game::Update(float elapsed) {
@@ -170,13 +171,10 @@ void Game::Update(float elapsed) {
     // init keyboard
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     
-    float tempElapsed = elapsed;
-    int lightningTimer = int(tempElapsed * 10000000);
-    cout << lightningTimer << endl;
-    if ( lightningTimer % 24 == 0  ) {
+    // lightning
+    if ( SDL_GetTicks() % 123 == 0 || SDL_GetTicks() % 124 == 0 ) {
         glClearColor(0.4, 0.42, 0.46, 1.0);
-//        if ( (lightningTimer + 5) % 5 == 0)
-//            glClearColor(0.4, 0.42, 0.46, 1.0);
+        Mix_PlayChannel(-1, thunder, 0);
     }
     else {
         glClearColor(0.2, 0.22, 0.26, 1.0);
@@ -374,17 +372,14 @@ void Game::Render() {
 
 void Game::Rain() {
     for ( size_t i = 0; i < rain.size(); i++ ) {
+        
         rain[i]->velocity_y = rand() % 6 * -1;
         rain[i]->velocity_x = 0.0f;
         rain[i]->floating = false;
         rain[i]->Go();
-        if ( rain[i]->y < -1.33 ) {
-            //rain[i]->velocity_y = VELOCITY_Y;
-            rain[i]->y = 1.33;
-        }
-        if ( rain[i]->x > 1.33 ) rain[i]->x = -1.33 + (rand() % 10) / 10.0;
-        if ( rain[i]->x < -1.33 ) rain[i]->x = 1.33 - (rand() % 10) / 10.0;
         
+        if ( rain[i]->y < -1.33 ) rain[i]->y = 1.33;
+
     }
 }
 

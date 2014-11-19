@@ -68,7 +68,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "/Users/laupsy/Desktop/CS3113-LauraBarbera/figuringoutmovement"
+      customWorkingDirectory = "/Users/laupsy/Desktop/CS3113-LauraBarbera/FinalProject"
       buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
