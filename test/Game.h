@@ -34,8 +34,6 @@ public:
     void EventsFromCollision(Entity * e);
     void SetCollisionToFalse(Entity * e);
     void Fall(Entity * e);
-    void CheckCollisionX(Entity * e);
-    void CheckCollisionY(Entity * e);
     
     GLuint LoadTexture(const char *image_path);
     void DrawText( GLuint textTexture, string text, float x, float y, float spacing, float size, float r, float g, float b, float a );
@@ -63,15 +61,17 @@ public:
     // Y AXIS
     float cat = 0.0f;
     float rabbit = 1.0f;
+    
     // X AXIS
     float playerFloating = 0.0f;
     float playerWalkingRight = 1.0f;
     float playerWalkingLeft = 2.0f;
     float playerStanding = 3.0f;
+    
     float blockForeground = 0.0f;
     float blockBackground = 1.0f;
-    float cloudForeground = 5.0f;
-    float cloudBackground = 6.0f;
+    float cloudForeground = 2.0f;
+    
     float pinkPuff = 7.0f;
     float bluePuff = 7.0f;
     

@@ -22,7 +22,7 @@
 #define VELOCITY_X 1.0f
 #define VELOCITY_Y 1.0f
 #define ACCELERATION_X 1.5f
-#define ACCELERATION_Y -4.0f // gravity
+#define ACCELERATION_Y -9.8f // gravity
 #define FRICTION_X 0.99999f
 #define FRICTION_Y 0.99999f
 #define SCALE 0.6f
@@ -43,6 +43,7 @@ public:
     void ResetX();
     void ResetY();
     
+    void collidesWith(Entity * e);
     bool IsColliding(std::vector<Entity*> entities);
     
     float lerp(float v0, float v1, float t);
@@ -56,8 +57,10 @@ public:
     float friction_x, friction_y;
     
     bool collidesLeft, collidesRight, collidesTop, collidesBottom;
+    bool solid;
     bool isStatic;
     bool floating;
+    bool jumping;
     
     GLuint textureID;
 };

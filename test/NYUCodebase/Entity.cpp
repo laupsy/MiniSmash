@@ -25,6 +25,7 @@ textureID(textureID),u(u),v(v),x(x),y(y) {
     collidesTop = false;
     collidesBottom = false;
     isStatic = false;
+    solid = true;
 }
 
 float Entity::lerp(float v0, float v1, float t) {
@@ -48,10 +49,11 @@ void Entity::Go() {
     x += velocity_x * FIXED_TIMESTEP;
     
     // y movement
-    velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
-    velocity_y += acceleration_y * FIXED_TIMESTEP;
-    y += velocity_y * FIXED_TIMESTEP;
-    
+    if ( !collidesBottom ) {
+        velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
+        velocity_y += acceleration_y * FIXED_TIMESTEP;
+        y += velocity_y * FIXED_TIMESTEP;
+    }
 }
 
 void Entity::Float() {
@@ -80,29 +82,52 @@ void Entity::Float() {
     // make floating less jerky
     
     // should move slower on x axis when floating
-    
     if ( velocity_y >= 0.2f ) {
         acceleration_y = -0.5f;
         acceleration_x = -0.1f;
         velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
     }
-    
+        
     else if ( velocity_y < -0.2f ) {
         acceleration_x = 0.1f;
         acceleration_y = 0.5f;
     }
-    
+        
     velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
-    
-    velocity_y += acceleration_y * FIXED_TIMESTEP;
-    y += velocity_y * FIXED_TIMESTEP;
-    velocity_x += acceleration_y * FIXED_TIMESTEP;
-    x += velocity_x * FIXED_TIMESTEP;
-    
+    if ( !collidesBottom ) {
+        velocity_y += acceleration_y * FIXED_TIMESTEP;
+        y += velocity_y * FIXED_TIMESTEP;
+        velocity_x += acceleration_y * FIXED_TIMESTEP;
+        x += velocity_x * FIXED_TIMESTEP;
+    }
 }
 
-bool Entity::IsColliding(vector<Entity*> entities) {
-    return collidesBottom || collidesTop || collidesLeft || collidesRight || collidesBottom;
+void Entity::collidesWith(Entity * e) {
+    
+    float x_penetration, y_penetration;
+    float x_distance, y_distance;
+    
+    // get y edges
+    float thisTopEdge = y + height/2;
+    float thisBotEdge = y - height/2;
+    float elseTopEdge = e->y + e->height/2;
+    float elseBotEdge = e->y - e->height/2;
+    
+    // get x edges
+    float thisLeftEdge = x - width/2;
+    float thisRightEdge = x + width/2;
+    float elseLeftEdge = e->x - e->width/2;
+    float elseRightEdge = e->x + e->width/2;
+    
+    // check y collision
+    // first, is it possible to collide?
+    if ( e->solid && thisRightEdge > elseLeftEdge && thisLeftEdge < elseRightEdge ) {
+        // next, is it colliding?
+        if ( thisTopEdge > elseBotEdge && thisTopEdge < elseTopEdge )
+            collidesTop = true;
+        if ( thisBotEdge < elseTopEdge && thisBotEdge > elseBotEdge)
+            collidesBottom = true;
+    }
 }
 
 void Entity::Draw(float scale) {
