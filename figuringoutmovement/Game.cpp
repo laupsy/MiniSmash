@@ -260,7 +260,6 @@ void Game::Update(float elapsed) {
                 // check if already jumping
                 if ( !player->jumping ) {
                     player->velocity_y = 3.5f;
-                    player->jumping = true;
                 }
                 /////
                 // jump
@@ -329,7 +328,6 @@ void Game::FixedUpdate() {
     player->collidesBottom = false;
     player->collidesLeft = false;
     player->collidesRight = false;
-    player->jumping = false;
     for ( size_t i = 0; i < entities.size(); i++ ) { player->collidesWith(entities[i]); }
     /////// check if colliding with bullet
     /////// check if colliding with finish line
@@ -339,8 +337,14 @@ void Game::FixedUpdate() {
 }
 
 void Game::Render() {
+    
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    
+    glTranslatef(player->x * -1 - 0.2, 0.0f, 0.0f);
+    
     // Render the level (things includes drawing stuff
     for ( size_t k = 0; k < clouds.size(); k++ ) {
         clouds[k]->Draw(SCALE);
@@ -364,6 +368,7 @@ void Game::Render() {
     ////// will need to change camera position so that both players are always visible
     ///////// do this after all single-player game stuff is set, then add second player and go from there?
     ///////
+    glPopMatrix();
     SDL_GL_SwapWindow(displayWindow);
 }
 
