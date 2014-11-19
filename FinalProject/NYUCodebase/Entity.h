@@ -19,13 +19,15 @@
 
 #define TILEWIDTH  72.0f/600.0f
 #define TILEHEIGHT 72.0f/454.0f
-#define VELOCITY_X 1.5f
+#define VELOCITY_X 2.0f
 #define VELOCITY_Y 1.0f
 #define ACCELERATION_X 1.5f
 #define ACCELERATION_Y -9.8f // gravity
 #define FRICTION_X 0.99999f
 #define FRICTION_Y 0.99999f
 #define SCALE 0.6f
+
+#define DEFAULT_Y -0.2f
 
 #define LEVELWIDTH 10
 
@@ -38,6 +40,7 @@ public:
     void FixedUpdate();
     void Go();
     void Float();
+    void Flutter();
     
     void collidesWith(Entity * e);
     bool IsColliding(std::vector<Entity*> entities);
@@ -51,6 +54,8 @@ public:
     float velocity_x, velocity_y;
     float acceleration_x, acceleration_y;
     float friction_x, friction_y;
+    
+    float jumpPoint;
     
     bool collidesLeft, collidesRight, collidesTop, collidesBottom;
     bool solid;

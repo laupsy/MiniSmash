@@ -74,6 +74,8 @@ public:
     float pinkPuff = 7.0f;
     float bluePuff = 7.0f;
     
+    float camY = 0.0f;
+    
     vector<float> vertexData;
     vector<float> texCoordData;
     

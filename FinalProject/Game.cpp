@@ -13,11 +13,11 @@ Game::Game() {
 void Game::LoadObjects() {
     
     // initialize the player
-    player = new Entity(LoadTexture(spriteSheet), TILEWIDTH * playerFloating, TILEHEIGHT * cat, -1.0f, -0.2f);
+    player = new Entity(LoadTexture(spriteSheet), TILEWIDTH * playerFloating, TILEHEIGHT * cat, 0.0f, DEFAULT_Y);
     
     // create raindrops
     for ( int i = 0; i < 500; i++ ) {
-        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 2.0, -1.33f + i / 25.0, -1.33f + (rand() % 20 )/10.0);
+        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 2.0, -1.33f + i / 25.0, -LEVELWIDTH - (rand() % 20 )/10.0);
         rain.push_back(raindrop);
     }
     
@@ -41,9 +41,9 @@ void Game::placeEntities(int whichEntity) {
     float randXLoc, randYLoc, offset;
     
     if ( whichEntity == blockForeground)
-        amt = 25;
+        amt = 23;
     else if ( whichEntity == blockBackground)
-        amt = 100;
+        amt = 25;
     else if ( whichEntity == pinkPuff )
         amt = 100;
     else if ( whichEntity == bluePuff )
@@ -58,16 +58,16 @@ void Game::placeEntities(int whichEntity) {
         if ( whichEntity == blockForeground ) {
             
             // generate random positions
-            randXLoc =  ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2 ) / 10.0f; // convert to float
-            if ( ( rand() % 10 ) % 2 == 0 ) randYLoc = -0.7f;
-            else randYLoc = 0.3f;
+            randYLoc =  ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2 ) / 10.0f; // convert to float
+            if ( ( rand() % 10 ) % 2 == 0 ) randXLoc = -0.8f;
+            else randXLoc = 0.3f;
             
             // prevent overlap
-            offset = (rand() % 10 ) / 10.0f + TILEWIDTH*1.5;
+            offset = (rand() % 10 ) / 10.0f - TILEWIDTH*2;
             if ( entities.size() > 0 ) {
                 Entity * prevEntity = entities[entities.size() - 1];
-                if ( prevEntity->x < randXLoc + offset && prevEntity->x > randXLoc - offset )
-                    randXLoc += offset;
+                if ( prevEntity->y < randYLoc + offset && prevEntity->y > randYLoc - offset )
+                    randYLoc += offset;
             }
             
             for ( int i = 0; i < 5; i++ ) {
@@ -75,7 +75,7 @@ void Game::placeEntities(int whichEntity) {
                 entities.push_back(block);
             }
             
-            Entity * midblock = new Entity(LoadTexture(spriteSheet), TILEWIDTH * whichEntity, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH * i, -0.2f);
+            Entity * midblock = new Entity(LoadTexture(spriteSheet), TILEWIDTH * whichEntity, TILEHEIGHT * 2.0f, randXLoc + (rand() % 10 - 5) / 10.0, randYLoc - 0.5f);
             entities.push_back(midblock);
             
         }
@@ -163,7 +163,7 @@ void Game::Init() {
     music = Mix_LoadMUS("battlestargalactica_roslinandadama.mp3");
     thunder = Mix_LoadWAV("thunder.wav");
     // play music
-    Mix_PlayMusic(music, -1);
+    //Mix_PlayMusic(music, -1);
 }
 
 void Game::Update(float elapsed) {
@@ -257,8 +257,9 @@ void Game::Update(float elapsed) {
                 /////
                 // check if already jumping
                 if ( !player->jumping ) {
-                    player->velocity_y = 3.5f;
+                    player->velocity_y = 5.0f;
                 }
+                
                 /////
                 // jump
                 ///// get a good speed to feel natural
@@ -313,7 +314,7 @@ void Game::FixedUpdate() {
     if ( player->y < -1.33 ) {
         player->floating = true;
         player->velocity_y = -0.15f;
-        player->y = 0.9f;
+        player->y = DEFAULT_Y;
     }
     // check player collision
     /////// reset scale/rotation on collision with bot
@@ -340,8 +341,11 @@ void Game::Render() {
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
+
+    if ( player->y > DEFAULT_Y )
+        camY = player->y * -1;
     
-    glTranslatef(player->x * -1 - 0.2, 0.0f, 0.0f);
+    glTranslatef(0.0f, camY, 0.0f);
     
     // Render the level (things includes drawing stuff
     for ( size_t k = 0; k < clouds.size(); k++ ) {
@@ -373,13 +377,12 @@ void Game::Render() {
 void Game::Rain() {
     for ( size_t i = 0; i < rain.size(); i++ ) {
         
-        rain[i]->velocity_y = rand() % 6 * -1;
+        rain[i]->velocity_y = (rand() % 6 * -1);
         rain[i]->velocity_x = 0.0f;
-        rain[i]->floating = false;
-        rain[i]->Go();
+//        rain[i]->floating = false;
+        rain[i]->Float();
         
-        if ( rain[i]->y < -1.33 ) rain[i]->y = 1.33;
-
+        if ( rain[i]->y < player->y - 1.33 ) rain[i]->y = player->y + 1.33;
     }
 }
 
