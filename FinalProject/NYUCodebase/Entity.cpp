@@ -60,29 +60,6 @@ void Entity::Go() {
 
 void Entity::Float() {
     
-//    // this looks dumb.. look into perlin noise thing
-//    
-//    float floatVal = ((rand() % 100 ));
-//    
-//    // prevent one sign from taking over and making entity constantly rise/fall
-//    
-//    if ( ( velocity_y > 1.5f && floatVal > 0.0f ) || ( velocity_y < -1.5f && floatVal < 0.0f ) ) floatVal *= -1;
-//    
-//    cout << "Float Val: " << floatVal << endl;
-//    
-////    velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
-////    velocity_x += floatVal * FIXED_TIMESTEP;
-////    x += velocity_x * FIXED_TIMESTEP;
-//    
-//    velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
-//    velocity_y += floatVal * FIXED_TIMESTEP;
-//    y += velocity_y * FIXED_TIMESTEP;
-//    
-//    cout << velocity_x << endl;
-//    cout << velocity_y << endl << endl;
-    
-    // make floating less jerky
-    
     // should move slower on x axis when floating
     if ( velocity_y >= 0.2f ) {
         acceleration_y = -0.5f;
@@ -96,6 +73,7 @@ void Entity::Float() {
     }
         
     velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
+    
     if ( !collidesBottom ) {
         velocity_y += acceleration_y * FIXED_TIMESTEP;
         y += velocity_y * FIXED_TIMESTEP;
@@ -105,25 +83,45 @@ void Entity::Float() {
 }
 
 void Entity::Flutter() {
-
-    if ( velocity_y >= 0.2f ) {
+    
+    // (rand() % 6 * -1)
+    
+    if ( velocity_y >= 0.1f ) {
         acceleration_y = -0.5f;
-        acceleration_x = -0.1f;
+        acceleration_x = (rand() % 6 * -1);
         velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
     }
     
-    else if ( velocity_y < -0.2f ) {
-        acceleration_x = 0.1f;
+    else if ( velocity_y < -0.6f ) {
+        acceleration_x = (rand() % 6 );
         acceleration_y = 0.5f;
     }
     
     velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
-    if ( !collidesBottom ) {
-        velocity_y += acceleration_y * FIXED_TIMESTEP;
-        y += velocity_y * FIXED_TIMESTEP;
-        velocity_x += acceleration_y * FIXED_TIMESTEP;
-        x += velocity_x * FIXED_TIMESTEP;
+    velocity_y += acceleration_y * FIXED_TIMESTEP;
+    y += velocity_y * FIXED_TIMESTEP;
+    velocity_x += acceleration_y * FIXED_TIMESTEP;
+    x += velocity_x * FIXED_TIMESTEP;
+}
+
+void Entity::FlutterLeft() {
+    
+    if ( velocity_y >= 0.1f ) {
+        acceleration_y = -0.5f;
+        acceleration_x = (rand() % 6 * -1);
+        velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
     }
+    
+    else if ( velocity_y < -0.6f ) {
+        acceleration_x = (rand() % 6 );
+        acceleration_y = 0.5f;
+    }
+    
+    velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
+    velocity_y += acceleration_y * FIXED_TIMESTEP;
+    y += velocity_y * FIXED_TIMESTEP;
+    velocity_x += acceleration_y * FIXED_TIMESTEP;
+    x -= velocity_x * FIXED_TIMESTEP;
 }
 
 void Entity::collidesWith(Entity * e) {
@@ -170,6 +168,7 @@ void Entity::collidesWith(Entity * e) {
     else if ( collidesTop )
         y -= 0.0001;
     else if ( collidesLeft )
+        
         x += 0.0001;
     else if ( collidesRight )
         x -= 0.0001;

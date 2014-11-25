@@ -48,6 +48,8 @@ public:
     
     bool done;
     
+    bool raining, snowing, inSpace;
+    
     //    int mapWidth;
     //    int mapHeight;
     //    int tileWidth;
@@ -66,6 +68,9 @@ public:
     float playerWalkingRight = 1.0f;
     float playerWalkingLeft = 2.0f;
     float playerStanding = 3.0f;
+    float earmuffsFloating = 4.0f;
+    float earmuffsWalkingLeft = 5.0f;
+    float earmuffsWalkingRight = 6.0f;
     
     float blockForeground = 0.0f;
     float blockBackground = 1.0f;

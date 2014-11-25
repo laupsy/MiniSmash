@@ -25,9 +25,9 @@
 #define ACCELERATION_Y -9.8f // gravity
 #define FRICTION_X 0.99999f
 #define FRICTION_Y 0.99999f
-#define SCALE 0.6f
+#define SCALE 0.5f
 
-#define DEFAULT_Y -0.2f
+#define DEFAULT_Y 0.0f
 
 #define LEVELWIDTH 10
 
@@ -41,6 +41,7 @@ public:
     void Go();
     void Float();
     void Flutter();
+    void FlutterLeft();
     
     void collidesWith(Entity * e);
     bool IsColliding(std::vector<Entity*> entities);

@@ -16,8 +16,8 @@ void Game::LoadObjects() {
     player = new Entity(LoadTexture(spriteSheet), TILEWIDTH * playerFloating, TILEHEIGHT * cat, 0.0f, DEFAULT_Y);
     
     // create raindrops
-    for ( int i = 0; i < 500; i++ ) {
-        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 2.0, -1.33f + i / 25.0, -LEVELWIDTH - (rand() % 20 )/10.0);
+    for ( int i = 0; i < 400; i++ ) {
+        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 2.0, -1.33f + i / 100.0, player->y + rand() % 10 - 5);
         rain.push_back(raindrop);
     }
     
@@ -41,9 +41,9 @@ void Game::placeEntities(int whichEntity) {
     float randXLoc, randYLoc, offset;
     
     if ( whichEntity == blockForeground)
-        amt = 23;
+        amt = 18;
     else if ( whichEntity == blockBackground)
-        amt = 25;
+        amt = 18;
     else if ( whichEntity == pinkPuff )
         amt = 100;
     else if ( whichEntity == bluePuff )
@@ -59,8 +59,8 @@ void Game::placeEntities(int whichEntity) {
             
             // generate random positions
             randYLoc =  ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2 ) / 10.0f; // convert to float
-            if ( ( rand() % 10 ) % 2 == 0 ) randXLoc = -0.8f;
-            else randXLoc = 0.3f;
+            if ( ( rand() % 10 ) % 2 == 0 ) randXLoc = -1.66f;
+            else randXLoc = -0.1f;
             
             // prevent overlap
             offset = (rand() % 10 ) / 10.0f - TILEWIDTH*2;
@@ -70,8 +70,9 @@ void Game::placeEntities(int whichEntity) {
                     randYLoc += offset;
             }
             
-            for ( int i = 0; i < 5; i++ ) {
-                Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH * whichEntity, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH * i, randYLoc);
+            for ( int i = 0; i < 7; i++ ) {
+                Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH * whichEntity, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH * i + 0.5, randYLoc);
+                // make snowing block
                 entities.push_back(block);
             }
             
@@ -172,39 +173,42 @@ void Game::Update(float elapsed) {
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     
     // lightning
-    if ( SDL_GetTicks() % 123 == 0 || SDL_GetTicks() % 124 == 0 ) {
+    if ( raining && ( SDL_GetTicks() % 123 == 0 || SDL_GetTicks() % 124 == 0 ) ) {
         glClearColor(0.4, 0.42, 0.46, 1.0);
         Mix_PlayChannel(-1, thunder, 0);
     }
     else {
-        glClearColor(0.2, 0.22, 0.26, 1.0);
+        glClearColor(fabs(0.2 + player->y / 25.0), fabs(0.22 + player->y / 25.0), fabs(0.26 + player->y / 10.0), 1.0);
     }
     
     // regular movement
     if ( keys[SDL_SCANCODE_LEFT] ) {
-        player->u = TILEWIDTH * playerWalkingLeft;
+        if ( raining ) player->u = TILEWIDTH * playerWalkingLeft;
+        if ( snowing ) player->u = TILEWIDTH * earmuffsWalkingLeft;
         if ( player->floating )
-            player->velocity_x = VELOCITY_X * -1 / 10;
+            player->velocity_x = VELOCITY_X * -1 / 10.0;
         else
             player->velocity_x = VELOCITY_X * -1;
     }
     else if ( keys[SDL_SCANCODE_RIGHT] ) {
-        player->u = TILEWIDTH * playerWalkingRight;
+        if ( raining ) player->u = TILEWIDTH * playerWalkingRight;
+        if ( snowing ) player->u = TILEWIDTH * earmuffsWalkingRight;
         if ( player->floating )
-            player->velocity_x = VELOCITY_X / 10;
+            player->velocity_x = VELOCITY_X / 10.0;
         else
             player->velocity_x = VELOCITY_X;
     }
     else if ( keys[SDL_SCANCODE_DOWN] ) {
         if ( player->floating ) {
-            player->velocity_y += VELOCITY_Y * -1 / 100;
-            player->velocity_x = VELOCITY_X/10;
+            player->velocity_y += VELOCITY_Y * -1 / 50;
+            player->velocity_x = 0.0f;
+
         }
     }
     else if ( keys[SDL_SCANCODE_UP] ) {
         if ( player->floating ) {
-            player->velocity_y += VELOCITY_Y / 100;
-            player->velocity_x = VELOCITY_X/10;
+            player->velocity_y += VELOCITY_Y / 50;
+            player->velocity_x = 0.0f;
         }
     }
     else if ( keys[SDL_SCANCODE_F] ) {
@@ -215,15 +219,23 @@ void Game::Update(float elapsed) {
         player->velocity_x = 0.0f;
     
     // sprite
-    if ( player->floating )
-        player->u = TILEWIDTH * playerFloating;
+    if ( player->floating ) {
+        if ( raining ) player->u = TILEWIDTH * playerFloating;
+        if ( snowing ) player->u = TILEWIDTH * earmuffsFloating;
+    }
     else {
-        if ( player->velocity_x < 0 )
-            player->u = TILEWIDTH * playerWalkingLeft;
-        else if ( player->velocity_x > 0 )
-            player->u = TILEWIDTH * playerWalkingRight;
-        else
-            player->u = TILEWIDTH * playerStanding;
+        if ( player->velocity_x < 0 ) {
+            if ( raining ) player->u = TILEWIDTH * playerWalkingLeft;
+            if ( snowing ) player->u = TILEWIDTH * earmuffsWalkingLeft;
+        }
+        else if ( player->velocity_x > 0 ) {
+            if ( raining ) player->u = TILEWIDTH * playerWalkingRight;
+            if ( snowing ) player->u = TILEWIDTH * earmuffsWalkingRight;
+        }
+        else {
+            if ( raining ) player->u = TILEWIDTH * playerStanding;
+            if ( snowing ) player->u = TILEWIDTH * earmuffsFloating;
+        }
     }
     
     if ( player->collidesBottom ) {
@@ -240,6 +252,14 @@ void Game::Update(float elapsed) {
     
     if ( player->collidesRight ) {
         player->velocity_x = 0;
+    }
+    
+    if ( player->x > 1.33 ) {
+        player->x = -1.33;
+    }
+    
+    if ( player->x < -1.33 ) {
+        player->x = 1.33;
     }
     
     // sdl event thing
@@ -328,6 +348,13 @@ void Game::FixedUpdate() {
     player->collidesLeft = false;
     player->collidesRight = false;
     for ( size_t i = 0; i < entities.size(); i++ ) { player->collidesWith(entities[i]); }
+    // check weather
+    raining = false;
+    snowing = false;
+    inSpace = false;
+    if ( player->y < 3.0 ) raining = true;
+    else if ( player->y >= 3.0 ) snowing = true;
+    else inSpace = false;
     /////// check if colliding with bullet
     /////// check if colliding with finish line
     ////////// check order of collision with finish line (eg if player1 collides w finish line before player2, player1 wins)
@@ -377,10 +404,18 @@ void Game::Render() {
 void Game::Rain() {
     for ( size_t i = 0; i < rain.size(); i++ ) {
         
-        rain[i]->velocity_y = (rand() % 6 * -1);
-        rain[i]->velocity_x = 0.0f;
-//        rain[i]->floating = false;
-        rain[i]->Float();
+        if ( raining ) {
+            rain[i]->u = TILEWIDTH * 3.0;
+            rain[i]->velocity_y = (rand() % 6 * -1);
+            rain[i]->velocity_x = 0.0f;
+            rain[i]->floating = false;
+            rain[i]->Go();
+        }
+        else if ( snowing ) {
+            rain[i]->u = TILEWIDTH * 4.0;
+            rain[i]->Flutter();
+            if ( rain[i]->x < player->x - 0.66 ) rain[i]->FlutterLeft();
+        }
         
         if ( rain[i]->y < player->y - 1.33 ) rain[i]->y = player->y + 1.33;
     }
