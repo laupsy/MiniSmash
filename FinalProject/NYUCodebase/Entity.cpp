@@ -56,6 +56,13 @@ void Entity::Go() {
         velocity_y += acceleration_y * FIXED_TIMESTEP;
         y += velocity_y * FIXED_TIMESTEP;
     }
+    
+    // force float
+    if ( y < -1.33 ) {
+        floating = true;
+        velocity_y = -0.15f;
+        y = DEFAULT_Y;
+    }
 }
 
 void Entity::Float() {

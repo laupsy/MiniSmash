@@ -27,7 +27,7 @@
 #define FRICTION_Y 0.99999f
 #define SCALE 0.5f
 
-#define DEFAULT_Y 0.0f
+#define DEFAULT_Y 0.3f
 
 #define LEVELWIDTH 10
 

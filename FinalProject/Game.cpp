@@ -2,18 +2,15 @@
 #include "Game.h"
 
 Game::Game() {
-    // init
     Init();
-    // load objects
     LoadObjects();
-    // check loop
     Loop();
 }
 
 void Game::LoadObjects() {
     
-    // initialize the player
     player = new Entity(LoadTexture(spriteSheet), TILEWIDTH * playerFloating, TILEHEIGHT * cat, 0.0f, DEFAULT_Y);
+    player->floating = true;
     
     // create raindrops
     for ( int i = 0; i < 400; i++ ) {
@@ -21,29 +18,19 @@ void Game::LoadObjects() {
         rain.push_back(raindrop);
     }
     
-    // start player as floating
-    player->floating = true;
-    
-    //placeEntities(cloudForeground);
-    
     placeEntities(blockBackground);
     placeEntities(blockForeground);
     
-    //placeEntities(pinkPuff);
-    //placeEntities(bluePuff);
-    ///////
 }
 
 void Game::placeEntities(int whichEntity) {
     
     int amt;
     
-    float randXLoc, randYLoc, offset;
-    
     if ( whichEntity == blockForeground)
-        amt = 18;
+        amt = 24;
     else if ( whichEntity == blockBackground)
-        amt = 18;
+        amt = 30;
     else if ( whichEntity == pinkPuff )
         amt = 100;
     else if ( whichEntity == bluePuff )
@@ -53,190 +40,137 @@ void Game::placeEntities(int whichEntity) {
     else
         amt = 0;
     
+    float randXLoc, randYLoc;
+    
     for ( size_t i = 0; i < amt; i++ ) {
         
         if ( whichEntity == blockForeground ) {
+//            
+//            if ( entities.size() > 0 ) {
+//                randXLoc = entities[entities.size() - 1]->x * -1;
+//            }
+//            else {
+                if ( ( rand() % 10 ) % 2 == 0 )
+                    randXLoc = -1.33f;
+                else
+                    randXLoc = -0.1f;
+           // }
             
-            // generate random positions
             randYLoc =  ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2 ) / 10.0f; // convert to float
-            if ( ( rand() % 10 ) % 2 == 0 ) randXLoc = -1.66f;
-            else randXLoc = -0.1f;
             
             // prevent overlap
-            offset = (rand() % 10 ) / 10.0f - TILEWIDTH*2;
+            
             if ( entities.size() > 0 ) {
                 Entity * prevEntity = entities[entities.size() - 1];
-                if ( prevEntity->y < randYLoc + offset && prevEntity->y > randYLoc - offset )
-                    randYLoc += offset;
+                if ( fabs(prevEntity->y - randYLoc) <= 0.1f )
+                    randYLoc += 0.1f;
             }
             
-            for ( int i = 0; i < 7; i++ ) {
+            // row of blocks
+            
+            for ( int i = 0; i < 5; i++ ) {
                 Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH * whichEntity, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH * i + 0.5, randYLoc);
-                // make snowing block
                 entities.push_back(block);
             }
-            
-            Entity * midblock = new Entity(LoadTexture(spriteSheet), TILEWIDTH * whichEntity, TILEHEIGHT * 2.0f, randXLoc + (rand() % 10 - 5) / 10.0, randYLoc - 0.5f);
-            entities.push_back(midblock);
-            
         }
         
-        if ( whichEntity == blockBackground ) {
-            
-            // generate random positions
-            randXLoc =  ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2*10 ) / 10.0f; // convert to float
+        else if ( whichEntity == blockBackground ) {
+
+            randXLoc =  ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2*10 ) / 10.0f;
             randYLoc = ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2*10 ) / 10.0f;
             
-            // prevent overlap
-            offset = (rand() % 10 ) / 10.0f + TILEWIDTH;
-            if ( entities.size() > 0 ) {
-                Entity * prevEntity = entities[entities.size() - 1];
-                if ( prevEntity->x < randXLoc + offset && prevEntity->x > randXLoc - offset )
-                    randXLoc += offset;
-                if ( prevEntity->y < randYLoc + offset && prevEntity->y > randYLoc - offset ) {
-                    if ( randYLoc + offset > 1.33  || randYLoc + offset < -1.33 ) randYLoc = 0.0f;
-                    else randYLoc += offset;
-                }
-            }
             Entity * blockbg = new Entity(LoadTexture(spriteSheet), TILEWIDTH * whichEntity, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH, randYLoc);
             blockbg->solid = false;
             entities.push_back(blockbg);
-        }
-        
-        if ( whichEntity == cloudForeground ) {
-            
-            // generate random positions
-            randXLoc =  ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2*10 ) / 10.0f; // convert to float
-            randYLoc = ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2*10 ) / 10.0f;
-            
-            // prevent overlap
-            offset = (rand() % 10 ) / 10.0f + TILEWIDTH;
-            if ( entities.size() > 0 ) {
-                Entity * prevEntity = entities[entities.size() - 1];
-                if ( prevEntity->x < randXLoc + offset && prevEntity->x > randXLoc - offset )
-                    randXLoc += offset;
-            }
-            Entity * cloud = new Entity(LoadTexture(spriteSheet), TILEWIDTH * whichEntity, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH, randYLoc);
-            cloud->solid = false;
-            entities.push_back(cloud);
         }
     }
 }
 
 void Game::Loop() {
-    // general vars
+    
     done = false;
     lastFrameTicks = 0.0f;
     timeLeftOver = 0.0f;
+    
     // any other game info that i might want loop eg score
     /////
 }
 
 Game::~Game() {
-    // delete all objects
-    delete player;
-    for ( size_t i = 0; i < entities.size(); i++ ) {
-        delete entities[i];
-    }
-    ///////
-    // stop all music and sounds
     Mix_FreeMusic(music);
-    // quit
     SDL_Quit();
 }
+
 void Game::Init() {
-    // init chunk
+    
     SDL_Init(SDL_INIT_VIDEO);
     displayWindow = SDL_CreateWindow("laupsygame",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,800, 600,SDL_WINDOW_OPENGL);
     SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
     SDL_GL_MakeCurrent(displayWindow, context);
+    
     // init audo
     Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096 );
+    
     // window stuff
     glViewport(0,0,800,600);
     glMatrixMode(GL_PROJECTION);
     glOrtho(-2.33, 2.33, -1.0, 1.0, -1.0, 1.0);
+    
     // window color
     glClearColor(0.2, 0.22, 0.26, 1.0);
+    
     // reset frame
     glClear(GL_COLOR_BUFFER_BIT);
+    
     // init music
     music = Mix_LoadMUS("battlestargalactica_roslinandadama.mp3");
     thunder = Mix_LoadWAV("thunder.wav");
+    
     // play music
     //Mix_PlayMusic(music, -1);
 }
 
-void Game::Update(float elapsed) {
+void Game::PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event) {
     
-    // init keyboard
-    const Uint8 *keys = SDL_GetKeyboardState(NULL);
-    
-    // lightning
-    if ( raining && ( SDL_GetTicks() % 123 == 0 || SDL_GetTicks() % 124 == 0 ) ) {
-        glClearColor(0.4, 0.42, 0.46, 1.0);
-        Mix_PlayChannel(-1, thunder, 0);
-    }
-    else {
-        glClearColor(fabs(0.2 + player->y / 25.0), fabs(0.22 + player->y / 25.0), fabs(0.26 + player->y / 10.0), 1.0);
-    }
-    
-    // regular movement
     if ( keys[SDL_SCANCODE_LEFT] ) {
-        if ( raining ) player->u = TILEWIDTH * playerWalkingLeft;
-        if ( snowing ) player->u = TILEWIDTH * earmuffsWalkingLeft;
-        if ( player->floating )
-            player->velocity_x = VELOCITY_X * -1 / 10.0;
+        
+        if ( raining ) e->u = TILEWIDTH * playerWalkingLeft;
+        if ( snowing ) e->u = TILEWIDTH * earmuffsWalkingLeft;
+        
+        if ( e->floating )
+            e->velocity_x = VELOCITY_X * -1 / 10.0;
         else
-            player->velocity_x = VELOCITY_X * -1;
+            e->velocity_x = VELOCITY_X * -1;
     }
+    
     else if ( keys[SDL_SCANCODE_RIGHT] ) {
-        if ( raining ) player->u = TILEWIDTH * playerWalkingRight;
-        if ( snowing ) player->u = TILEWIDTH * earmuffsWalkingRight;
-        if ( player->floating )
-            player->velocity_x = VELOCITY_X / 10.0;
+        
+        if ( raining ) e->u = TILEWIDTH * playerWalkingRight;
+        if ( snowing ) e->u = TILEWIDTH * earmuffsWalkingRight;
+        
+        if ( e->floating )
+            e->velocity_x = VELOCITY_X / 10.0;
         else
-            player->velocity_x = VELOCITY_X;
+            e->velocity_x = VELOCITY_X;
     }
     else if ( keys[SDL_SCANCODE_DOWN] ) {
-        if ( player->floating ) {
-            player->velocity_y += VELOCITY_Y * -1 / 50;
-            player->velocity_x = 0.0f;
-
+        if ( e->floating ) {
+            e->velocity_y += VELOCITY_Y * -1 / 50;
+            e->velocity_x = 0.0f;
         }
     }
     else if ( keys[SDL_SCANCODE_UP] ) {
-        if ( player->floating ) {
-            player->velocity_y += VELOCITY_Y / 50;
-            player->velocity_x = 0.0f;
+        if ( e->floating ) {
+            e->velocity_y += VELOCITY_Y / 50;
+            e->velocity_x = 0.0f;
         }
     }
     else if ( keys[SDL_SCANCODE_F] ) {
-        player->velocity_y = -0.5f;
-        player->floating = true;
+        e->velocity_y = -0.5f;
+        e->floating = true;
     }
     else
-        player->velocity_x = 0.0f;
-    
-    // sprite
-    if ( player->floating ) {
-        if ( raining ) player->u = TILEWIDTH * playerFloating;
-        if ( snowing ) player->u = TILEWIDTH * earmuffsFloating;
-    }
-    else {
-        if ( player->velocity_x < 0 ) {
-            if ( raining ) player->u = TILEWIDTH * playerWalkingLeft;
-            if ( snowing ) player->u = TILEWIDTH * earmuffsWalkingLeft;
-        }
-        else if ( player->velocity_x > 0 ) {
-            if ( raining ) player->u = TILEWIDTH * playerWalkingRight;
-            if ( snowing ) player->u = TILEWIDTH * earmuffsWalkingRight;
-        }
-        else {
-            if ( raining ) player->u = TILEWIDTH * playerStanding;
-            if ( snowing ) player->u = TILEWIDTH * earmuffsFloating;
-        }
-    }
+        e->velocity_x = 0.0f;
     
     if ( player->collidesBottom ) {
         player->velocity_y = 0.0f;
@@ -262,104 +196,108 @@ void Game::Update(float elapsed) {
         player->x = 1.33;
     }
     
-    // sdl event thing
-    SDL_Event event;
     while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE)
-            done = true;
-        else if (event.type == SDL_KEYDOWN ) {
+        
+        if (event.type == SDL_KEYDOWN ) {
+            
             if ( event.key.keysym.scancode == SDL_SCANCODE_SPACE && !event.key.repeat ) {
+                
                 player->floating = false;
-                // check if colliding on bot
+                
                 if ( player->collidesBottom ) {
                     player->collidesBottom = false;
                 }
-                /////
-                // check if already jumping
+                
                 if ( !player->jumping ) {
                     player->velocity_y = 5.0f;
                 }
                 
-                /////
-                // jump
-                ///// get a good speed to feel natural
-                //player->velocity_y = 2.0f;
-                // play jump sound
-                /////￼
-                // glLoadIdentity();
-                // glPushMatrix();
-                // glRotatef(15.0 * player->velocity_x,1.0,0.0,0.0);
-                // glRotatef(15.0 * player->velocity_x,0.0,1.0,0.0);
-                // glRotatef(15.0 * player->velocity_x,0.0,0.0,1.0);
-                // glPopMatrix();
                 // glScalef(1.0, -1.0, 1.0); this would be cool for like a reverse gravity mode
+                
             }
         }
     }
 }
 
-void Game::FixedUpdate() {
-    // play game sounds
-    //// sound on shoot
-    //// sound on death
-    //// sound on speed boost
-    //// sound on start
-    //// sound on win
-    //// sound on jump up
-    //// sound on land from jump
-    //// sound on crash into object
-    //// sound on crash into player2
-    //// sound on player select
-    //// sound on lap
-    ///////
-    // do game effects
-    //// player jump makes player scale up slightly and applies circle shadow below while moving up very slightly
-    //// after a certain speed stretch player
-    //// squish player if crash
-    //// confetti on success (anything classified as success event will receive a bool)
-    //////// make particle gen function and for this randomize colors from an array of colors (roygbv) and scale particles?
-    //// always apply particle trail when running
-    //// player effect when selected (during champ select)
-    //// squish and resize player when land from jump
-    //// flatten player when ran over
-    //// bullets have particle trail
-    ///////
-    // move the player with fixed timestep
-    if ( !player->floating ) player->Go();
-    else player->Float();
-    // weather effect
-    Rain();
-    ///////
-    // check player location
-    if ( player->y < -1.33 ) {
-        player->floating = true;
-        player->velocity_y = -0.15f;
-        player->y = DEFAULT_Y;
+void Game::PlayerBehavior(Entity * e) {
+    if ( e->floating ) {
+        if ( raining ) e->u = TILEWIDTH * playerFloating;
+        if ( snowing ) e->u = TILEWIDTH * earmuffsFloating;
     }
-    // check player collision
-    /////// reset scale/rotation on collision with bot
-    ///////
-    /////// check if colliding with speed boost
-    /////// check if colliding with object that causes death
-    /////// check if colliding with other player
-    /////// check if colliding with platform
+    else {
+        if ( e->velocity_x < 0 ) {
+            if ( raining ) e->u = TILEWIDTH * playerWalkingLeft;
+            if ( snowing ) player->u = TILEWIDTH * earmuffsWalkingLeft;
+        }
+        else if ( e->velocity_x > 0 ) {
+            if ( raining ) e->u = TILEWIDTH * playerWalkingRight;
+            if ( snowing ) e->u = TILEWIDTH * earmuffsWalkingRight;
+        }
+        else {
+            if ( raining ) e->u = TILEWIDTH * playerStanding;
+            if ( snowing ) e->u = TILEWIDTH * earmuffsFloating;
+        }
+    }
+}
+
+void Game::Lightning() {
+    if ( raining && ( SDL_GetTicks() % 123 == 0 || SDL_GetTicks() % 124 == 0 ) ) {
+        glClearColor(0.4, 0.42, 0.46, 1.0);
+        Mix_PlayChannel(-1, thunder, 0);
+    }
+    else {
+        glClearColor(fabs(0.2 + player->y / 25.0), fabs(0.22 + player->y / 25.0), fabs(0.26 + player->y / 10.0), 1.0);
+    }
+}
+
+void Game::Update(float elapsed) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
+            done = true;
+        }
+    }
+}
+
+void Game::CollisionCheck() {
+    
     player->collidesTop = false;
     player->collidesBottom = false;
     player->collidesLeft = false;
     player->collidesRight = false;
+    
     for ( size_t i = 0; i < entities.size(); i++ ) { player->collidesWith(entities[i]); }
-    // check weather
+}
+
+void Game::WeatherCheck() {
+    
     raining = false;
     snowing = false;
     inSpace = false;
+    
     if ( player->y < 3.0 ) raining = true;
     else if ( player->y >= 3.0 ) snowing = true;
     else inSpace = false;
-    /////// check if colliding with bullet
-    /////// check if colliding with finish line
-    ////////// check order of collision with finish line (eg if player1 collides w finish line before player2, player1 wins)
-    // run any AI eg enemies
-    ///////
+}
+
+void Game::FixedUpdate() {
+    
+    const Uint8 *keys = SDL_GetKeyboardState(NULL);
+    SDL_Event event;
+    
+    PlayerControls(player, keys, event);
+    PlayerBehavior(player);
+    CollisionCheck();
+    WeatherCheck();
+    
+    // do game effects, world effects, player effects
+    Lightning();
+    Rain();
+    
+    if ( !player->floating )
+        player->Go();
+    else
+        player->Float();
 }
 
 void Game::Render() {

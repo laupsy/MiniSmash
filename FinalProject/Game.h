@@ -25,6 +25,11 @@ public:
     // void buildTiles();
     // void readLevel();
     void placeEntities(int whichEntity);
+    void PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event);
+    void PlayerBehavior(Entity * e);
+    void Lightning();
+    void CollisionCheck();
+    void WeatherCheck();
     
     void Rain();
     
