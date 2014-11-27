@@ -73,7 +73,8 @@ void World::Rain() {
     
     for ( size_t i = 0; i < rain.size(); i++ ) {
         
-        //rain[i]->velocity_x = (float)(rand() % 100 ) * 0.01;
+        rain[i]->solid = false;
+        
         rain[i]->velocity_x = 0.0;
         rain[i]->velocity_y = -1.5f;
         
@@ -81,7 +82,7 @@ void World::Rain() {
         rain[i]->y += rain[i]->velocity_y * FIXED_TIMESTEP;
         rain[i]->velocity_x += rain[i]->acceleration_x * FIXED_TIMESTEP;
         rain[i]->x += rain[i]->velocity_x * FIXED_TIMESTEP;
-            
+        
         if ( rain[i]->y < player->y - 2.0f ) {
             rain[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;
             rain[i]->y = player->y + 2.0f;
@@ -90,6 +91,30 @@ void World::Rain() {
         if ( rain[i]->x > player->x + 2.0f ) {
             rain[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;
             rain[i]->velocity_x = ((float)rand())/RAND_MAX * 0.5 - 0.25;
+        }
+    }
+}
+
+void World::Snow() {
+    
+    for ( size_t i = 0; i < rain.size(); i++ ) {
+        
+        rain[i]->solid = true;
+        
+        rain[i]->velocity_x = 0.1;
+        rain[i]->velocity_y = -0.05f;
+        
+        rain[i]->velocity_y += rain[i]->acceleration_y * FIXED_TIMESTEP;
+        rain[i]->y += rain[i]->velocity_y * FIXED_TIMESTEP;
+        rain[i]->velocity_x += rain[i]->acceleration_x * FIXED_TIMESTEP;
+        rain[i]->x += rain[i]->velocity_x * FIXED_TIMESTEP;
+        
+        if ( rain[i]->y < player->y - 2.0f ) {
+            rain[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;
+            rain[i]->y = player->y + 2.0f;
+        }
+        if ( rain[i]->x > player->x + 2.0f ) {
+            rain[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;
         }
     }
 }

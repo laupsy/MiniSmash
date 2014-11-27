@@ -191,7 +191,6 @@ void Game::CollisionCheck() {
     world->player->collidesBottom = false;
     world->player->collidesLeft = false;
     world->player->collidesRight = false;
-    
     for ( size_t i = 0; i < world->blocks.size(); i++ ) { world->player->collidesWith(world->blocks[i]); }
 }
 
@@ -206,8 +205,14 @@ void Game::FixedUpdate() {
     world->WeatherCheck();
     
     // do game effects, world effects, world->player effects
-    world->Lightning();
-    world->Rain();
+    if ( world->raining) {
+        world->Lightning();
+        world->Rain();
+    }
+    
+    if ( world->snowing ) {
+        world->Snow();
+    }
     
     if ( !world->player->floating )
         world->player->Go();

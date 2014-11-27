@@ -29,7 +29,7 @@
 #define LEVELWIDTH 10
 
 #define BLOCKS 20
-#define RAINDROPS 250
+#define RAINDROPS 200
 
 
 class Entity {
