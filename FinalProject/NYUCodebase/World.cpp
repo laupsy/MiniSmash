@@ -36,7 +36,7 @@ void World::PlaceBlocks() {
             // row of blocks
             
             for ( int i = 0; i < 5; i++ ) {
-                Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 1.0f, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH * i + 0.5, randYLoc);
+                Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH * i + 0.5, randYLoc);
                 blocks.push_back(block);
             }
         }

@@ -202,7 +202,7 @@ void Game::CollisionCheck() {
     player->collidesLeft = false;
     player->collidesRight = false;
     
-    for ( size_t i = 0; i < entities.size(); i++ ) { player->collidesWith(entities[i]); }
+    for ( size_t i = 0; i < world->blocks.size(); i++ ) { player->collidesWith(world->blocks[i]); }
 }
 
 void Game::WeatherCheck() {
