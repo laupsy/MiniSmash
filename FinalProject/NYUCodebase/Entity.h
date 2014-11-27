@@ -29,11 +29,12 @@
 #define LEVELWIDTH 10
 
 #define BLOCKS 20
+#define RAINDROPS 250
 
 
 class Entity {
 public:
-    Entity(GLuint textureID, float u, float v, float x, float y);
+    Entity(GLuint textureID, float u, float v, float x, float y, bool floating = false);
     ~Entity();
     
     void Draw(float scale);
@@ -63,6 +64,7 @@ public:
     bool isStatic;
     bool floating;
     bool jumping;
+    bool player1;
     
     GLuint textureID;
 };

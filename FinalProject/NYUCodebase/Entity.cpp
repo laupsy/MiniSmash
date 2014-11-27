@@ -10,8 +10,8 @@
 
 using namespace std;
 
-Entity::Entity(GLuint textureID, float u, float v, float x, float y):
-textureID(textureID),u(u+0.0009),v(v+0.0009),x(x),y(y) {
+Entity::Entity(GLuint textureID, float u, float v, float x, float y, bool floating):
+textureID(textureID),u(u+0.0009),v(v+0.0009),x(x),y(y), floating(floating) {
     width = TILEWIDTH * 0.98;
     height = TILEHEIGHT * 0.98;
     velocity_x = VELOCITY_X;
@@ -58,7 +58,7 @@ void Entity::Go() {
     }
     
     // force float
-    if ( y < -1.33 ) {
+    if ( y < -1.33 && player1 ) {
         floating = true;
         velocity_y = -0.15f;
         y = DEFAULT_Y;

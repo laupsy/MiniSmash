@@ -10,12 +10,12 @@ Game::Game() {
 void Game::LoadObjects() {
     
     world = new World();
-    player = new Entity(world->LoadTexture(world->spriteSheet), TILEWIDTH * playerFloating, TILEHEIGHT * cat, 0.0f, DEFAULT_Y);
-    player->floating = true;
+    world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * world->playerFloating, TILEHEIGHT * world->cat, 0.0f, DEFAULT_Y, true );
+    world->player->player1 = true;
     
     // create raindrops
     for ( int i = 0; i < 400; i++ ) {
-        Entity * raindrop = new Entity(world->LoadTexture(world->spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 2.0, -1.33f + i / 100.0, player->y + rand() % 10 - 5);
+        Entity * raindrop = new Entity(world->LoadTexture(world->spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 2.0, -1.33f + i / 100.0, world->player->y + rand() % 10 - 5);
         rain.push_back(raindrop);
     }
     
@@ -70,8 +70,8 @@ void Game::PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event) {
     
     if ( keys[SDL_SCANCODE_LEFT] ) {
         
-        if ( raining ) e->u = TILEWIDTH * playerWalkingLeft;
-        if ( snowing ) e->u = TILEWIDTH * earmuffsWalkingLeft;
+        if ( world->raining ) e->u = TILEWIDTH * world->playerWalkingLeft;
+        if ( world->snowing ) e->u = TILEWIDTH * world->earmuffsWalkingLeft;
         
         if ( e->floating )
             e->velocity_x = VELOCITY_X * -1 / 10.0;
@@ -81,8 +81,8 @@ void Game::PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event) {
     
     else if ( keys[SDL_SCANCODE_RIGHT] ) {
         
-        if ( raining ) e->u = TILEWIDTH * playerWalkingRight;
-        if ( snowing ) e->u = TILEWIDTH * earmuffsWalkingRight;
+        if ( world->raining ) e->u = TILEWIDTH * world->playerWalkingRight;
+        if ( world->snowing ) e->u = TILEWIDTH * world->earmuffsWalkingRight;
         
         if ( e->floating )
             e->velocity_x = VELOCITY_X / 10.0;
@@ -108,28 +108,28 @@ void Game::PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event) {
     else
         e->velocity_x = 0.0f;
     
-    if ( player->collidesBottom ) {
-        player->velocity_y = 0.0f;
+    if ( world->player->collidesBottom ) {
+        world->player->velocity_y = 0.0f;
     }
     
-    if ( player->collidesTop ) {
-        player->velocity_y = VELOCITY_Y * -1;
+    if ( world->player->collidesTop ) {
+        world->player->velocity_y = VELOCITY_Y * -1;
     }
     
-    if ( player->collidesLeft ) {
-        player->velocity_x = 0;
+    if ( world->player->collidesLeft ) {
+        world->player->velocity_x = 0;
     }
     
-    if ( player->collidesRight ) {
-        player->velocity_x = 0;
+    if ( world->player->collidesRight ) {
+        world->player->velocity_x = 0;
     }
     
-    if ( player->x > 1.33 ) {
-        player->x = -1.33;
+    if ( world->player->x > 1.33 ) {
+        world->player->x = -1.33;
     }
     
-    if ( player->x < -1.33 ) {
-        player->x = 1.33;
+    if ( world->player->x < -1.33 ) {
+        world->player->x = 1.33;
     }
     
     while (SDL_PollEvent(&event)) {
@@ -138,14 +138,14 @@ void Game::PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event) {
             
             if ( event.key.keysym.scancode == SDL_SCANCODE_SPACE && !event.key.repeat ) {
                 
-                player->floating = false;
+                world->player->floating = false;
                 
-                if ( player->collidesBottom ) {
-                    player->collidesBottom = false;
+                if ( world->player->collidesBottom ) {
+                    world->player->collidesBottom = false;
                 }
                 
-                if ( !player->jumping ) {
-                    player->velocity_y = 5.0f;
+                if ( !world->player->jumping ) {
+                    world->player->velocity_y = 5.0f;
                 }
                 
                 // glScalef(1.0, -1.0, 1.0); this would be cool for like a reverse gravity mode
@@ -157,32 +157,22 @@ void Game::PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event) {
 
 void Game::PlayerBehavior(Entity * e) {
     if ( e->floating ) {
-        if ( raining ) e->u = TILEWIDTH * playerFloating;
-        if ( snowing ) e->u = TILEWIDTH * earmuffsFloating;
+        if ( world->raining ) e->u = TILEWIDTH * world->playerFloating;
+        if ( world->snowing ) e->u = TILEWIDTH * world->earmuffsFloating;
     }
     else {
         if ( e->velocity_x < 0 ) {
-            if ( raining ) e->u = TILEWIDTH * playerWalkingLeft;
-            if ( snowing ) player->u = TILEWIDTH * earmuffsWalkingLeft;
+            if ( world->raining ) e->u = TILEWIDTH * world->playerWalkingLeft;
+            if ( world->snowing ) world->player->u = TILEWIDTH * world->earmuffsWalkingLeft;
         }
         else if ( e->velocity_x > 0 ) {
-            if ( raining ) e->u = TILEWIDTH * playerWalkingRight;
-            if ( snowing ) e->u = TILEWIDTH * earmuffsWalkingRight;
+            if ( world->raining ) e->u = TILEWIDTH * world->playerWalkingRight;
+            if ( world->snowing ) e->u = TILEWIDTH * world->earmuffsWalkingRight;
         }
         else {
-            if ( raining ) e->u = TILEWIDTH * playerStanding;
-            if ( snowing ) e->u = TILEWIDTH * earmuffsFloating;
+            if ( world->raining ) e->u = TILEWIDTH * world->playerStanding;
+            if ( world->snowing ) e->u = TILEWIDTH * world->earmuffsFloating;
         }
-    }
-}
-
-void Game::Lightning() {
-    if ( raining && ( SDL_GetTicks() % 123 == 0 || SDL_GetTicks() % 124 == 0 ) ) {
-        glClearColor(0.4, 0.42, 0.46, 1.0);
-        Mix_PlayChannel(-1, thunder, 0);
-    }
-    else {
-        glClearColor(fabs(0.2 + player->y / 25.0), fabs(0.22 + player->y / 25.0), fabs(0.26 + player->y / 10.0), 1.0);
     }
 }
 
@@ -197,23 +187,12 @@ void Game::Update(float elapsed) {
 
 void Game::CollisionCheck() {
     
-    player->collidesTop = false;
-    player->collidesBottom = false;
-    player->collidesLeft = false;
-    player->collidesRight = false;
+    world->player->collidesTop = false;
+    world->player->collidesBottom = false;
+    world->player->collidesLeft = false;
+    world->player->collidesRight = false;
     
-    for ( size_t i = 0; i < world->blocks.size(); i++ ) { player->collidesWith(world->blocks[i]); }
-}
-
-void Game::WeatherCheck() {
-    
-    raining = false;
-    snowing = false;
-    inSpace = false;
-    
-    if ( player->y < 3.0 ) raining = true;
-    else if ( player->y >= 3.0 ) snowing = true;
-    else inSpace = false;
+    for ( size_t i = 0; i < world->blocks.size(); i++ ) { world->player->collidesWith(world->blocks[i]); }
 }
 
 void Game::FixedUpdate() {
@@ -221,19 +200,19 @@ void Game::FixedUpdate() {
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     SDL_Event event;
     
-    PlayerControls(player, keys, event);
-    PlayerBehavior(player);
+    PlayerControls(world->player, keys, event);
+    PlayerBehavior(world->player);
     CollisionCheck();
-    WeatherCheck();
+    world->WeatherCheck();
     
-    // do game effects, world effects, player effects
-    Lightning();
-    Rain();
+    // do game effects, world effects, world->player effects
+    world->Lightning();
+    world->Rain();
     
-    if ( !player->floating )
-        player->Go();
+    if ( !world->player->floating )
+        world->player->Go();
     else
-        player->Float();
+        world->player->Float();
 }
 
 void Game::Render() {
@@ -243,33 +222,26 @@ void Game::Render() {
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
 
-    if ( player->y > DEFAULT_Y )
-        camY = player->y * -1;
+    if ( world->player->y > DEFAULT_Y )
+        camY = world->player->y * -1;
     
     glTranslatef(0.0f, camY, 0.0f);
     
-    // Render the level (things includes drawing stuff
-    for ( size_t k = 0; k < clouds.size(); k++ ) {
-        clouds[k]->Draw(SCALE);
-    }
-    for ( size_t j = 0; j < bg.size(); j++ ) {
-        bg[j]->Draw(SCALE);
-    }
     for ( size_t i = 0; i < world->blocks.size(); i++ ) {
         world->blocks[i]->Draw(SCALE);
     }
     
-    // draw player last so not overlapped by solids
-    player->Draw(SCALE);
+    // draw world->player last so not overlapped by solids
+    world->player->Draw(SCALE);
     
-    for ( size_t h = 0; h < rain.size(); h++ ) {
-        rain[h]->Draw(SCALE * ( rand() % 10 / 10.0 ));
+    for ( size_t h = 0; h < world->rain.size(); h++ ) {
+        world->rain[h]->Draw(SCALE);
     }
     
     ///////
-    // Lock camera onto player
-    ////// will need to change camera position so that both players are always visible
-    ///////// do this after all single-player game stuff is set, then add second player and go from there?
+    // Lock camera onto world->player
+    ////// will need to change camera position so that both world->players are always visible
+    ///////// do this after all single-world->player game stuff is set, then add second world->player and go from there?
     ///////
     glPopMatrix();
     SDL_GL_SwapWindow(displayWindow);
@@ -278,20 +250,20 @@ void Game::Render() {
 void Game::Rain() {
     for ( size_t i = 0; i < rain.size(); i++ ) {
         
-        if ( raining ) {
+        if ( world->raining ) {
             rain[i]->u = TILEWIDTH * 3.0;
             rain[i]->velocity_y = (rand() % 6 * -1);
             rain[i]->velocity_x = 0.0f;
             rain[i]->floating = false;
             rain[i]->Go();
         }
-        else if ( snowing ) {
+        else if ( world->snowing ) {
             rain[i]->u = TILEWIDTH * 4.0;
             rain[i]->Flutter();
-            if ( rain[i]->x < player->x - 0.66 ) rain[i]->FlutterLeft();
+            if ( rain[i]->x < world->player->x - 0.66 ) rain[i]->FlutterLeft();
         }
         
-        if ( rain[i]->y < player->y - 1.33 ) rain[i]->y = player->y + 1.33;
+        if ( rain[i]->y < world->player->y - 1.33 ) rain[i]->y = world->player->y + 1.33;
     }
 }
 

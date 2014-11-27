@@ -8,39 +8,90 @@
 
 #include "World.h"
 
-World::World() {
-    
-}
+World::World() {}
 
 void World::PlaceBlocks() {
     
     float randXLoc, randYLoc;
     
     for ( size_t i = 0; i < BLOCKS; i++ ) {
-
-            if ( ( rand() % 10 ) % 2 == 0 )
-                randXLoc = -1.33f;
-            else
-                randXLoc = -0.1f;
+        if ( ( rand() % 10 ) % 2 == 0 )
+            randXLoc = -1.33f;
+        else
+            randXLoc = -0.1f;
+    
+        randYLoc =  ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2 ) / 10.0f; // convert to float
         
-            randYLoc =  ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2 ) / 10.0f; // convert to float
-            
-            // prevent overlap
-            
-            if ( blocks.size() > 0 ) {
-                Entity * prevEntity = blocks[blocks.size() - 1];
-                if ( fabs(prevEntity->y - randYLoc) <= 0.1f )
-                    randYLoc += 0.1f;
-            }
-            
-            // row of blocks
-            
-            for ( int i = 0; i < 5; i++ ) {
-                Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH * i + 0.5, randYLoc);
-                blocks.push_back(block);
-            }
+        // prevent overlap
+        
+        if ( blocks.size() > 0 ) {
+            Entity * prevEntity = blocks[blocks.size() - 1];
+            if ( fabs(prevEntity->y - randYLoc) <= 0.1f )
+                randYLoc += 0.1f;
         }
+        
+        // row of blocks
+        
+        for ( int i = 0; i < 5; i++ ) {
+            Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH * i + 0.5, randYLoc);
+            blocks.push_back(block);
+        }
+    }
+    
+    for ( size_t j = 0; j < RAINDROPS; j++ ) {
+        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 2.0, 0.0f, 0.0f);
+        rain.push_back(raindrop);
+    }
 
+}
+
+void World::WeatherCheck() {
+    
+    raining = false;
+    snowing = false;
+    inSpace = false;
+    
+    if ( player->y < 3.0 )
+        raining = true;
+    else if ( player->y >= 3.0 )
+        snowing = true;
+    else
+        inSpace = false;
+}
+
+void World::Lightning() {
+    if ( raining && ( SDL_GetTicks() % 123 == 0 || SDL_GetTicks() % 124 == 0 ) ) {
+        glClearColor(0.4, 0.42, 0.46, 1.0);
+        //Mix_PlayChannel(-1, thunder, 0);
+    }
+    else {
+        glClearColor(fabs(0.2 + player->y / 25.0), fabs(0.22 + player->y / 25.0), fabs(0.26 + player->y / 10.0), 1.0);
+    }
+}
+
+void World::Rain() {
+    
+    for ( size_t i = 0; i < rain.size(); i++ ) {
+        
+        //rain[i]->velocity_x = (float)(rand() % 100 ) * 0.01;
+        rain[i]->velocity_x = 0.0;
+        rain[i]->velocity_y = -1.5f;
+        
+        rain[i]->velocity_y += rain[i]->acceleration_y * FIXED_TIMESTEP;
+        rain[i]->y += rain[i]->velocity_y * FIXED_TIMESTEP;
+        rain[i]->velocity_x += rain[i]->acceleration_x * FIXED_TIMESTEP;
+        rain[i]->x += rain[i]->velocity_x * FIXED_TIMESTEP;
+            
+        if ( rain[i]->y < player->y - 2.0f ) {
+            rain[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;
+            rain[i]->y = player->y + 2.0f;
+            rain[i]->acceleration_y = (float)(rand() % 100 ) * -1;
+        }
+        if ( rain[i]->x > player->x + 2.0f ) {
+            rain[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;
+            rain[i]->velocity_x = ((float)rand())/RAND_MAX * 0.5 - 0.25;
+        }
+    }
 }
 
 GLuint World::LoadTexture(const char *image_path) {
