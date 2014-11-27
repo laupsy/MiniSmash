@@ -9,83 +9,19 @@ Game::Game() {
 
 void Game::LoadObjects() {
     
-    player = new Entity(LoadTexture(spriteSheet), TILEWIDTH * playerFloating, TILEHEIGHT * cat, 0.0f, DEFAULT_Y);
+    world = new World();
+    player = new Entity(world->LoadTexture(world->spriteSheet), TILEWIDTH * playerFloating, TILEHEIGHT * cat, 0.0f, DEFAULT_Y);
     player->floating = true;
     
     // create raindrops
     for ( int i = 0; i < 400; i++ ) {
-        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 2.0, -1.33f + i / 100.0, player->y + rand() % 10 - 5);
+        Entity * raindrop = new Entity(world->LoadTexture(world->spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 2.0, -1.33f + i / 100.0, player->y + rand() % 10 - 5);
         rain.push_back(raindrop);
     }
     
-    placeEntities(blockBackground);
-    placeEntities(blockForeground);
+    world->PlaceBlocks();
     
 }
-
-void Game::placeEntities(int whichEntity) {
-    
-    int amt;
-    
-    if ( whichEntity == blockForeground)
-        amt = 24;
-    else if ( whichEntity == blockBackground)
-        amt = 30;
-    else if ( whichEntity == pinkPuff )
-        amt = 100;
-    else if ( whichEntity == bluePuff )
-        amt = 34;
-    else if ( whichEntity == cloudForeground )
-        amt = 100;
-    else
-        amt = 0;
-    
-    float randXLoc, randYLoc;
-    
-    for ( size_t i = 0; i < amt; i++ ) {
-        
-        if ( whichEntity == blockForeground ) {
-//            
-//            if ( entities.size() > 0 ) {
-//                randXLoc = entities[entities.size() - 1]->x * -1;
-//            }
-//            else {
-                if ( ( rand() % 10 ) % 2 == 0 )
-                    randXLoc = -1.33f;
-                else
-                    randXLoc = -0.1f;
-           // }
-            
-            randYLoc =  ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2 ) / 10.0f; // convert to float
-            
-            // prevent overlap
-            
-            if ( entities.size() > 0 ) {
-                Entity * prevEntity = entities[entities.size() - 1];
-                if ( fabs(prevEntity->y - randYLoc) <= 0.1f )
-                    randYLoc += 0.1f;
-            }
-            
-            // row of blocks
-            
-            for ( int i = 0; i < 5; i++ ) {
-                Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH * whichEntity, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH * i + 0.5, randYLoc);
-                entities.push_back(block);
-            }
-        }
-        
-        else if ( whichEntity == blockBackground ) {
-
-            randXLoc =  ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2*10 ) / 10.0f;
-            randYLoc = ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2*10 ) / 10.0f;
-            
-            Entity * blockbg = new Entity(LoadTexture(spriteSheet), TILEWIDTH * whichEntity, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH, randYLoc);
-            blockbg->solid = false;
-            entities.push_back(blockbg);
-        }
-    }
-}
-
 void Game::Loop() {
     
     done = false;
@@ -319,8 +255,8 @@ void Game::Render() {
     for ( size_t j = 0; j < bg.size(); j++ ) {
         bg[j]->Draw(SCALE);
     }
-    for ( size_t i = 0; i < entities.size(); i++ ) {
-        entities[i]->Draw(SCALE);
+    for ( size_t i = 0; i < world->blocks.size(); i++ ) {
+        world->blocks[i]->Draw(SCALE);
     }
     
     // draw player last so not overlapped by solids
@@ -382,57 +318,4 @@ bool Game::UpdateAndRender() {
     
     // quit if applicable
     return done;
-}
-GLuint Game::LoadTexture(const char *image_path) {
-    SDL_Surface *surface = IMG_Load(image_path);
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    SDL_FreeSurface(surface);
-    return textureID;
-}
-void Game::DrawText( GLuint textTexture, string text, float x, float y, float spacing, float size, float r, float g, float b, float a ) {
-    glBindTexture(GL_TEXTURE_2D, textTexture);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glLoadIdentity();
-    glTranslatef( x, y, 0.0 );
-    vector<float> vertexData;
-    vector<float> textCoordData;
-    vector<float> colorData;
-    float textureSize = 1.0/16.0f;
-    for ( int i=0; i <text.size(); i++ ) {
-        float textX = (float) (((int)text[i]) % 16 ) / 16.0f;
-        float textY = (float) (((int)text[i]) / 16 ) / 16.0f;
-        vertexData.insert(vertexData.end(), {
-            ((size+spacing) * i) + (-0.5f * size), 0.5f * size,
-            ((size+spacing) * i) + (-0.5f * size), -0.5f * size,
-            ((size+spacing) * i) + (0.5f * size), -0.5f * size,
-            ((size+spacing) * i) + (0.5f * size), 0.5f * size});
-        colorData.insert(colorData.end(), {r,g,b,a, r,g,b,a, r,g,b,a, r,g,b,a});
-        textCoordData.insert(textCoordData.end(),
-                             {   textX,
-                                 textY,
-                                 textX,
-                                 textY + textureSize,
-                                 textX + textureSize,
-                                 textY + textureSize,
-                                 textX + textureSize,
-                                 textY
-                             });
-    }
-    glColorPointer(4, GL_FLOAT, 0, colorData.data());
-    glEnableClientState(GL_COLOR_ARRAY);
-    glVertexPointer (2, GL_FLOAT, 0, vertexData.data());
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glTexCoordPointer(2, GL_FLOAT, 0, textCoordData.data());
-    glEnableClientState( GL_TEXTURE_COORD_ARRAY);
-    glDrawArrays(GL_QUADS, 0, text.size() * 4.0);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }

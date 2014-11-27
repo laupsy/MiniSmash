@@ -1,5 +1,5 @@
 
-#include "Entity.h"
+#include "World.h"
 
 using namespace std;
 
@@ -21,9 +21,6 @@ public:
     void RenderGameOver();
     bool UpdateAndRender();
     
-    // void buildLevel();
-    // void buildTiles();
-    // void readLevel();
     void placeEntities(int whichEntity);
     void PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event);
     void PlayerBehavior(Entity * e);
@@ -39,8 +36,6 @@ public:
     void SetCollisionToFalse(Entity * e);
     void Fall(Entity * e);
     
-    GLuint LoadTexture(const char *image_path);
-    void DrawText( GLuint textTexture, string text, float x, float y, float spacing, float size, float r, float g, float b, float a );
     
     vector<Entity*> entities;
     vector<Entity*> bg;
@@ -48,8 +43,7 @@ public:
     vector<Entity*> rain;
     
     Entity * player;
-    
-    const char * spriteSheet = "laurassecondsprite.png";
+    World * world;
     
     bool done;
     

@@ -19,6 +19,7 @@
 		CD094F601A13D223009B097E /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD094F5F1A13D223009B097E /* SDL2_mixer.framework */; };
 		CD094F611A13D223009B097E /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD094F5F1A13D223009B097E /* SDL2_mixer.framework */; };
 		CD3F725319F4B82400C74F8F /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD3F725119F4B82400C74F8F /* Entity.cpp */; };
+		CDA00CB71A269BA000C1A7B6 /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA00CB51A269BA000C1A7B6 /* World.cpp */; };
 		CDB9400F19DF8CA9002C7602 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB9400D19DF8CA9002C7602 /* Game.cpp */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +51,8 @@
 		CD094F5F1A13D223009B097E /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = ../../../../../Library/Frameworks/SDL2_mixer.framework; sourceTree = "<group>"; };
 		CD3F725119F4B82400C74F8F /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
 		CD3F725219F4B82400C74F8F /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
+		CDA00CB51A269BA000C1A7B6 /* World.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = World.cpp; sourceTree = "<group>"; };
+		CDA00CB61A269BA000C1A7B6 /* World.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = World.h; sourceTree = "<group>"; };
 		CDB9400D19DF8CA9002C7602 /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Game.cpp; path = ../Game.cpp; sourceTree = "<group>"; };
 		CDB9400E19DF8CA9002C7602 /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Game.h; path = ../Game.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -146,6 +149,8 @@
 			children = (
 				6D5A86B919AE5C710066C1FD /* main.cpp */,
 				CDB9400D19DF8CA9002C7602 /* Game.cpp */,
+				CDA00CB51A269BA000C1A7B6 /* World.cpp */,
+				CDA00CB61A269BA000C1A7B6 /* World.h */,
 				CDB9400E19DF8CA9002C7602 /* Game.h */,
 				CD3F725119F4B82400C74F8F /* Entity.cpp */,
 				CD3F725219F4B82400C74F8F /* Entity.h */,
@@ -251,6 +256,7 @@
 			files = (
 				6D5A86BA19AE5C710066C1FD /* main.cpp in Sources */,
 				CD3F725319F4B82400C74F8F /* Entity.cpp in Sources */,
+				CDA00CB71A269BA000C1A7B6 /* World.cpp in Sources */,
 				CDB9400F19DF8CA9002C7602 /* Game.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

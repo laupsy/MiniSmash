@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <SDL.h>
 #include <SDL_keyboard.h>
@@ -11,12 +10,12 @@
 #include <sstream>
 #include <SDL_mixer.h>
 
+#include <stdio.h>
 #include <Math.h>
 
 #define FIXED_TIMESTEP 0.0166666f
 #define MAX_TIMESTEPS 6
 #define OFFSET 0.01f
-
 #define TILEWIDTH  72.0f/600.0f
 #define TILEHEIGHT 72.0f/454.0f
 #define VELOCITY_X 2.0f
@@ -26,10 +25,11 @@
 #define FRICTION_X 0.99999f
 #define FRICTION_Y 0.99999f
 #define SCALE 0.5f
-
 #define DEFAULT_Y 0.3f
-
 #define LEVELWIDTH 10
+
+#define BLOCKS 20
+
 
 class Entity {
 public:
