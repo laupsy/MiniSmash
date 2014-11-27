@@ -14,6 +14,7 @@ public:
     void Lightning();
     void Rain();
     void Snow();
+    void EnterVortex();
     
     GLuint LoadTexture(const char *image_path);
     void DrawText(GLuint textTexture, std::string text, float x, float y, float spacing, float size, float r, float g, float b, float a);
@@ -31,8 +32,9 @@ public:
     Entity * player;
     
     // Y AXIS
-    float cat = 0.0f;
-    float rabbit = 1.0f;
+    float object = 0.0f;
+    float cat = 1.0f;
+    float rabbit = 2.0f;
     
     // X AXIS
     float playerFloating = 0.0f;

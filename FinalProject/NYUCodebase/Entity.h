@@ -24,11 +24,11 @@
 #define ACCELERATION_Y -9.8f // gravity
 #define FRICTION_X 0.99999f
 #define FRICTION_Y 0.99999f
-#define SCALE 0.5f
+#define SCALE 0.6f
 #define DEFAULT_Y 0.3f
 #define LEVELWIDTH 10
 
-#define BLOCKS 20
+#define BLOCKS 50
 #define RAINDROPS 200
 
 

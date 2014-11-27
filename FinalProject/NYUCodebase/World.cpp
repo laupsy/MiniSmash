@@ -16,11 +16,11 @@ void World::PlaceBlocks() {
     
     for ( size_t i = 0; i < BLOCKS; i++ ) {
         if ( ( rand() % 10 ) % 2 == 0 )
-            randXLoc = -1.33f;
+            randXLoc = -1.0f;
         else
-            randXLoc = -0.1f;
+            randXLoc = 0.3f;
     
-        randYLoc =  ( rand() % LEVELWIDTH * 10 - LEVELWIDTH/2 ) / 10.0f; // convert to float
+        randYLoc =  ( rand() % LEVELWIDTH * 20 - LEVELWIDTH/2 ) / 20.0f; // convert to float
         
         // prevent overlap
         
@@ -32,14 +32,14 @@ void World::PlaceBlocks() {
         
         // row of blocks
         
-        for ( int i = 0; i < 5; i++ ) {
-            Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 2.0f, randXLoc + TILEWIDTH * i + 0.5, randYLoc);
+        for ( int i = 0; i < 7; i++ ) {
+            Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH, TILEHEIGHT * object, randXLoc + TILEWIDTH * i, randYLoc);
             blocks.push_back(block);
         }
     }
     
     for ( size_t j = 0; j < RAINDROPS; j++ ) {
-        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 2.0, 0.0f, 0.0f);
+        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 2.0f, TILEHEIGHT * object, 0.0f, -1.0f);
         rain.push_back(raindrop);
     }
 
@@ -51,12 +51,20 @@ void World::WeatherCheck() {
     snowing = false;
     inSpace = false;
     
-    if ( player->y < 3.0 )
+    if ( player->y < 5.0 )
         raining = true;
-    else if ( player->y >= 3.0 )
+    else if ( player->y >= 5.0 )
         snowing = true;
     else
         inSpace = false;
+    
+    if ( fabs(player->y - 5.0 ) <= 1.0 ) EnterVortex();
+}
+
+void World::EnterVortex() {
+    
+    // effect that makes weather transition better
+    
 }
 
 void World::Lightning() {
@@ -65,7 +73,7 @@ void World::Lightning() {
         //Mix_PlayChannel(-1, thunder, 0);
     }
     else {
-        glClearColor(fabs(0.2 + player->y / 25.0), fabs(0.22 + player->y / 25.0), fabs(0.26 + player->y / 10.0), 1.0);
+        glClearColor(fabs(0.1 + player->y / 25.0), fabs(0.11 + player->y / 25.0), fabs(0.13 + player->y / 10.0), 1.0);
     }
 }
 
@@ -93,6 +101,10 @@ void World::Rain() {
             rain[i]->velocity_x = ((float)rand())/RAND_MAX * 0.5 - 0.25;
         }
     }
+    
+    for ( size_t i = 0; i < blocks.size(); i++ ) {
+        blocks[i]->u = TILEWIDTH * 0.0;
+    }
 }
 
 void World::Snow() {
@@ -116,6 +128,10 @@ void World::Snow() {
         if ( rain[i]->x > player->x + 2.0f ) {
             rain[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;
         }
+    }
+    
+    for ( size_t i = 0; i < blocks.size(); i++ ) {
+        blocks[i]->u = TILEWIDTH * 1.0;
     }
 }
 
