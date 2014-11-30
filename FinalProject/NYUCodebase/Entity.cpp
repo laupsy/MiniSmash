@@ -171,14 +171,13 @@ void Entity::collidesWith(Entity * e) {
     // react to collision
     
     if ( collidesBottom )
-        y += 0.0001;
+        y += 0.0005;
     else if ( collidesTop )
-        y -= 0.0001;
+        y -= 0.0005;
     else if ( collidesLeft )
-        
-        x += 0.0001;
+        x += 0.0005;
     else if ( collidesRight )
-        x -= 0.0001;
+        x -= 0.0005;
 }
 
 void Entity::Draw(float scale) {

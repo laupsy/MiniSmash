@@ -10,7 +10,7 @@ Game::Game() {
 void Game::LoadObjects() {
     
     world = new World();
-    world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * world->playerFloating, TILEHEIGHT * 3.0, 0.0f, DEFAULT_Y, true );
+    world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * 2.0, TILEHEIGHT * 0.0, 0.0f, DEFAULT_Y, true );
     world->player->player1 = true;
     
     world->PlaceBlocks();
@@ -28,6 +28,15 @@ void Game::Loop() {
 
 Game::~Game() {
     Mix_FreeMusic(music);
+    
+    for ( size_t i = 0; i < world->blocks.size(); i++ ) {
+        delete world->blocks[i];
+    }
+    
+    for ( size_t i = 0; i < world->rain.size(); i++ ) {
+        delete world->rain[i];
+    }
+    
     SDL_Quit();
 }
 
@@ -63,23 +72,15 @@ void Game::Init() {
 void Game::PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event) {
     
     if ( keys[SDL_SCANCODE_LEFT] ) {
-        
-        if ( world->raining ) e->u = TILEWIDTH * world->playerWalkingLeft;
-        if ( world->snowing ) e->u = TILEWIDTH * world->earmuffsWalkingLeft;
-        
         if ( e->floating )
-            e->velocity_x = VELOCITY_X * -1 / 10.0;
+            e->velocity_x = VELOCITY_X * -1 / 2.0;
         else
             e->velocity_x = VELOCITY_X * -1;
     }
     
     else if ( keys[SDL_SCANCODE_RIGHT] ) {
-        
-        if ( world->raining ) e->u = TILEWIDTH * world->playerWalkingRight;
-        if ( world->snowing ) e->u = TILEWIDTH * world->earmuffsWalkingRight;
-        
         if ( e->floating )
-            e->velocity_x = VELOCITY_X / 10.0;
+            e->velocity_x = VELOCITY_X / 2.0;
         else
             e->velocity_x = VELOCITY_X;
     }
@@ -151,22 +152,39 @@ void Game::PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event) {
 }
 
 void Game::PlayerBehavior(Entity * e) {
+    
     if ( e->floating ) {
-        if ( world->raining ) e->u = TILEWIDTH * world->playerFloating;
-        if ( world->snowing ) e->u = TILEWIDTH * world->earmuffsFloating;
+        if ( world->raining ) e->v = TILEHEIGHT * 0.0;
+        if ( world->snowing ) e->v = TILEHEIGHT * 0.0;
+        
+        if ( e->velocity_x < 0 ) {
+            if ( world->raining ) e->v = TILEHEIGHT * 3.0;
+            if ( world->snowing ) e->v = TILEHEIGHT * 3.0;
+        }
+        
+        if ( e->velocity_x > 0 ) {
+            if ( world->raining ) e->v = TILEHEIGHT * 2.0;
+            if ( world->snowing ) e->v = TILEHEIGHT * 2.0;
+        }
+        
+        if ( fabs(e->velocity_y) >= 0.4 ) {
+            if ( world->raining ) e->v = TILEHEIGHT * 1.0;
+            if ( world->snowing ) e->v = TILEHEIGHT * 1.0;
+        }
     }
     else {
+        
+        if ( world->raining ) e->v = TILEHEIGHT * 0.0;
+        if ( world->snowing ) e->v = TILEHEIGHT * 0.0;
+        
         if ( e->velocity_x < 0 ) {
-            if ( world->raining ) e->u = TILEWIDTH * world->playerWalkingLeft;
-            if ( world->snowing ) world->player->u = TILEWIDTH * world->earmuffsWalkingLeft;
+            if ( world->raining ) e->v = TILEHEIGHT * 3.0;
+            if ( world->snowing ) e->v = TILEHEIGHT * 3.0;
         }
-        else if ( e->velocity_x > 0 ) {
-            if ( world->raining ) e->u = TILEWIDTH * world->playerWalkingRight;
-            if ( world->snowing ) e->u = TILEWIDTH * world->earmuffsWalkingRight;
-        }
-        else {
-            if ( world->raining ) e->u = TILEWIDTH * world->playerStanding;
-            if ( world->snowing ) e->u = TILEWIDTH * world->earmuffsFloating;
+        
+        if ( e->velocity_x > 0 ) {
+            if ( world->raining ) e->v = TILEHEIGHT * 2.0;
+            if ( world->snowing ) e->v = TILEHEIGHT * 2.0;
         }
     }
 }

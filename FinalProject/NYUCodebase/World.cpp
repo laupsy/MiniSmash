@@ -12,34 +12,45 @@ World::World() {}
 
 void World::PlaceBlocks() {
     
-    float randXLoc, randYLoc;
+//    float randXLoc, randYLoc;
+//    
+//    for ( size_t i = 0; i < BLOCKS; i++ ) {
+//        if ( ( rand() % 10 ) % 2 == 0 )
+//            randXLoc = -1.0f;
+//        else
+//            randXLoc = 0.3f;
+//    
+//        randYLoc =  ( rand() % LEVELWIDTH * 20 - LEVELWIDTH/2 ) / 20.0f; // convert to float
+//        
+//        // prevent overlap
+//        
+//        if ( blocks.size() > 0 ) {
+//            Entity * prevEntity = blocks[blocks.size() - 1];
+//            if ( fabs(prevEntity->y - randYLoc) <= 0.1f )
+//                randYLoc += 0.1f;
+//        }
+//        
+//        // row of blocks
+//        
+//        for ( int i = 0; i < rand() % 20; i++ ) {
+//            Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 1.0, TILEHEIGHT * object, randXLoc + TILEWIDTH * i, randYLoc);
+//            blocks.push_back(block);
+//        }
+//    }
+
     
-    for ( size_t i = 0; i < BLOCKS; i++ ) {
-        if ( ( rand() % 10 ) % 2 == 0 )
-            randXLoc = -1.0f;
-        else
-            randXLoc = 0.3f;
+        // test platform for setting up effects and stuff
     
-        randYLoc =  ( rand() % LEVELWIDTH * 20 - LEVELWIDTH/2 ) / 20.0f; // convert to float
-        
-        // prevent overlap
-        
-        if ( blocks.size() > 0 ) {
-            Entity * prevEntity = blocks[blocks.size() - 1];
-            if ( fabs(prevEntity->y - randYLoc) <= 0.1f )
-                randYLoc += 0.1f;
-        }
-        
-        // row of blocks
-        
-        for ( int i = 0; i < 7; i++ ) {
-            Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH, TILEHEIGHT * object, randXLoc + TILEWIDTH * i, randYLoc);
-            blocks.push_back(block);
-        }
+    for ( int i = 0; i < 10; i++ ) {
+        Entity * block2 = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0, TILEHEIGHT * 0.0, -0.5 + i * TILEWIDTH * 1.1, 0.5);
+        blocks.push_back(block2);
     }
     
+    
+    
+    
     for ( size_t j = 0; j < RAINDROPS; j++ ) {
-        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 2.0f, TILEHEIGHT * object, 0.0f, -1.0f);
+        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0f, TILEHEIGHT * object, 0.0f, -1.0f);
         rain.push_back(raindrop);
     }
 
