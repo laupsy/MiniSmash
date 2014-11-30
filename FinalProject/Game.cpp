@@ -10,7 +10,7 @@ Game::Game() {
 void Game::LoadObjects() {
     
     world = new World();
-    world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * world->playerFloating, TILEHEIGHT * world->rabbit, 0.0f, DEFAULT_Y, true );
+    world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * world->playerFloating, TILEHEIGHT * 3.0, 0.0f, DEFAULT_Y, true );
     world->player->player1 = true;
     
     world->PlaceBlocks();
