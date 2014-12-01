@@ -69,12 +69,14 @@ void Entity::Float(int originPt) {
     
     // should move slower on x axis when floating
     if ( velocity_y >= 1.2f ) {
+        velocity_y = 1.15f;
         acceleration_y = -0.05f;
         acceleration_x = -0.1f;
         velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
     }
         
     else if ( velocity_y < 0.8f ) {
+        velocity_y = 0.85f;
         acceleration_y = 0.5f;
         acceleration_x = 0.1f;
     }
@@ -177,8 +179,10 @@ void Entity::collidesWith(Entity * e) {
     x_penetration = fabs(x_distance - width/2 - e->width/2);
     y_penetration = fabs(y_distance - width/2 - e->width/2);
     
-    if ( collidesBottom )
+    if ( collidesBottom ) {
         y += y_penetration;
+        floating = true;
+    }
     else if ( collidesTop )
         y -= y_penetration;
     else if ( collidesLeft )
