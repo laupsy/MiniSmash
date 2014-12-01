@@ -15,6 +15,7 @@ public:
     void Rain();
     void Snow();
     void EnterVortex();
+    void MovePlatform();
     
     GLuint LoadTexture(const char *image_path);
     void DrawText(GLuint textTexture, std::string text, float x, float y, float spacing, float size, float r, float g, float b, float a);
@@ -30,6 +31,7 @@ public:
     bool raining, snowing, inSpace;
     
     Entity * player;
+    Entity * platform;
     
     // Y AXIS
     float object = 0.0f;

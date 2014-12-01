@@ -37,7 +37,7 @@ Entity::~Entity() {
     delete this;
 }
 
-void Entity::Go() {
+void Entity::Go(int originPt) {
     
     // reset acceleration from floating
     acceleration_x = ACCELERATION_X;
@@ -58,14 +58,14 @@ void Entity::Go() {
     }
     
     // force float
-    if ( y < -1.33 && player1 ) {
+    if ( y < originPt - 1.33 && player1 ) {
         floating = true;
         velocity_y = -0.15f;
-        y = DEFAULT_Y;
+        y = originPt + DEFAULT_Y;
     }
 }
 
-void Entity::Float() {
+void Entity::Float(int originPt) {
     
     // should move slower on x axis when floating
     if ( velocity_y >= 0.2f ) {
@@ -75,11 +75,12 @@ void Entity::Float() {
     }
         
     else if ( velocity_y < -0.2f ) {
-        acceleration_x = 0.1f;
         acceleration_y = 0.5f;
+        acceleration_x = 0.1f;
     }
         
     velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
+
     
     if ( !collidesBottom ) {
         velocity_y += acceleration_y * FIXED_TIMESTEP;
@@ -170,14 +171,20 @@ void Entity::collidesWith(Entity * e) {
     
     // react to collision
     
+    x_distance = fabs(x - e->x);
+    y_distance = fabs(y - e->y);
+    
+    x_penetration = fabs(x_distance - width/2 - e->width/2);
+    y_penetration = fabs(y_distance - width/2 - e->width/2);
+    
     if ( collidesBottom )
-        y += 0.0005;
+        y += y_penetration;
     else if ( collidesTop )
-        y -= 0.0005;
+        y -= y_penetration;
     else if ( collidesLeft )
-        x += 0.0005;
+        x += x_penetration;
     else if ( collidesRight )
-        x -= 0.0005;
+        x -= x_penetration;
 }
 
 void Entity::Draw(float scale) {

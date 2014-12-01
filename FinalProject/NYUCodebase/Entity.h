@@ -27,8 +27,10 @@
 #define SCALE 0.7f
 #define DEFAULT_Y 0.3f
 #define LEVELWIDTH 10
+#define SNOW_TRANSITION 10.0
+#define SPACE_TRANSITION 20.0
 
-#define BLOCKS 20
+#define BLOCKS 50
 #define RAINDROPS 200
 
 
@@ -39,8 +41,8 @@ public:
     
     void Draw(float scale);
     void FixedUpdate();
-    void Go();
-    void Float();
+    void Go(int originPt);
+    void Float(int originPt);
     void Flutter();
     void FlutterLeft();
     

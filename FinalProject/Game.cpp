@@ -10,8 +10,12 @@ Game::Game() {
 void Game::LoadObjects() {
     
     world = new World();
-    world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * 2.0, TILEHEIGHT * 0.0, 0.0f, DEFAULT_Y, true );
+    world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * 1.0, TILEHEIGHT * 0.0, 0.0f, DEFAULT_Y, true );
     world->player->player1 = true;
+    
+    world->platform = new Entity(world->LoadTexture(world->spriteSheet), TILEWIDTH * 4.0, TILEHEIGHT * 0.0, 0.0, DEFAULT_Y - 0.7);
+    world->platform->width = TILEWIDTH * 4.0;
+    world->platform->height = TILEHEIGHT * 2.0;
     
     world->PlaceBlocks();
     
@@ -162,12 +166,12 @@ void Game::PlayerBehavior(Entity * e) {
             if ( world->snowing ) e->v = TILEHEIGHT * 3.0;
         }
         
-        if ( e->velocity_x > 0 ) {
+        else if ( e->velocity_x > 0 ) {
             if ( world->raining ) e->v = TILEHEIGHT * 2.0;
             if ( world->snowing ) e->v = TILEHEIGHT * 2.0;
         }
         
-        if ( fabs(e->velocity_y) >= 0.4 ) {
+        else if ( fabs(e->velocity_y) >= 0.4 ) {
             if ( world->raining ) e->v = TILEHEIGHT * 1.0;
             if ( world->snowing ) e->v = TILEHEIGHT * 1.0;
         }
@@ -204,7 +208,7 @@ void Game::CollisionCheck() {
     world->player->collidesBottom = false;
     world->player->collidesLeft = false;
     world->player->collidesRight = false;
-    for ( size_t i = 0; i < world->blocks.size(); i++ ) { world->player->collidesWith(world->blocks[i]); }
+    world->player->collidesWith(world->platform);
 }
 
 void Game::FixedUpdate() {
@@ -217,13 +221,14 @@ void Game::FixedUpdate() {
     CollisionCheck();
     world->WeatherCheck();
     world->Lightning();
+    world->MovePlatform();
     
     // do game effects, world effects, world->player effects
     if ( world->raining) world->Rain();
     if ( world->snowing ) world->Snow();
     
-    if ( !world->player->floating ) world->player->Go();
-    else world->player->Float();
+    if ( !world->player->floating ) world->player->Go(world->platform->y);
+    else world->player->Float(world->platform->y);
 }
 
 void Game::Render() {
@@ -234,7 +239,7 @@ void Game::Render() {
     glPushMatrix();
 
     if ( world->player->y > DEFAULT_Y )
-        camY = world->player->y * -1;
+        camY = world->platform->y * -1;
     
     glTranslatef(0.0f, camY, 0.0f);
     
@@ -244,6 +249,7 @@ void Game::Render() {
     
     // draw world->player last so not overlapped by solids
     world->player->Draw(SCALE);
+    world->platform->Draw(SCALE);
     
     for ( size_t h = 0; h < world->rain.size(); h++ ) {
         world->rain[h]->Draw(SCALE);

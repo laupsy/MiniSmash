@@ -41,19 +41,34 @@ void World::PlaceBlocks() {
     
         // test platform for setting up effects and stuff
     
-    for ( int i = 0; i < 10; i++ ) {
-        Entity * block2 = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0, TILEHEIGHT * 0.0, -0.5 + i * TILEWIDTH * 1.1, 0.5);
-        blocks.push_back(block2);
-    }
-    
-    
-    
-    
+//    Entity * platform = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 0.0, -0.2, DEFAULT_Y - 0.2);
+//    platform->width = TILEWIDTH * 4.0;
+//    platform->height = TILEHEIGHT * 2.0;
+//    blocks.push_back(platform);
+//    
+//    
+//    
     for ( size_t j = 0; j < RAINDROPS; j++ ) {
-        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0f, TILEHEIGHT * object, 0.0f, -1.0f);
+        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 4.0, 0.0f, -1.0f);
         rain.push_back(raindrop);
     }
+    
+    float randX, randY;
+    
+    for ( size_t i = 0; i < BLOCKS; i++ ) {
+        randX = (rand() % 14 - 7) / 10.0;
+        randY = (rand() % 250) / 10.0;
+        Entity * cloud = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0, TILEHEIGHT * (rand() % 2 / 1.0), randX, randY);
+        blocks.push_back(cloud);
+    }
 
+}
+
+void World::MovePlatform() {
+    platform->acceleration_y = 0.0;
+    platform->velocity_y = 1.0;
+    platform->velocity_y += platform->acceleration_y * FIXED_TIMESTEP;
+    platform->y += platform->velocity_y * FIXED_TIMESTEP;
 }
 
 void World::WeatherCheck() {
@@ -62,14 +77,14 @@ void World::WeatherCheck() {
     snowing = false;
     inSpace = false;
     
-    if ( player->y < 5.0 )
+    if ( player->y < SNOW_TRANSITION )
         raining = true;
-    else if ( player->y >= 5.0 )
+    else if ( player->y >= SNOW_TRANSITION )
         snowing = true;
     else
         inSpace = false;
     
-    if ( fabs(player->y - 5.0 ) <= 1.0 ) EnterVortex();
+    if ( fabs(player->y - SNOW_TRANSITION ) <= 1.0 ) EnterVortex();
 }
 
 void World::EnterVortex() {
@@ -84,7 +99,7 @@ void World::Lightning() {
         //Mix_PlayChannel(-1, thunder, 0);
     }
     else {
-        glClearColor(fabs(0.1 + player->y / 25.0), fabs(0.11 + player->y / 25.0), fabs(0.13 + player->y / 10.0), 1.0);
+        glClearColor(fabs(0.1 + player->y / 100.0), fabs(0.11 + player->y / 100.0), fabs(0.13 + player->y / 50.0), 1.0);
     }
 }
 
@@ -124,8 +139,8 @@ void World::Snow() {
         
         rain[i]->solid = true;
         
-        rain[i]->velocity_x = 0.1;
-        rain[i]->velocity_y = -0.05f;
+        rain[i]->velocity_x = 0.01;
+        rain[i]->velocity_y = -0.005f;
         
         rain[i]->velocity_y += rain[i]->acceleration_y * FIXED_TIMESTEP;
         rain[i]->y += rain[i]->velocity_y * FIXED_TIMESTEP;
@@ -142,8 +157,14 @@ void World::Snow() {
     }
     
     for ( size_t i = 0; i < blocks.size(); i++ ) {
-        blocks[i]->u = TILEWIDTH * 1.0;
+        blocks[i]->v = TILEHEIGHT * 2.0;
     }
+    
+    for ( size_t i = 0; i < rain.size(); i++ ) {
+        rain[i]->v = TILEHEIGHT * 3.0;
+    }
+    
+    platform->v = TILEHEIGHT * 2.0;
 }
 
 GLuint World::LoadTexture(const char *image_path) {
