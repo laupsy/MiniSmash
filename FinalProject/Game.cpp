@@ -218,7 +218,7 @@ void Game::FixedUpdate() {
     
     PlayerControls(world->player, keys, event);
     PlayerBehavior(world->player);
-    CollisionCheck();
+    
     world->WeatherCheck();
     world->Lightning();
     world->MovePlatform();
@@ -226,6 +226,8 @@ void Game::FixedUpdate() {
     // do game effects, world effects, world->player effects
     if ( world->raining) world->Rain();
     if ( world->snowing ) world->Snow();
+    
+    CollisionCheck();
     
     if ( !world->player->floating ) world->player->Go(world->platform->y);
     else world->player->Float(world->platform->y);
@@ -239,7 +241,7 @@ void Game::Render() {
     glPushMatrix();
 
     if ( world->player->y > DEFAULT_Y )
-        camY = world->platform->y * -1;
+        camY = world->platform->y * -1 - 0.5;
     
     glTranslatef(0.0f, camY, 0.0f);
     

@@ -68,13 +68,13 @@ void Entity::Go(int originPt) {
 void Entity::Float(int originPt) {
     
     // should move slower on x axis when floating
-    if ( velocity_y >= 0.2f ) {
-        acceleration_y = -0.5f;
+    if ( velocity_y >= 1.2f ) {
+        acceleration_y = -0.05f;
         acceleration_x = -0.1f;
         velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
     }
         
-    else if ( velocity_y < -0.2f ) {
+    else if ( velocity_y < 0.8f ) {
         acceleration_y = 0.5f;
         acceleration_x = 0.1f;
     }
