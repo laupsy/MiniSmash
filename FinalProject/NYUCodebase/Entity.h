@@ -16,21 +16,21 @@
 #define FIXED_TIMESTEP 0.0166666f
 #define MAX_TIMESTEPS 6
 #define OFFSET 0.01f
-#define TILEWIDTH 72.0f/600.0f
-#define TILEHEIGHT 72.0f/454.0f
+#define TILEWIDTH 72.0f/900.0f
+#define TILEHEIGHT 72.0f/681.0f
 #define VELOCITY_X 2.0f
 #define VELOCITY_Y 1.0f
 #define ACCELERATION_X 1.5f
 #define ACCELERATION_Y -9.8f // gravity
 #define FRICTION_X 0.99999f
 #define FRICTION_Y 0.99999f
-#define SCALE 0.7f
+#define SCALE 0.8f
 #define DEFAULT_Y 0.3f
 #define LEVELWIDTH 10
 #define SNOW_TRANSITION 10.0
 #define SPACE_TRANSITION 20.0
 
-#define BLOCKS 50
+#define BLOCKS 100
 #define RAINDROPS 200
 
 

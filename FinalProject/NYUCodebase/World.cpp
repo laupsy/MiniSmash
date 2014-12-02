@@ -56,8 +56,8 @@ void World::PlaceBlocks() {
     float randX, randY;
     
     for ( size_t i = 0; i < BLOCKS; i++ ) {
-        randX = (rand() % 14 - 7) / 10.0;
-        randY = (rand() % 250) / 10.0;
+        randX = (rand() % 16 - 8) / 10.0;
+        randY = (rand() % 400) / 10.0;
         Entity * cloud = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0, TILEHEIGHT * (rand() % 2 / 1.0), randX, randY);
         blocks.push_back(cloud);
     }
