@@ -17,6 +17,7 @@ public:
     void Space();
     void EnterVortex();
     void MovePlatform();
+    void AnchorStatics();
     
     GLuint LoadTexture(const char *image_path);
     void DrawText(GLuint textTexture, std::string text, float x, float y, float spacing, float size, float r, float g, float b, float a);
@@ -24,6 +25,7 @@ public:
     std::vector<Entity*> blocks;
     std::vector<Entity*> rain;
     std::vector<Entity*> projectiles;
+    std::vector<Entity*> statics;
     
     std::vector<float> vertexData;
     std::vector<float> texCoordData;

@@ -18,8 +18,8 @@
 #define OFFSET 0.01f
 #define TILEWIDTH 72.0f/990.0f
 #define TILEHEIGHT 72.0f/749.0f
-#define VELOCITY_X 2.0f
-#define VELOCITY_Y 1.0f
+#define VELOCITY_X 3.0f
+#define VELOCITY_Y 2.0f
 #define ACCELERATION_X 1.5f
 #define ACCELERATION_Y -9.8f // gravity
 #define FRICTION_X 0.99999f

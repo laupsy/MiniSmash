@@ -237,10 +237,9 @@ void Game::ShootProjectile(Entity * e) {
         e->acceleration_x = -ACCELERATION_X;
         shake = true;
     }
-    else if ( e->x <= -1.32 || e->x >= 1.32 ) {
+    else if ( e->x <= -5.32 || e->x >= 5.32 ) {
         world->player->notShooting = true;
-        if ( e->x <= -5.32 || e->x >= 1.33 )
-            shake = false;
+        shake = false;
     }
     else {
         shake = false;
@@ -286,6 +285,7 @@ void Game::FixedUpdate() {
     world->WeatherCheck();
     world->Lightning();
     world->MovePlatform();
+    world->AnchorStatics();
     
     // do game effects, world effects, world->player effects
     if ( world->raining) world->Rain();
@@ -335,6 +335,12 @@ void Game::Render() {
     
     for ( size_t h = 0; h < world->rain.size(); h++ ) {
         world->rain[h]->Draw(SCALE);
+    }
+    
+    // STATICS
+    
+    for ( size_t k = 0; k < world->statics.size(); k++ ) {
+        world->statics[k]->Draw(SCALE);
     }
     
     ///////
