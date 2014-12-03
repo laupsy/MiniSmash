@@ -135,7 +135,8 @@ void Entity::FlutterLeft() {
 }
 
 void Entity::ShootProjectile(Entity * e, Entity * player) {
-    e->velocity_x = 1.0f;
+    if ( player->velocity_x == VELOCITY_X ) e->velocity_x = 1.0f;
+    else e->velocity_x = -1.0f;
     e->velocity_y = 1.0f;
     e->x = player->x + TILEWIDTH;
 }

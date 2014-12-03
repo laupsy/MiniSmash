@@ -10,7 +10,7 @@ Game::Game() {
 void Game::LoadObjects() {
     
     world = new World();
-    world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * 1.0, TILEHEIGHT * 0.0, 0.0f, DEFAULT_Y, true );
+    world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * 2.0, TILEHEIGHT * 0.0, 0.0f, DEFAULT_Y, true );
     world->player->player1 = true;
     
     world->platform = new Entity(world->LoadTexture(world->spriteSheet), TILEWIDTH * 4.0, TILEHEIGHT * 0.0, 0.0, DEFAULT_Y - 0.7);
@@ -71,6 +71,8 @@ void Game::Init() {
     
     // play music
     //Mix_PlayMusic(music, -1);
+    
+    shake = false;
 }
 
 void Game::PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event) {
@@ -153,7 +155,7 @@ void Game::PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event) {
             }
             
             if ( event.key.keysym.scancode == SDL_SCANCODE_Q && !event.key.repeat ) {
-                if ( world->player->player1 ) {
+                if ( world->player->player1 && world->player->velocity_x != 0.0f ) {
                     e->ShootProjectile(world->projectiles[0], world->player);
                     world->player->notShooting = false;
                 }
@@ -215,6 +217,31 @@ void Game::Update(float elapsed) {
     }
 }
 
+void Game::ShootProjectile(Entity * e) {
+    
+    e->acceleration_x = ACCELERATION_X * 15.0;
+    if ( world->player->velocity_x < 0.0 ) e->acceleration_x = ACCELERATION_X * -15.0;
+    e->acceleration_y = ACCELERATION_Y;
+
+    e->velocity_x += e->acceleration_x * FIXED_TIMESTEP;
+    e->x += e->velocity_x * FIXED_TIMESTEP;
+    
+    e->velocity_y += e->acceleration_y * FIXED_TIMESTEP;
+    e->y += e->velocity_y * FIXED_TIMESTEP;
+
+    if ( e->x > 1.33 && e->x < 5.32 ) {
+        e->acceleration_x = ACCELERATION_X;
+        shake = true;
+    }
+    else if ( e->x < -1.33 && e->x > -5.32 ) {
+        e->acceleration_x = ACCELERATION_X;
+        shake = true;
+    }
+    else {
+        shake = false;
+    }
+}
+
 void Game::CollisionCheck() {
     
     world->player->collidesTop = false;
@@ -225,24 +252,22 @@ void Game::CollisionCheck() {
 }
 
 void Game::ProjectileCheck() {
-    for ( size_t i = 0; i < world->projectiles.size(); i++ ) {
-        if ( world->player->notShooting ) world->projectiles[i]->x = 0.0;
+    if ( world->player->player1 ) {
+        if ( world->player->notShooting )
+            world->projectiles[0]->x = -4.0;
         else {
-            // reset acceleration from floating
-            world->projectiles[i]->acceleration_x = ACCELERATION_X * 15.0;
-            world->projectiles[i]->acceleration_y = ACCELERATION_Y;
-            
-            // x movement
-            world->projectiles[i]->velocity_x += world->projectiles[i]->acceleration_x * FIXED_TIMESTEP;
-            world->projectiles[i]->x += world->projectiles[i]->velocity_x * FIXED_TIMESTEP;
-        
-            world->projectiles[i]->velocity_y += world->projectiles[i]->acceleration_y * FIXED_TIMESTEP;
-            world->projectiles[i]->y += world->projectiles[i]->velocity_y * FIXED_TIMESTEP;
-            
+            ShootProjectile(world->projectiles[0]);
+            world->projectiles[0]->y = world->player->y;
         }
-        world->projectiles[i]->y = world->player->y;
     }
-    cout << world->projectiles[0]->velocity_x << endl;
+    if ( world->player->player2 ) {
+        if ( world->player->notShooting )
+            world->projectiles[1]->x = -4.0;
+        else {
+            ShootProjectile(world->projectiles[1]);
+            world->projectiles[1]->y = world->player->y;
+        }
+    }
 }
 
 void Game::FixedUpdate() {
@@ -279,7 +304,13 @@ void Game::Render() {
     if ( world->player->y > DEFAULT_Y )
         camY = world->platform->y * -1 - 0.5;
     
-    glTranslatef(0.0f, camY, 0.0f);
+    if ( shake == true ) {
+        glTranslatef( (rand() % 6 - 3)/ 100.0, camY + (rand() % 8 - 4)/100.0, 0.0f);
+    }
+    
+    else {
+        glTranslatef(0.0f, camY, 0.0f);
+    }
     
     for ( size_t i = 0; i < world->blocks.size(); i++ ) {
         world->blocks[i]->Draw(SCALE);

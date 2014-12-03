@@ -19,6 +19,7 @@ public:
     void RenderStart();
     void RenderLevel();
     void RenderGameOver();
+    
     bool UpdateAndRender();
     
     void PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event);
@@ -26,6 +27,7 @@ public:
     void Lightning();
     void CollisionCheck();
     void ProjectileCheck();
+    void ShootProjectile(Entity * e);
     
     void Rain();
     
@@ -42,6 +44,7 @@ public:
     World * world;
     
     bool done;
+    bool shake;
     
     float elapsed;
     float lastFrameTicks;

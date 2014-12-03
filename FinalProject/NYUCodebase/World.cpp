@@ -50,7 +50,7 @@ void World::PlaceBlocks() {
 //
     
     for ( size_t k = 0; k < 2; k++ ) {
-        Entity * projectile = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 6.0, 0.0f, 0.0f);
+        Entity * projectile = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 6.0, -4.0f, 0.0f);
         projectiles.push_back(projectile);
     }
     
