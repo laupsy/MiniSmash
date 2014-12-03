@@ -10,7 +10,7 @@ Game::Game() {
 void Game::LoadObjects() {
     
     world = new World();
-    world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * 2.0, TILEHEIGHT * 0.0, 0.0f, DEFAULT_Y, true );
+    world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * 1.0, TILEHEIGHT * 0.0, 0.0f, DEFAULT_Y, true );
     world->player->player1 = true;
     
     world->platform = new Entity(world->LoadTexture(world->spriteSheet), TILEWIDTH * 4.0, TILEHEIGHT * 0.0, 0.0, DEFAULT_Y - 0.7);
@@ -151,6 +151,13 @@ void Game::PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event) {
                 // glScalef(1.0, -1.0, 1.0); this would be cool for like a reverse gravity mode
                 
             }
+            
+            if ( event.key.keysym.scancode == SDL_SCANCODE_Q && !event.key.repeat ) {
+                if ( world->player->player1 ) {
+                    e->ShootProjectile(world->projectiles[0], world->player);
+                    world->player->notShooting = false;
+                }
+            }
         }
     }
 }
@@ -160,34 +167,41 @@ void Game::PlayerBehavior(Entity * e) {
     if ( e->floating ) {
         if ( world->raining ) e->v = TILEHEIGHT * 0.0;
         if ( world->snowing ) e->v = TILEHEIGHT * 4.0;
+        if ( world->inSpace ) e->v = TILEHEIGHT * 7.0;
         
         if ( e->velocity_x < 0 ) {
             if ( world->raining ) e->v = TILEHEIGHT * 3.0;
             if ( world->snowing ) e->v = TILEHEIGHT * 6.0;
+            if ( world->inSpace ) e->v = TILEHEIGHT * 9.0;
         }
         
         else if ( e->velocity_x > 0 ) {
             if ( world->raining ) e->v = TILEHEIGHT * 2.0;
             if ( world->snowing ) e->v = TILEHEIGHT * 5.0;
+            if ( world->inSpace ) e->v = TILEHEIGHT * 8.0;
         }
         
         else if ( fabs(e->velocity_y) >= 0.4 ) {
             if ( world->raining ) e->v = TILEHEIGHT * 1.0;
             if ( world->snowing ) e->v = TILEHEIGHT * 4.0;
+            if ( world->inSpace ) e->v = TILEHEIGHT * 7.0;
         }
     }
     else {
         if ( world->raining ) e->v = TILEHEIGHT * 0.0;
         if ( world->snowing ) e->v = TILEHEIGHT * 4.0;
+        if ( world->inSpace ) e->v = TILEHEIGHT * 7.0;
         
         if ( e->velocity_x < 0 ) {
             if ( world->raining ) e->v = TILEHEIGHT * 3.0;
             if ( world->snowing ) e->v = TILEHEIGHT * 6.0;
+            if ( world->inSpace ) e->v = TILEHEIGHT * 9.0;
         }
         
         if ( e->velocity_x > 0 ) {
             if ( world->raining ) e->v = TILEHEIGHT * 2.0;
             if ( world->snowing ) e->v = TILEHEIGHT * 5.0;
+            if ( world->inSpace ) e->v = TILEHEIGHT * 8.0;
         }
     }
 }
@@ -210,6 +224,27 @@ void Game::CollisionCheck() {
     world->player->collidesWith(world->platform);
 }
 
+void Game::ProjectileCheck() {
+    for ( size_t i = 0; i < world->projectiles.size(); i++ ) {
+        if ( world->player->notShooting ) world->projectiles[i]->x = 0.0;
+        else {
+            // reset acceleration from floating
+            world->projectiles[i]->acceleration_x = ACCELERATION_X * 15.0;
+            world->projectiles[i]->acceleration_y = ACCELERATION_Y;
+            
+            // x movement
+            world->projectiles[i]->velocity_x += world->projectiles[i]->acceleration_x * FIXED_TIMESTEP;
+            world->projectiles[i]->x += world->projectiles[i]->velocity_x * FIXED_TIMESTEP;
+        
+            world->projectiles[i]->velocity_y += world->projectiles[i]->acceleration_y * FIXED_TIMESTEP;
+            world->projectiles[i]->y += world->projectiles[i]->velocity_y * FIXED_TIMESTEP;
+            
+        }
+        world->projectiles[i]->y = world->player->y;
+    }
+    cout << world->projectiles[0]->velocity_x << endl;
+}
+
 void Game::FixedUpdate() {
     
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
@@ -225,7 +260,9 @@ void Game::FixedUpdate() {
     // do game effects, world effects, world->player effects
     if ( world->raining) world->Rain();
     if ( world->snowing ) world->Snow();
+    if ( world->inSpace ) world->Space();
     
+    ProjectileCheck();
     CollisionCheck();
     
     if ( !world->player->floating ) world->player->Go(world->platform->y);
@@ -246,6 +283,10 @@ void Game::Render() {
     
     for ( size_t i = 0; i < world->blocks.size(); i++ ) {
         world->blocks[i]->Draw(SCALE);
+    }
+    
+    for ( size_t j = 0; j < world->projectiles.size(); j++ ) {
+        world->projectiles[j]->Draw(SCALE);
     }
     
     // draw world->player last so not overlapped by solids

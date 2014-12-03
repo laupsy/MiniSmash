@@ -26,6 +26,7 @@ textureID(textureID),u(u+0.0009),v(v+0.0009),x(x),y(y), floating(floating) {
     collidesBottom = false;
     isStatic = false;
     solid = true;
+    notShooting = true;
 }
 
 float Entity::lerp(float v0, float v1, float t) {
@@ -82,7 +83,6 @@ void Entity::Float(int originPt) {
     }
         
     velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
-
     
     if ( !collidesBottom ) {
         velocity_y += acceleration_y * FIXED_TIMESTEP;
@@ -132,6 +132,12 @@ void Entity::FlutterLeft() {
     y += velocity_y * FIXED_TIMESTEP;
     velocity_x += acceleration_y * FIXED_TIMESTEP;
     x -= velocity_x * FIXED_TIMESTEP;
+}
+
+void Entity::ShootProjectile(Entity * e, Entity * player) {
+    e->velocity_x = 1.0f;
+    e->velocity_y = 1.0f;
+    e->x = player->x + TILEWIDTH;
 }
 
 void Entity::collidesWith(Entity * e) {

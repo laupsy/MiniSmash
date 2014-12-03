@@ -25,6 +25,7 @@ public:
     void PlayerBehavior(Entity * e);
     void Lightning();
     void CollisionCheck();
+    void ProjectileCheck();
     
     void Rain();
     

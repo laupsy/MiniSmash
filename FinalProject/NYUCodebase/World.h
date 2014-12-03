@@ -14,6 +14,7 @@ public:
     void Lightning();
     void Rain();
     void Snow();
+    void Space();
     void EnterVortex();
     void MovePlatform();
     
@@ -22,6 +23,7 @@ public:
     
     std::vector<Entity*> blocks;
     std::vector<Entity*> rain;
+    std::vector<Entity*> projectiles;
     
     std::vector<float> vertexData;
     std::vector<float> texCoordData;

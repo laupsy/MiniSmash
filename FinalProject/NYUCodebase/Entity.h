@@ -16,15 +16,15 @@
 #define FIXED_TIMESTEP 0.0166666f
 #define MAX_TIMESTEPS 6
 #define OFFSET 0.01f
-#define TILEWIDTH 72.0f/900.0f
-#define TILEHEIGHT 72.0f/681.0f
+#define TILEWIDTH 72.0f/990.0f
+#define TILEHEIGHT 72.0f/749.0f
 #define VELOCITY_X 2.0f
 #define VELOCITY_Y 1.0f
 #define ACCELERATION_X 1.5f
 #define ACCELERATION_Y -9.8f // gravity
 #define FRICTION_X 0.99999f
 #define FRICTION_Y 0.99999f
-#define SCALE 0.8f
+#define SCALE 1.0f
 #define DEFAULT_Y 0.3f
 #define LEVELWIDTH 10
 #define SNOW_TRANSITION 10.0
@@ -45,6 +45,7 @@ public:
     void Float(int originPt);
     void Flutter();
     void FlutterLeft();
+    void ShootProjectile(Entity * e, Entity * player);
     
     void collidesWith(Entity * e);
     bool IsColliding(std::vector<Entity*> entities);
@@ -67,6 +68,8 @@ public:
     bool floating;
     bool jumping;
     bool player1;
+    bool player2;
+    bool notShooting;
     
     GLuint textureID;
 };
