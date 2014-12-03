@@ -12,50 +12,13 @@ World::World() {}
 
 void World::PlaceBlocks() {
     
-//    float randXLoc, randYLoc;
-//    
-//    for ( size_t i = 0; i < BLOCKS; i++ ) {
-//        if ( ( rand() % 10 ) % 2 == 0 )
-//            randXLoc = -1.0f;
-//        else
-//            randXLoc = 0.3f;
-//    
-//        randYLoc =  ( rand() % LEVELWIDTH * 20 - LEVELWIDTH/2 ) / 20.0f; // convert to float
-//        
-//        // prevent overlap
-//        
-//        if ( blocks.size() > 0 ) {
-//            Entity * prevEntity = blocks[blocks.size() - 1];
-//            if ( fabs(prevEntity->y - randYLoc) <= 0.1f )
-//                randYLoc += 0.1f;
-//        }
-//        
-//        // row of blocks
-//        
-//        for ( int i = 0; i < rand() % 20; i++ ) {
-//            Entity * block = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 1.0, TILEHEIGHT * object, randXLoc + TILEWIDTH * i, randYLoc);
-//            blocks.push_back(block);
-//        }
-//    }
-
-    
-        // test platform for setting up effects and stuff
-    
-//    Entity * platform = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0, TILEHEIGHT * 0.0, -0.2, DEFAULT_Y - 0.2);
-//    platform->width = TILEWIDTH * 4.0;
-//    platform->height = TILEHEIGHT * 2.0;
-//    blocks.push_back(platform);
-//    
-//    
-//
-    
     for ( size_t k = 0; k < 2; k++ ) {
         Entity * projectile = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 6.0, -4.0f, 0.0f);
         projectiles.push_back(projectile);
     }
     
     for ( size_t j = 0; j < RAINDROPS; j++ ) {
-        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 4.0, 0.0f, -1.0f);
+        Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 4.0, 0.0, -3.33);
         rain.push_back(raindrop);
     }
     
@@ -133,7 +96,7 @@ void World::Rain() {
         
         if ( rain[i]->y < player->y - 2.0f ) {
             rain[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;
-            rain[i]->y = player->y + 2.0f;
+            rain[i]->y = player->y + 3.0f;
             rain[i]->acceleration_y = (float)(rand() % 100 ) * -1;
         }
         if ( rain[i]->x > player->x + 2.0f ) {
@@ -201,7 +164,7 @@ void World::Space() {
         
         if ( blocks[i]->y < platform->y - 2.0f ) {
             blocks[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;
-            blocks[i]->y = platform->y + ( rand() % 16 - 7.5)/ 10.0;
+            blocks[i]->y = platform->y + 4.0 + ( rand() % 16 - 8)/ 10.0;
         }
     }
     

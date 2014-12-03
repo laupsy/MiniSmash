@@ -234,8 +234,13 @@ void Game::ShootProjectile(Entity * e) {
         shake = true;
     }
     else if ( e->x < -1.33 && e->x > -5.32 ) {
-        e->acceleration_x = ACCELERATION_X;
+        e->acceleration_x = -ACCELERATION_X;
         shake = true;
+    }
+    else if ( e->x <= -1.32 || e->x >= 1.32 ) {
+        world->player->notShooting = true;
+        if ( e->x <= -5.32 || e->x >= 1.33 )
+            shake = false;
     }
     else {
         shake = false;
@@ -290,7 +295,11 @@ void Game::FixedUpdate() {
     ProjectileCheck();
     CollisionCheck();
     
-    if ( !world->player->floating ) world->player->Go(world->platform->y);
+    if ( shake ) {
+        world->player->velocity_x = 0.0f;
+    }
+    
+    if ( !world->player->floating && !shake ) world->player->Go(world->platform->y);
     else world->player->Float(world->platform->y);
 }
 

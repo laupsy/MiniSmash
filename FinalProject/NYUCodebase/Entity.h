@@ -31,7 +31,7 @@
 #define SPACE_TRANSITION 20.0
 
 #define BLOCKS 100
-#define RAINDROPS 200
+#define RAINDROPS 100
 
 
 class Entity {
