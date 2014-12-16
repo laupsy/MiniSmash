@@ -77,87 +77,115 @@ void Game::Init() {
 
 void Game::PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event) {
     
-    if ( keys[SDL_SCANCODE_LEFT] ) {
+    Uint8 ctrl_left, ctrl_right, ctrl_up, ctrl_down;
+    Uint8 ctrl_float;
+    SDL_Scancode ctrl_shootProjectile, ctrl_jump;
+    
+    // Player 1 controls
+    
+    if ( e->player1 ) {
+        ctrl_left = keys[SDL_SCANCODE_LEFT];
+        ctrl_right = keys[SDL_SCANCODE_RIGHT];
+        ctrl_up = keys[SDL_SCANCODE_UP];
+        ctrl_down = keys[SDL_SCANCODE_DOWN];
+        ctrl_jump = SDL_SCANCODE_SEMICOLON;
+        ctrl_shootProjectile = SDL_SCANCODE_K;
+        ctrl_float = keys[SDL_SCANCODE_L];
+    }
+    
+    // Player 2 controls
+    
+    else {
+        ctrl_left = keys[SDL_SCANCODE_Q];
+        ctrl_right = keys[SDL_SCANCODE_E];
+        ctrl_up = keys[SDL_SCANCODE_2];
+        ctrl_down = keys[SDL_SCANCODE_S];
+        ctrl_jump = SDL_SCANCODE_R;
+        ctrl_shootProjectile = SDL_SCANCODE_W;
+        ctrl_float = keys[SDL_SCANCODE_F];
+    }
+    
+    if ( ctrl_left ) {
         if ( e->floating )
             e->velocity_x = VELOCITY_X * -1 / 2.0;
         else
             e->velocity_x = VELOCITY_X * -1;
     }
     
-    else if ( keys[SDL_SCANCODE_RIGHT] ) {
+    else if ( ctrl_right ) {
         if ( e->floating )
             e->velocity_x = VELOCITY_X / 2.0;
         else
             e->velocity_x = VELOCITY_X;
     }
-    else if ( keys[SDL_SCANCODE_DOWN] ) {
+    else if ( ctrl_down ) {
         if ( e->floating ) {
             e->velocity_y += VELOCITY_Y * -1 / 50;
             e->velocity_x = 0.0f;
         }
     }
-    else if ( keys[SDL_SCANCODE_UP] ) {
+    else if ( ctrl_up ) {
         if ( e->floating ) {
             e->velocity_y += VELOCITY_Y / 50;
             e->velocity_x = 0.0f;
         }
     }
-    else if ( keys[SDL_SCANCODE_F] ) {
+    else if ( ctrl_float ) {
         e->velocity_y = -0.5f;
         e->floating = true;
     }
     else
         e->velocity_x = 0.0f;
     
-    if ( world->player->collidesBottom ) {
-        world->player->velocity_y = 0.0f;
+    if ( e->collidesBottom ) {
+        e->velocity_y = 0.0f;
+        shake = true;
     }
     
-    if ( world->player->collidesTop ) {
-        world->player->velocity_y = VELOCITY_Y * -1;
+    if ( e->collidesTop ) {
+        e->velocity_y = VELOCITY_Y * -1;
     }
     
-    if ( world->player->collidesLeft ) {
-        world->player->velocity_x = 0;
+    if ( e->collidesLeft ) {
+        e->velocity_x = 0;
     }
     
-    if ( world->player->collidesRight ) {
-        world->player->velocity_x = 0;
+    if ( e->collidesRight ) {
+        e->velocity_x = 0;
     }
     
-    if ( world->player->x > 1.33 ) {
-        world->player->x = -1.33;
+    if ( e->x > 1.33 ) {
+        e->x = -1.33;
     }
     
-    if ( world->player->x < -1.33 ) {
-        world->player->x = 1.33;
+    if ( e->x < -1.33 ) {
+        e->x = 1.33;
     }
     
     while (SDL_PollEvent(&event)) {
         
         if (event.type == SDL_KEYDOWN ) {
             
-            if ( event.key.keysym.scancode == SDL_SCANCODE_SPACE && !event.key.repeat ) {
+            if ( event.key.keysym.scancode == ctrl_jump && !event.key.repeat ) {
                 
+                e->floating = false;
                 
-                world->player->floating = false;
-                
-                if ( world->player->collidesBottom ) {
-                    world->player->collidesBottom = false;
+                if ( e->collidesBottom ) {
+                    e->collidesBottom = false;
                 }
                 
-                if ( !world->player->jumping ) {
-                    world->player->velocity_y = 4.0f;
+                if ( !e->jumping ) {
+                    e->velocity_y = 4.0f;
                 }
                 
                 // glScalef(1.0, -1.0, 1.0); this would be cool for like a reverse gravity mode
                 
             }
             
-            if ( event.key.keysym.scancode == SDL_SCANCODE_Q && !event.key.repeat ) {
-                if ( world->player->player1 && world->player->velocity_x != 0.0f ) {
-                    e->ShootProjectile(world->projectiles[0], world->player);
-                    world->player->notShooting = false;
+            if ( event.key.keysym.scancode == ctrl_shootProjectile && !event.key.repeat ) {
+                if ( e->player1 && e->velocity_x != 0.0f ) {
+                    e->ShootProjectile(world->projectiles[0], e);
+                    e->notShooting = false;
                 }
             }
         }
@@ -297,7 +325,13 @@ void Game::FixedUpdate() {
     
     if ( shake ) {
         world->player->velocity_x = 0.0f;
+        world->player->velocity_y = 1.0f;
     }
+    
+    // jump shake range cutoff
+    float jumpshake = fabs((world->player->y - world->player->height/2) - (world->platform->y + world->platform->height/2));
+    
+    if ( jumpshake > 0.095 & jumpshake < 0.1 ) shake = false;
     
     if ( !world->player->floating && !shake ) world->player->Go(world->platform->y);
     else world->player->Float(world->platform->y);
