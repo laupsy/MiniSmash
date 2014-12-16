@@ -31,10 +31,10 @@ void World::PlaceBlocks() {
         blocks.push_back(cloud);
     }
     
-    Entity * frame = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 10.0f, TILEHEIGHT * 0.0, 0.86, 0.0);
-    frame->width = TILEWIDTH * 2.0;
-    frame->height = TILEHEIGHT * 11.4;
-    statics.push_back(frame);
+//    Entity * frame = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 10.0f, TILEHEIGHT * 0.0, 0.86, 0.0);
+//    frame->width = TILEWIDTH * 2.0;
+//    frame->height = TILEHEIGHT * 11.4;
+//    statics.push_back(frame);
 
 }
 
