@@ -25,7 +25,7 @@ public:
     void PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event);
     void PlayerBehavior(Entity * e);
     void Lightning();
-    void CollisionCheck();
+    void CollisionCheck(Entity * e);
     void ProjectileCheck();
     void ShootProjectile(Entity * e);
     

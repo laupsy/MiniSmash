@@ -35,6 +35,7 @@ public:
     bool raining, snowing, inSpace;
     
     Entity * player;
+    Entity * player2;
     Entity * platform;
     
     // Y AXIS

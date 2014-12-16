@@ -13,6 +13,9 @@ void Game::LoadObjects() {
     world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * 2.0, TILEHEIGHT * 0.0, 0.0f, DEFAULT_Y, true );
     world->player->player1 = true;
     
+    world->player2 = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * 1.0, TILEHEIGHT * 0.0, 0.0f, DEFAULT_Y, true );
+    world->player2->player2 = true;
+    
     world->platform = new Entity(world->LoadTexture(world->spriteSheet), TILEWIDTH * 4.0, TILEHEIGHT * 0.0, 0.0, DEFAULT_Y - 0.7);
     world->platform->width = TILEWIDTH * 6.0;
     world->platform->height = TILEHEIGHT * 2.0;
@@ -274,13 +277,14 @@ void Game::ShootProjectile(Entity * e) {
     }
 }
 
-void Game::CollisionCheck() {
+void Game::CollisionCheck(Entity * e) {
     
-    world->player->collidesTop = false;
-    world->player->collidesBottom = false;
-    world->player->collidesLeft = false;
-    world->player->collidesRight = false;
-    world->player->collidesWith(world->platform);
+    e->collidesTop = false;
+    e->collidesBottom = false;
+    e->collidesLeft = false;
+    e->collidesRight = false;
+    e->collidesWith(world->platform);
+    
 }
 
 void Game::ProjectileCheck() {
@@ -321,7 +325,8 @@ void Game::FixedUpdate() {
     if ( world->inSpace ) world->Space();
     
     ProjectileCheck();
-    CollisionCheck();
+    CollisionCheck(world->player);
+    CollisionCheck(world->player2);
     
     if ( shake ) {
         world->player->velocity_x = 0.0f;
@@ -364,15 +369,15 @@ void Game::Render() {
     }
     
     // draw world->player last so not overlapped by solids
-    world->player->Draw(SCALE);
     world->platform->Draw(SCALE);
+    world->player->Draw(SCALE);
+    world->player2->Draw(SCALE);
     
     for ( size_t h = 0; h < world->rain.size(); h++ ) {
         world->rain[h]->Draw(SCALE);
     }
     
     // STATICS
-    
     for ( size_t k = 0; k < world->statics.size(); k++ ) {
         world->statics[k]->Draw(SCALE);
     }
