@@ -27,20 +27,20 @@ void World::PlaceBlocks() {
     for ( size_t i = 0; i < BLOCKS; i++ ) {
         randX = (rand() % 16 - 8) / 10.0;
         randY = (rand() % 400) / 10.0;
-        Entity * cloud = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0, TILEHEIGHT * (rand() % 2 / 1.0), randX, randY);
+        Entity * cloud = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0, TILEHEIGHT * 2, randX, randY);
         blocks.push_back(cloud);
     }
     
-//    Entity * frame = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 10.0f, TILEHEIGHT * 0.0, 0.86, 0.0);
-//    frame->width = TILEWIDTH * 2.0;
-//    frame->height = TILEHEIGHT * 11.4;
-//    statics.push_back(frame);
+    Entity * frame = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 4.0f, TILEHEIGHT * 6.0, 0.05, 0.0);
+    frame->width = TILEWIDTH * 8.0;
+    frame->height = TILEHEIGHT * 1;
+    statics.push_back(frame);
 
 }
 
 void World::AnchorStatics() {
     for ( size_t i = 0; i < statics.size(); i++ ) {
-        statics[i]->y = platform->y + 0.39;
+        statics[i]->y = platform->y - 0.4;
     }
 }
 

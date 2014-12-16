@@ -26,7 +26,9 @@ textureID(textureID),u(u+0.0009),v(v+0.0009),x(x),y(y), floating(floating) {
     collidesBottom = false;
     isStatic = false;
     solid = true;
+    hit = false;
     notShooting = true;
+    damage = 0;
 }
 
 float Entity::lerp(float v0, float v1, float t) {
@@ -64,9 +66,17 @@ void Entity::Go(int originPt) {
         velocity_y = -0.15f;
         y = originPt + DEFAULT_Y;
     }
+    // force float
+    if ( y < originPt - 1.33 && player2 ) {
+        floating = true;
+        velocity_y = -0.15f;
+        y = originPt + DEFAULT_Y;
+    }
 }
 
 void Entity::Float(int originPt) {
+    
+    const Uint8 *keys = SDL_GetKeyboardState(NULL);
     
     // should move slower on x axis when floating
     if ( velocity_y >= 1.2f ) {
@@ -81,7 +91,23 @@ void Entity::Float(int originPt) {
         acceleration_y = 0.5f;
         acceleration_x = 0.1f;
     }
-        
+    
+    if ( keys[SDL_SCANCODE_UP] && player1 ) {
+        velocity_y = 2.0f;
+    }
+    
+    if ( keys[SDL_SCANCODE_DOWN] && player1 ) {
+        velocity_y = -2.0f;
+    }
+    
+    if ( keys[SDL_SCANCODE_2] && player2 ) {
+        velocity_y = 2.0f;
+    }
+    
+    if ( keys[SDL_SCANCODE_S] && player2 ) {
+        velocity_y = -2.0f;
+    }
+    
     velocity_x = Entity::lerp(velocity_x, 0.0f, FIXED_TIMESTEP * friction_x);
     
     if ( !collidesBottom ) {
@@ -141,7 +167,7 @@ void Entity::ShootProjectile(Entity * e, Entity * player) {
     e->x = player->x + TILEWIDTH;
 }
 
-void Entity::collidesWith(Entity * e) {
+bool Entity::collidesWith(Entity * e) {
     
     float x_penetration, y_penetration;
     float x_distance, y_distance;
@@ -192,10 +218,16 @@ void Entity::collidesWith(Entity * e) {
     }
     else if ( collidesTop )
         y -= y_penetration;
-    else if ( collidesLeft )
+    else if ( collidesLeft ) {
         x += x_penetration;
-    else if ( collidesRight )
+        solid = false;
+    }
+    else if ( collidesRight ) {
         x -= x_penetration;
+        solid = false;
+    }
+    
+    return collidesTop || collidesBottom || collidesLeft || collidesRight;
 }
 
 void Entity::Draw(float scale) {

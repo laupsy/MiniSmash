@@ -44,6 +44,10 @@ Game::~Game() {
         delete world->rain[i];
     }
     
+    for ( size_t i = 0; i < world->statics.size(); i++ ) {
+        delete world->statics[i];
+    }
+    
     delete world->player;
     delete world->player2;
     delete world->platform;
@@ -122,6 +126,11 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
         world->player->floating = true;
     }
     
+    else if ( keys[SDL_SCANCODE_K] ) { // stationary shoot
+        world->player->ShootProjectile(world->projectiles[0], world->player);
+        world->player->notShooting = false;
+    }
+    
     // PLAYER 2 CONTROLS
     
     if ( keys[SDL_SCANCODE_Q] ) { // move left
@@ -155,6 +164,11 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     else if ( keys[SDL_SCANCODE_F] ) { // float
         world->player2->velocity_y = -0.5f;
         world->player2->floating = true;
+    }
+    
+    else if ( keys[SDL_SCANCODE_W] ) { // stationary shoot
+        world->player2->ShootProjectile(world->projectiles[1], world->player2);
+        world->player2->notShooting = false;
     }
     
     // Player 1 and 2 jump & shoot
@@ -249,12 +263,12 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
         world->player2->x = -1.33;
     }
     
-    if ( world->player->x < -1.33 ) {
-        world->player->x = 1.33;
+    if ( world->player->y < -1.33 ) {
+        world->player->y = 1.33;
     }
     
-    if ( world->player2->x < -1.33 ) {
-        world->player2->x = 1.33;
+    if ( world->player2->y < -1.33 ) {
+        world->player2->y = 1.33;
     }
 }
 
@@ -269,12 +283,14 @@ void Game::PlayerBehavior(Entity * e) {
             if ( world->raining ) e->v = TILEHEIGHT * 3.0;
             if ( world->snowing ) e->v = TILEHEIGHT * 6.0;
             if ( world->inSpace ) e->v = TILEHEIGHT * 9.0;
+            e->lastDirection = -1;
         }
         
         else if ( e->velocity_x > 0 ) {
             if ( world->raining ) e->v = TILEHEIGHT * 2.0;
             if ( world->snowing ) e->v = TILEHEIGHT * 5.0;
             if ( world->inSpace ) e->v = TILEHEIGHT * 8.0;
+            e->lastDirection = 1;
         }
         
         else if ( fabs(e->velocity_y) >= 0.4 ) {
@@ -292,12 +308,14 @@ void Game::PlayerBehavior(Entity * e) {
             if ( world->raining ) e->v = TILEHEIGHT * 3.0;
             if ( world->snowing ) e->v = TILEHEIGHT * 6.0;
             if ( world->inSpace ) e->v = TILEHEIGHT * 9.0;
+            e->lastDirection = -1;
         }
         
         if ( e->velocity_x > 0 ) {
             if ( world->raining ) e->v = TILEHEIGHT * 2.0;
             if ( world->snowing ) e->v = TILEHEIGHT * 5.0;
             if ( world->inSpace ) e->v = TILEHEIGHT * 8.0;
+            e->lastDirection = 1;
         }
     }
 }
@@ -315,6 +333,7 @@ void Game::ShootProjectile(Entity * e, Entity * p) {
     
     e->acceleration_x = ACCELERATION_X * 15.0;
     if ( p->velocity_x < 0.0 ) e->acceleration_x = ACCELERATION_X * -15.0;
+    else if ( p->velocity_x == 0.0 ) e->acceleration_x = ACCELERATION_X * 15.0 * p->lastDirection;
     e->acceleration_y = ACCELERATION_Y;
 
     e->velocity_x += e->acceleration_x * FIXED_TIMESTEP;
@@ -325,11 +344,11 @@ void Game::ShootProjectile(Entity * e, Entity * p) {
 
     if ( e->x > 1.33 && e->x < 5.32 ) {
         e->acceleration_x = ACCELERATION_X;
-        shake = true;
+        //shake = true;
     }
     else if ( e->x < -1.33 && e->x > -5.32 ) {
         e->acceleration_x = -ACCELERATION_X;
-        shake = true;
+        //shake = true;
     }
     else if ( e->x <= -5.32 || e->x >= 5.32 ) {
         p->notShooting = true;
@@ -348,6 +367,53 @@ void Game::CollisionCheck(Entity * e) {
     e->collidesRight = false;
     e->collidesWith(world->platform);
     
+    if ( world->projectiles[0]->collidesWith(world->player2) ) {
+        // crit chance
+        int crit = rand() % 50;
+        if ( crit > 20 ) crit = 50;
+        else crit = 0;
+        int dmg = 10 + rand() % 10 + crit;
+        cout << crit << endl;
+        world->projectiles[0]->onHitDamage = dmg;
+        shake = true;
+        world->player2->damage += dmg;
+        world->player->velocity_y = 4.0f;
+        world->player2->floating = false;
+        world->projectiles[0]->velocity_x = 0.0;
+        // KO
+        if ( crit > 40 ) {
+            world->player2->velocity_x *= 20;
+            world->player2->damage = 0;
+            cout << "SHOULD FLY" << endl;
+        }
+    }
+    else {
+        world->projectiles[0]->onHitDamage = 1;
+    }
+//    if ( world->projectiles[1]->collidesWith(world->player) ) {
+//        // crit chance
+//        crit = rand() % 50;
+//        if ( crit > 40 ) crit = 50;
+//        else crit = 0;
+//        dmg = 10 + rand() % 10 + crit;
+//        shake = true;
+//        world->player->damage += dmg;
+//        world->player->floating = false;
+//        world->player->hit = true;
+//        world->projectiles[1]->velocity_x = 0.0;
+//        world->projectiles[1]->onHitDamage = dmg;
+//        
+//        // KO
+//        if ( crit > 40 ) {
+//            world->player->velocity_y = 4.0f;
+//            world->player->damage = 0;
+//        }
+//    }
+//    else {
+//        world->projectiles[1]->onHitDamage = 1;
+//    }
+    
+    //cout << world->player2->floating << endl;
 }
 
 void Game::ProjectileCheck(Entity * e) {
@@ -394,6 +460,9 @@ void Game::FixedUpdate() {
     CollisionCheck(world->player);
     CollisionCheck(world->player2);
     
+    CollisionCheck(world->projectiles[0]);
+    CollisionCheck(world->projectiles[1]);
+    
     if ( shake ) {
         world->player->velocity_x = 0.0f;
         world->player->velocity_y = 1.0f;
@@ -416,10 +485,10 @@ void Game::FixedUpdate() {
     
     // movement p1
     if ( !world->player->floating && !world->player->shaking ) world->player->Go(world->platform->y);
-    else world->player->Float(world->platform->y);
+    else if ( !world->player->hit ) world->player->Float(world->platform->y);
     // movement p2
     if ( !world->player2->floating && !world->player2->shaking ) world->player2->Go(world->platform->y);
-    else world->player2->Float(world->platform->y);
+    else if ( !world->player2->hit ) world->player2->Float(world->platform->y);
 }
 
 void Game::Render() {
@@ -445,7 +514,7 @@ void Game::Render() {
     }
     
     for ( size_t j = 0; j < world->projectiles.size(); j++ ) {
-        world->projectiles[j]->Draw(SCALE);
+        world->projectiles[j]->Draw(SCALE/2 + world->projectiles[j]->velocity_x/5 * world->projectiles[j]->onHitDamage);
     }
     
     // draw world->player last so not overlapped by solids
@@ -459,8 +528,12 @@ void Game::Render() {
     
     // STATICS
     for ( size_t k = 0; k < world->statics.size(); k++ ) {
-        world->statics[k]->Draw(SCALE);
+        world->statics[k]->Draw(SCALE * 1.2);
     }
+    
+    //DrawText( GLuint textTexture, std::string text, float x, float y, float spacing, float size, float r, float g, float b, float a )
+    world->DrawText(world->LoadTexture("pixel_font.png"), to_string(world->player->damage) + "%", -0.15f, -0.92, FONT_SPACING, FONT_SIZE, 1.0, 1.0, 1.0, 1.0 );
+    world->DrawText(world->LoadTexture("pixel_font.png"), to_string(world->player2->damage) + "%", 0.02f, -0.92, FONT_SPACING, FONT_SIZE, 1.0, 1.0, 1.0, 1.0 );
     
     ///////
     // Lock camera onto world->player

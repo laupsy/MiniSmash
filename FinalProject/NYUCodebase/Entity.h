@@ -33,6 +33,9 @@
 #define BLOCKS 100
 #define RAINDROPS 100
 
+#define FONT_SIZE 0.02f
+#define FONT_SPACING 0.005f
+
 
 class Entity {
 public:
@@ -47,8 +50,7 @@ public:
     void FlutterLeft();
     void ShootProjectile(Entity * e, Entity * player);
     
-    void collidesWith(Entity * e);
-    bool IsColliding(std::vector<Entity*> entities);
+    bool collidesWith(Entity * e);
     
     float lerp(float v0, float v1, float t);
     
@@ -71,6 +73,11 @@ public:
     bool player1;
     bool player2;
     bool notShooting;
+    bool hit;
+    
+    int lastDirection;
+    int damage;
+    int onHitDamage;
     
     GLuint textureID;
 };
