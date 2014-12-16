@@ -44,6 +44,10 @@ Game::~Game() {
         delete world->rain[i];
     }
     
+    delete world->player;
+    delete world->player2;
+    delete world->platform;
+    
     SDL_Quit();
 }
 
@@ -78,120 +82,179 @@ void Game::Init() {
     shake = false;
 }
 
-void Game::PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event) {
+void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     
-    Uint8 ctrl_left, ctrl_right, ctrl_up, ctrl_down;
-    Uint8 ctrl_float;
-    SDL_Scancode ctrl_shootProjectile, ctrl_jump;
+    world->player->velocity_x = 0.0f;
+    world->player2->velocity_x = 0.0f;
     
-    // Player 1 controls
+    // PLAYER 1 CONTROLS
     
-    if ( e->player1 ) {
-        ctrl_left = keys[SDL_SCANCODE_LEFT];
-        ctrl_right = keys[SDL_SCANCODE_RIGHT];
-        ctrl_up = keys[SDL_SCANCODE_UP];
-        ctrl_down = keys[SDL_SCANCODE_DOWN];
-        ctrl_jump = SDL_SCANCODE_SEMICOLON;
-        ctrl_shootProjectile = SDL_SCANCODE_K;
-        ctrl_float = keys[SDL_SCANCODE_L];
-    }
-    
-    // Player 2 controls
-    
-    else {
-        ctrl_left = keys[SDL_SCANCODE_Q];
-        ctrl_right = keys[SDL_SCANCODE_E];
-        ctrl_up = keys[SDL_SCANCODE_2];
-        ctrl_down = keys[SDL_SCANCODE_S];
-        ctrl_jump = SDL_SCANCODE_R;
-        ctrl_shootProjectile = SDL_SCANCODE_W;
-        ctrl_float = keys[SDL_SCANCODE_F];
-    }
-    
-    if ( ctrl_left ) {
-        if ( e->floating )
-            e->velocity_x = VELOCITY_X * -1 / 2.0;
+    if ( keys[SDL_SCANCODE_LEFT] ) { // move left
+        if ( world->player->floating )
+            world->player->velocity_x = VELOCITY_X * -1 / 2.0;
         else
-            e->velocity_x = VELOCITY_X * -1;
+            world->player->velocity_x = VELOCITY_X * -1;
     }
     
-    else if ( ctrl_right ) {
-        if ( e->floating )
-            e->velocity_x = VELOCITY_X / 2.0;
+    else if ( keys[SDL_SCANCODE_RIGHT] ) { // move right
+        if ( world->player->floating )
+            world->player->velocity_x = VELOCITY_X / 2.0;
         else
-            e->velocity_x = VELOCITY_X;
+            world->player->velocity_x = VELOCITY_X;
     }
-    else if ( ctrl_down ) {
-        if ( e->floating ) {
-            e->velocity_y += VELOCITY_Y * -1 / 50;
-            e->velocity_x = 0.0f;
+    
+    else if ( keys[SDL_SCANCODE_DOWN] ) { // move down
+        if ( world->player->floating ) {
+            world->player->velocity_y += VELOCITY_Y * -1 / 50;
+            world->player->velocity_x = 0.0f;
         }
     }
-    else if ( ctrl_up ) {
-        if ( e->floating ) {
-            e->velocity_y += VELOCITY_Y / 50;
-            e->velocity_x = 0.0f;
+    
+    else if ( keys[SDL_SCANCODE_UP] ) { // move up
+        if ( world->player->floating ) {
+            world->player->velocity_y += VELOCITY_Y / 50;
+            world->player->velocity_x = 0.0f;
         }
     }
-    else if ( ctrl_float ) {
-        e->velocity_y = -0.5f;
-        e->floating = true;
-    }
-    else
-        e->velocity_x = 0.0f;
     
-    if ( e->collidesBottom ) {
-        e->velocity_y = 0.0f;
-        shake = true;
+    else if ( keys[SDL_SCANCODE_L] ) { // float
+        world->player->velocity_y = -0.5f;
+        world->player->floating = true;
     }
     
-    if ( e->collidesTop ) {
-        e->velocity_y = VELOCITY_Y * -1;
+    // PLAYER 2 CONTROLS
+    
+    if ( keys[SDL_SCANCODE_Q] ) { // move left
+        if ( world->player2->floating )
+            world->player2->velocity_x = VELOCITY_X * -1 / 2.0;
+        else
+            world->player2->velocity_x = VELOCITY_X * -1;
     }
     
-    if ( e->collidesLeft ) {
-        e->velocity_x = 0;
+    else if ( keys[SDL_SCANCODE_E] ) {  // move right
+        if ( world->player2->floating )
+            world->player2->velocity_x = VELOCITY_X / 2.0;
+        else
+            world->player2->velocity_x = VELOCITY_X;
     }
     
-    if ( e->collidesRight ) {
-        e->velocity_x = 0;
+    else if ( keys[SDL_SCANCODE_S] ) { // move down
+        if ( world->player2->floating ) {
+            world->player2->velocity_y += VELOCITY_Y * -1 / 50;
+            world->player2->velocity_x = 0.0f;
+        }
     }
     
-    if ( e->x > 1.33 ) {
-        e->x = -1.33;
+    else if ( keys[SDL_SCANCODE_2] ) { // move up
+        if ( world->player2->floating ) {
+            world->player2->velocity_y += VELOCITY_Y / 50;
+            world->player2->velocity_x = 0.0f;
+        }
     }
     
-    if ( e->x < -1.33 ) {
-        e->x = 1.33;
+    else if ( keys[SDL_SCANCODE_F] ) { // float
+        world->player2->velocity_y = -0.5f;
+        world->player2->floating = true;
     }
+    
+    // Player 1 and 2 jump & shoot
     
     while (SDL_PollEvent(&event)) {
         
         if (event.type == SDL_KEYDOWN ) {
             
-            if ( event.key.keysym.scancode == ctrl_jump && !event.key.repeat ) {
-                
-                e->floating = false;
-                
-                if ( e->collidesBottom ) {
-                    e->collidesBottom = false;
-                }
-                
-                if ( !e->jumping ) {
-                    e->velocity_y = 4.0f;
-                }
-                
-                // glScalef(1.0, -1.0, 1.0); this would be cool for like a reverse gravity mode
-                
+            // Player 1 jump
+            
+            if ( event.key.keysym.scancode == SDL_SCANCODE_SEMICOLON && !event.key.repeat ) {
+                world->player->floating = false;
+                if ( world->player->collidesBottom )
+                    world->player->collidesBottom = false;
+                if ( !world->player->jumping )
+                    world->player->velocity_y = 4.0f;
             }
             
-            if ( event.key.keysym.scancode == ctrl_shootProjectile && !event.key.repeat ) {
-                if ( e->player1 && e->velocity_x != 0.0f ) {
-                    e->ShootProjectile(world->projectiles[0], e);
-                    e->notShooting = false;
+            // Player 1 shoot
+            
+            if ( event.key.keysym.scancode == SDL_SCANCODE_K && !event.key.repeat ) {
+                if ( world->player->velocity_x != 0.0f ) {
+                    world->player->ShootProjectile(world->projectiles[0], world->player);
+                    world->player->notShooting = false;
+                }
+            }
+            
+            // Player 2 jump
+            
+            if ( event.key.keysym.scancode == SDL_SCANCODE_R && !event.key.repeat ) {
+                world->player2->floating = false;
+                if ( world->player2->collidesBottom )
+                    world->player2->collidesBottom = false;
+                if ( !world->player2->jumping )
+                    world->player2->velocity_y = 4.0f;
+            }
+            
+            // Player 2 shoot
+            
+            if ( event.key.keysym.scancode == SDL_SCANCODE_W && !event.key.repeat ) {
+                if ( world->player2->velocity_x != 0.0f ) {
+                    world->player2->ShootProjectile(world->projectiles[1], world->player2);
+                    world->player2->notShooting = false;
                 }
             }
         }
+    }
+    
+    // Player 1 & 2 reactions
+    
+    if ( world->player->collidesBottom ) {
+        world->player->velocity_y = 0.0f;
+        //shake = true;
+        world->player->shaking = true;
+    }
+    
+    if ( world->player2->collidesBottom ) {
+        world->player2->velocity_y = 0.0f;
+        //shake = true;
+        world->player2->shaking = true;
+    }
+    
+    if ( world->player->collidesTop ) {
+        world->player->velocity_y = VELOCITY_Y * -1;
+    }
+    
+    if ( world->player2->collidesTop ) {
+        world->player->velocity_y = VELOCITY_Y * -1;
+    }
+    
+    if ( world->player->collidesLeft ) {
+        world->player->velocity_x = 0;
+    }
+    
+    if ( world->player2->collidesLeft ) {
+        world->player2->velocity_x = 0;
+    }
+    
+    if ( world->player->collidesRight ) {
+        world->player->velocity_x = 0;
+    }
+    
+    if ( world->player2->collidesRight ) {
+        world->player2->velocity_x = 0;
+    }
+    
+    if ( world->player->x > 1.33 ) {
+        world->player->x = -1.33;
+    }
+    
+    if ( world->player2->x > 1.33 ) {
+        world->player2->x = -1.33;
+    }
+    
+    if ( world->player->x < -1.33 ) {
+        world->player->x = 1.33;
+    }
+    
+    if ( world->player2->x < -1.33 ) {
+        world->player2->x = 1.33;
     }
 }
 
@@ -248,10 +311,10 @@ void Game::Update(float elapsed) {
     }
 }
 
-void Game::ShootProjectile(Entity * e) {
+void Game::ShootProjectile(Entity * e, Entity * p) {
     
     e->acceleration_x = ACCELERATION_X * 15.0;
-    if ( world->player->velocity_x < 0.0 ) e->acceleration_x = ACCELERATION_X * -15.0;
+    if ( p->velocity_x < 0.0 ) e->acceleration_x = ACCELERATION_X * -15.0;
     e->acceleration_y = ACCELERATION_Y;
 
     e->velocity_x += e->acceleration_x * FIXED_TIMESTEP;
@@ -269,7 +332,7 @@ void Game::ShootProjectile(Entity * e) {
         shake = true;
     }
     else if ( e->x <= -5.32 || e->x >= 5.32 ) {
-        world->player->notShooting = true;
+        p->notShooting = true;
         shake = false;
     }
     else {
@@ -287,21 +350,21 @@ void Game::CollisionCheck(Entity * e) {
     
 }
 
-void Game::ProjectileCheck() {
-    if ( world->player->player1 ) {
-        if ( world->player->notShooting )
+void Game::ProjectileCheck(Entity * e) {
+    if ( e->player1 ) {
+        if ( e->notShooting )
             world->projectiles[0]->x = -4.0;
         else {
-            ShootProjectile(world->projectiles[0]);
-            world->projectiles[0]->y = world->player->y;
+            ShootProjectile(world->projectiles[0], e);
+            world->projectiles[0]->y = e->y;
         }
     }
-    if ( world->player->player2 ) {
-        if ( world->player->notShooting )
+    if ( e->player2 ) {
+        if ( e->notShooting )
             world->projectiles[1]->x = -4.0;
         else {
-            ShootProjectile(world->projectiles[1]);
-            world->projectiles[1]->y = world->player->y;
+            ShootProjectile(world->projectiles[1], e);
+            world->projectiles[1]->y = e->y;
         }
     }
 }
@@ -311,8 +374,9 @@ void Game::FixedUpdate() {
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     SDL_Event event;
     
-    PlayerControls(world->player, keys, event);
+    PlayerControls(keys, event);
     PlayerBehavior(world->player);
+    PlayerBehavior(world->player2);
     
     world->WeatherCheck();
     world->Lightning();
@@ -324,22 +388,38 @@ void Game::FixedUpdate() {
     if ( world->snowing ) world->Snow();
     if ( world->inSpace ) world->Space();
     
-    ProjectileCheck();
+    ProjectileCheck(world->player);
+    ProjectileCheck(world->player2);
+    
     CollisionCheck(world->player);
     CollisionCheck(world->player2);
     
     if ( shake ) {
         world->player->velocity_x = 0.0f;
         world->player->velocity_y = 1.0f;
+        world->player2->velocity_x = 0.0f;
+        world->player2->velocity_y = 1.0f;
+    }
+    
+    else {
+        world->player->shaking = false;
+        world->player2->shaking = false;
     }
     
     // jump shake range cutoff
-    float jumpshake = fabs((world->player->y - world->player->height/2) - (world->platform->y + world->platform->height/2));
-    
+    float jumpshake;
+    if ( world->player->shaking ) jumpshake = fabs((world->player->y - world->player->height/2) - (world->platform->y + world->platform->height/2));
+    else jumpshake = fabs((world->player2->y - world->player2->height/2) - (world->platform->y + world->platform->height/2));
+    // check jumpshake range
     if ( jumpshake > 0.095 & jumpshake < 0.1 ) shake = false;
     
-    if ( !world->player->floating && !shake ) world->player->Go(world->platform->y);
+    
+    // movement p1
+    if ( !world->player->floating && !world->player->shaking ) world->player->Go(world->platform->y);
     else world->player->Float(world->platform->y);
+    // movement p2
+    if ( !world->player2->floating && !world->player2->shaking ) world->player2->Go(world->platform->y);
+    else world->player2->Float(world->platform->y);
 }
 
 void Game::Render() {

@@ -66,6 +66,7 @@ public:
     bool solid;
     bool isStatic;
     bool floating;
+    bool shaking;
     bool jumping;
     bool player1;
     bool player2;

@@ -22,12 +22,12 @@ public:
     
     bool UpdateAndRender();
     
-    void PlayerControls(Entity * e, const Uint8 *keys, SDL_Event event);
+    void PlayerControls(const Uint8 *keys, SDL_Event event);
     void PlayerBehavior(Entity * e);
     void Lightning();
     void CollisionCheck(Entity * e);
-    void ProjectileCheck();
-    void ShootProjectile(Entity * e);
+    void ProjectileCheck(Entity * e);
+    void ShootProjectile(Entity * e, Entity * p);
     
     void Rain();
     
