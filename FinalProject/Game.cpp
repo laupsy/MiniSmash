@@ -3,6 +3,7 @@
 
 Game::Game() {
     startGame = false;
+    endGame = false;
     Init();
     LoadObjects();
     Loop();
@@ -94,18 +95,13 @@ void Game::Init() {
     glClear(GL_COLOR_BUFFER_BIT);
     
     // init music
-    music = Mix_LoadMUS("battlestargalactica_roslinandadama.wav");
+    music = Mix_LoadMUS("bsg1.wav");
     laser = Mix_LoadWAV("laser2.wav");
     battleCryP1_1 = Mix_LoadWAV("noise1.wav");
     battleCryP2_1 = Mix_LoadWAV("noise2.wav");
-    
-    // play music
-    if ( startGame ) {
-        Mix_PlayMusic(music, -1);
-    }
-    else {
-        Mix_PlayMusic(music, -1);
-    }
+    explosion = Mix_LoadWAV("explosion.wav");
+    clank = Mix_LoadWAV("clank.wav");
+    energy = Mix_LoadWAV("energy.wav");
     
     shake = false;
 }
@@ -402,11 +398,13 @@ void Game::ShootProjectile(Entity * e, Entity * p) {
 
     if ( e->x > 1.33 && e->x < 5.32 ) {
         e->acceleration_x = ACCELERATION_X;
-        //shake = true;
+        shake = true;
+        Mix_PlayChannel( -1, explosion, 0);
     }
     else if ( e->x < -1.33 && e->x > -5.32 ) {
         e->acceleration_x = -ACCELERATION_X;
-        //shake = true;
+        shake = true;
+        Mix_PlayChannel( -1, explosion, 0);
     }
     else if ( e->x <= -5.32 || e->x >= 5.32 ) {
         p->notShooting = true;
@@ -441,6 +439,7 @@ void Game::CollisionCheck(Entity * e) {
         Mix_PlayChannel(-1, battleCryP2_1, 0);
         world->projectiles[0]->velocity_x = 0.0;
         world->projectiles[0]->v = TILEHEIGHT * 8.0f;
+        if ( world->projectiles[0]->velocity_x > 5 ) Mix_PlayChannel( -1, explosion, 0);
         // KO
         if ( crit > 4 ) {
             world->player2->velocity_x *= 20;
@@ -470,6 +469,7 @@ void Game::CollisionCheck(Entity * e) {
         world->player->hit = true;
         world->projectiles[1]->velocity_x = 0.0;
         world->projectiles[1]->v = TILEHEIGHT * 9.0f;
+        if ( world->projectiles[0]->velocity_x > 5 ) Mix_PlayChannel( -1, explosion, 0);
         // KO
         if ( crit > 4 ) {
             world->player->velocity_x *= 20;
@@ -509,47 +509,57 @@ void Game::FixedUpdate() {
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     SDL_Event event;
     
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-    
-    while (SDL_PollEvent(&event)) {
-        if ( event.type == SDL_MOUSEBUTTONDOWN ) {
-            if ( event.button.button == SDL_BUTTON_LEFT ) {
-                if ( fabs(y - 550) <= 30 && fabs(x - 490) <= 50 ) {
-                    world->player->u = TILEWIDTH * 1.0;
-                    world->player2->u = TILEWIDTH * 2.0;
-                    startGame = true;
-                }
-                if ( fabs(y - 550) <= 30 && fabs(x - 830) <= 50 ) {
-                    world->player->u = TILEWIDTH * 2.0;
-                    world->player2->u = TILEWIDTH * 1.0;
-                    startGame = true;
+    if ( !startGame ) {
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+        
+        while (SDL_PollEvent(&event)) {
+            if ( event.type == SDL_MOUSEBUTTONDOWN ) {
+                if ( event.button.button == SDL_BUTTON_LEFT ) {
+                    if ( fabs(y - 550) <= 30 && fabs(x - 490) <= 50 ) {
+                        world->player->u = TILEWIDTH * 1.0;
+                        world->player2->u = TILEWIDTH * 2.0;
+                        startGame = true;
+                        Mix_PlayChannel( -1, clank, 0);
+                        
+                        Mix_PlayMusic(music, -1);
+                    }
+                    if ( fabs(y - 550) <= 30 && fabs(x - 830) <= 50 ) {
+                        world->player->u = TILEWIDTH * 2.0;
+                        world->player2->u = TILEWIDTH * 1.0;
+                        startGame = true;
+                        Mix_PlayChannel( -1, clank, 0);
+                        
+                        Mix_PlayMusic(music, -1);
+                    }
                 }
             }
         }
+        
+        if ( fabs(y - 550) <= 30 && fabs(x - 490) <= 50 ) {
+            world->menuItems[2]->x = -0.412;
+            world->menuItems[2]->y = -0.195;
+            //Mix_PlayChannel( -1, energy, 0);
+        }
+        
+        else {
+            world->menuItems[2]->x = 500;
+            world->menuItems[2]->y = 500;
+        }
+        
+        if ( fabs(y - 550) <= 30 && fabs(x - 830) <= 50 ) {
+            world->menuItems[1]->x = 0.101;
+            world->menuItems[1]->y = -0.195;
+            //Mix_PlayChannel( -1, energy, 0);
+        }
+        
+        else {
+            world->menuItems[1]->x = 500;
+            world->menuItems[1]->y = 500;
+        }
     }
     
-    if ( fabs(y - 550) <= 30 && fabs(x - 490) <= 50 ) {
-        world->menuItems[2]->x = -0.412;
-        world->menuItems[2]->y = -0.195;
-    }
-    
-    else {
-        world->menuItems[2]->x = 500;
-        world->menuItems[2]->y = 500;
-    }
-    
-    if ( fabs(y - 550) <= 30 && fabs(x - 830) <= 50 ) {
-        world->menuItems[1]->x = 0.101;
-        world->menuItems[1]->y = -0.195;
-    }
-    
-    else {
-        world->menuItems[1]->x = 500;
-        world->menuItems[1]->y = 500;
-    }
-
-    if ( startGame ) {
+    else if ( startGame ) {
         PlayerControls(keys, event);
         PlayerBehavior(world->player);
         PlayerBehavior(world->player2);
@@ -593,6 +603,11 @@ void Game::FixedUpdate() {
         else if ( !world->player2->hit ) world->player2->Float(world->platform->y);
         else world->player2->KO(world->platform->y);
     }
+    
+    if ( world->platform->y >= END_TRANSITION ) {
+        startGame = false;
+        endGame = true;
+    }
 }
 
 void Game::Render() {
@@ -603,12 +618,12 @@ void Game::Render() {
     glPushMatrix();
     
     SDL_ShowCursor(0);
-
+    
     if ( world->player->y > DEFAULT_Y )
         camY = world->platform->y * -1 - 0.2;
     
     if ( shake == true ) {
-        glTranslatef( (rand() % 10 - 5)/ 100.0, camY + (rand() % 12 - 6)/100.0, 0.0f);
+        glTranslatef( (rand() % 4 - 2)/ 100.0, camY + (rand() % 6 - 3)/100.0, 0.0f);
     }
     
     else {
@@ -669,17 +684,58 @@ void Game::StartMenu() {
     glTranslatef(x/-10000.0 + 0.1, y/7000.0 - 0.1, 0.0f);
     glClearColor(0.2, 0.23, 0.25, 1.0);
     
-    for ( size_t k = 0; k < world->menuItems.size(); k++ ) {
-        world->menuItems[k]->Draw(SCALE);
+    if ( !endGame ) {
+        for ( size_t k = 0; k < world->menuItems.size()-1; k++ ) {
+            world->menuItems[k]->Draw(SCALE);
+        }
+    }
+    
+    else {
+        if ( world->player2->damage < world->player->damage ) {
+            world->player2->Draw(SCALE * 1.5);
+            world->player2->x = 0.0f;
+            world->player2->y = 0.0f;
+        }
+        else {
+            world->player->Draw(SCALE * 1.5);
+            world->player->x = 0.0f;
+            world->player->y = 0.0f;
+        }
+        world->menuItems[world->menuItems.size()-1]->Draw(SCALE);
+        world->menuItems[world->menuItems.size()-2]->Draw(SCALE);
     }
     
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     if ( keys[SDL_SCANCODE_RETURN] ) {
-        startGame = true;
+        Reset();
+        endGame = false;
     }
     
     glPopMatrix();
     SDL_GL_SwapWindow(displayWindow);
+}
+
+void Game::Reset() {
+    world->platform->y = DEFAULT_Y;
+    world->player->damage = 0;
+    world->player2->damage = 0;
+    world->player->y = DEFAULT_Y;
+    world->player2->y = DEFAULT_Y;
+    startGame = false;
+    endGame = false;
+    world->inSpace = false;
+    world->raining = true;
+    world->snowing = true;
+    
+    for ( size_t j = 0; j < RAINDROPS; j++ ) {
+        world->rain[j]->v = TILEHEIGHT * 4.0;
+    }
+    
+    for ( size_t i = 0; i < BLOCKS; i++ ) {
+        world->blocks[i]->v = TILEHEIGHT * 2.0;
+    }
+    
+
 }
 
 bool Game::UpdateAndRender() {

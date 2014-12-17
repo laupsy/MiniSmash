@@ -12,6 +12,7 @@ public:
     void Init();
     void LoadObjects();
     void Loop();
+    void Reset();
     
     void Update(float elapsed);
     void FixedUpdate();
@@ -47,6 +48,7 @@ public:
     bool done;
     bool shake;
     bool startGame;
+    bool endGame;
     
     float elapsed;
     float lastFrameTicks;
@@ -57,11 +59,14 @@ public:
     Mix_Music *music;
     Mix_Chunk *storm;
     Mix_Chunk *laser;
+    Mix_Chunk *clank;
     Mix_Chunk *selection;
     Mix_Chunk *battleCryP1_1;
     Mix_Chunk *battleCryP1_2;
     Mix_Chunk *battleCryP2_1;
     Mix_Chunk *battleCryP2_2;
+    Mix_Chunk *explosion;
+    Mix_Chunk *energy;
     
     GLuint mainSpriteTexture;
     SDL_Event event;

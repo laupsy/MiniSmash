@@ -25,15 +25,16 @@
 #define FRICTION_X 0.99999f
 #define FRICTION_Y 0.99999f
 #define SCALE 0.7f
-#define DEFAULT_Y 0.6f
+#define DEFAULT_Y 1.0f
 #define LEVELWIDTH 10
-#define SNOW_TRANSITION 70.0
-#define SPACE_TRANSITION 140.0
+#define SNOW_TRANSITION 40.0
+#define SPACE_TRANSITION 70.0
+#define END_TRANSITION 85.0
 
 #define BLOCKS 100
 #define RAINDROPS 100
 
-#define FONT_SIZE 0.02f
+#define FONT_SIZE 0.06f
 #define FONT_SPACING 0.0005f
 
 

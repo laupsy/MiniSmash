@@ -71,6 +71,10 @@ void World::PlaceBlocks() {
     decor->width = TILEWIDTH * 3.0f;
     menuItems.push_back(decor);
     
+    Entity * v = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 10.0f, TILEHEIGHT * 7.0, 0.0, 0.4);
+    v->width = TILEWIDTH * 3.5f;
+    menuItems.push_back(v);
+    
     // Buttons
     for ( int k = 0; k < 6; k++ ) {
         Entity * b = new Entity(LoadTexture(spriteSheet), TILEWIDTH * (4.0f + k), TILEHEIGHT * 6.0, -0.95f, 0.0f);
@@ -154,7 +158,7 @@ void World::WeatherCheck() {
         raining = true;
     else if ( platform->y >= SNOW_TRANSITION && platform->y < SPACE_TRANSITION )
         snowing = true;
-    else if ( platform->y >= SPACE_TRANSITION )
+    else if ( platform->y >= SPACE_TRANSITION && platform->y < END_TRANSITION )
         inSpace = true;
     
     if ( fabs(player->y - SNOW_TRANSITION ) <= 1.0 ) EnterVortex();
