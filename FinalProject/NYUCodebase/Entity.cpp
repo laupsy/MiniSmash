@@ -77,7 +77,7 @@ void Entity::Go(int originPt) {
 
 void Entity::KO(int originPt) {
     
-    if ( damage > 50 ) damage = 50.0;
+    if ( damage > 20 ) damage = 15.0;
     
     acceleration_y = ACCELERATION_Y * damage/10.0;
     

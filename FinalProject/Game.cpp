@@ -434,10 +434,9 @@ void Game::CollisionCheck(Entity * e) {
         Mix_PlayChannel(-1, battleCryP2_1, 0);
         world->projectiles[0]->velocity_x = 0.0;
         world->projectiles[0]->v = TILEHEIGHT * 8.0f;
-        if ( world->projectiles[0]->velocity_x > 5 ) Mix_PlayChannel( -1, explosion, 0);
+        if ( world->projectiles[0]->velocity_x > 3 ) Mix_PlayChannel( -1, explosion, 0);
         // KO
         if ( crit > 4 ) {
-            world->player2->velocity_x *= 20;
             world->player2->damage = 0;
         }
         else {
@@ -503,15 +502,6 @@ void Game::FixedUpdate() {
     
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     SDL_Event event;
-    
-    while ( SDL_PollEvent(&event)) {
-        if ( event.type == SDL_KEYDOWN ) {
-            if ( event.key.keysym.scancode == SDL_SCANCODE_ESCAPE ) {
-                SDL_Quit();
-                done = true;
-            }
-        }
-    }
     
     if ( !startGame ) {
         int x, y;
@@ -611,6 +601,15 @@ void Game::FixedUpdate() {
     if ( world->platform->y >= END_TRANSITION ) {
         startGame = false;
         endGame = true;
+    }
+    SDL_Event event2;
+    while ( SDL_PollEvent(&event2)) {
+        if ( event2.type == SDL_KEYDOWN ) {
+            if ( event2.key.keysym.scancode == SDL_SCANCODE_ESCAPE ) {
+                SDL_Quit();
+                done = true;
+            }
+        }
     }
 }
 
