@@ -11,10 +11,10 @@ Game::Game() {
 void Game::LoadObjects() {
     
     world = new World();
-    world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * 2.0, TILEHEIGHT * 0.0, 0.0f, DEFAULT_Y, true );
+    world->player = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * 2.0, TILEHEIGHT * 0.0, -0.1f, DEFAULT_Y, true );
     world->player->player1 = true;
     
-    world->player2 = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * 1.0, TILEHEIGHT * 0.0, 0.0f, DEFAULT_Y, true );
+    world->player2 = new Entity( world->LoadTexture(world->spriteSheet), TILEWIDTH * 1.0, TILEHEIGHT * 0.0, 0.1f, DEFAULT_Y, true );
     world->player2->player2 = true;
     
     world->platform = new Entity(world->LoadTexture(world->spriteSheet), TILEWIDTH * 4.0, TILEHEIGHT * 0.0, 0.0, DEFAULT_Y - 0.7);
@@ -118,6 +118,7 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     // PLAYER 1 CONTROLS
     
     if ( keys[SDL_SCANCODE_LEFT] ) { // move left
+        world->buttons[0]->v = TILEHEIGHT * 7.0;
         if ( world->player->floating )
             world->player->velocity_x = VELOCITY_X * -1 / 2.0;
         else
@@ -125,6 +126,7 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     }
     
     else if ( keys[SDL_SCANCODE_RIGHT] ) { // move right
+        world->buttons[2]->v = TILEHEIGHT * 7.0;
         if ( world->player->floating )
             world->player->velocity_x = VELOCITY_X / 2.0;
         else
@@ -132,6 +134,7 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     }
     
     else if ( keys[SDL_SCANCODE_DOWN] ) { // move down
+        world->buttons[5]->v = TILEHEIGHT * 7.0;
         if ( world->player->floating ) {
             world->player->velocity_y += VELOCITY_Y * -1 / 50;
             world->player->velocity_x = 0.0f;
@@ -139,6 +142,7 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     }
     
     else if ( keys[SDL_SCANCODE_UP] ) { // move up
+        world->buttons[4]->v = TILEHEIGHT * 7.0;
         if ( world->player->floating ) {
             world->player->velocity_y += VELOCITY_Y / 50;
             world->player->velocity_x = 0.0f;
@@ -146,11 +150,13 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     }
     
     else if ( keys[SDL_SCANCODE_L] ) { // float
+        world->buttons[3]->v = TILEHEIGHT * 7.0;
         world->player->velocity_y = -0.5f;
         world->player->floating = true;
     }
     
     else if ( keys[SDL_SCANCODE_K] ) { // stationary shoot
+        world->buttons[1]->v = TILEHEIGHT * 7.0;
         world->player->ShootProjectile(world->projectiles[0], world->player);
         world->player->notShooting = false;
         Mix_PlayChannel( -1, laser, 0);
@@ -159,6 +165,7 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     // PLAYER 2 CONTROLS
     
     if ( keys[SDL_SCANCODE_Q] ) { // move left
+        world->buttons[world->buttons.size()/2 + 0]->v = TILEHEIGHT * 9.0;
         if ( world->player2->floating )
             world->player2->velocity_x = VELOCITY_X * -1 / 2.0;
         else
@@ -166,6 +173,7 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     }
     
     else if ( keys[SDL_SCANCODE_E] ) {  // move right
+        world->buttons[world->buttons.size()/2 + 2]->v = TILEHEIGHT * 9.0;
         if ( world->player2->floating )
             world->player2->velocity_x = VELOCITY_X / 2.0;
         else
@@ -173,6 +181,7 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     }
     
     else if ( keys[SDL_SCANCODE_S] ) { // move down
+        world->buttons[world->buttons.size()/2 + 5]->v = TILEHEIGHT * 9.0;
         if ( world->player2->floating ) {
             world->player2->velocity_y += VELOCITY_Y * -1 / 50;
             world->player2->velocity_x = 0.0f;
@@ -180,6 +189,7 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     }
     
     else if ( keys[SDL_SCANCODE_2] ) { // move up
+        world->buttons[world->buttons.size()/2 + 4]->v = TILEHEIGHT * 9.0;
         if ( world->player2->floating ) {
             world->player2->velocity_y += VELOCITY_Y / 50;
             world->player2->velocity_x = 0.0f;
@@ -187,11 +197,13 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     }
     
     else if ( keys[SDL_SCANCODE_F] ) { // float
+        world->buttons[world->buttons.size()/2 + 3]->v = TILEHEIGHT * 9.0;
         world->player2->velocity_y = -0.5f;
         world->player2->floating = true;
     }
     
     else if ( keys[SDL_SCANCODE_W] ) { // stationary shoot
+        world->buttons[world->buttons.size()/2 + 1]->v = TILEHEIGHT * 9.0;
         world->player2->ShootProjectile(world->projectiles[1], world->player2);
         world->player2->notShooting = false;
         Mix_PlayChannel( -1, laser, 0);
@@ -200,6 +212,15 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     // Player 1 and 2 jump & shoot
     
     while (SDL_PollEvent(&event)) {
+        
+        if ( event.type == SDL_KEYUP ) {
+            for ( int i = 0; i < world->buttons.size()/2; i++ ) {
+                world->buttons[i]->v = TILEHEIGHT * 6.0;
+            }
+            for ( int i = world->buttons.size()/2; i < world->buttons.size(); i++ ) {
+                world->buttons[i]->v = TILEHEIGHT * 8.0;
+            }
+        }
         
         if (event.type == SDL_KEYDOWN ) {
             
@@ -488,48 +509,90 @@ void Game::FixedUpdate() {
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     SDL_Event event;
     
-    PlayerControls(keys, event);
-    PlayerBehavior(world->player);
-    PlayerBehavior(world->player2);
+    int x, y;
+    SDL_GetMouseState(&x, &y);
     
-    world->WeatherCheck();
-    world->Lightning();
-    world->MovePlatform();
-    world->AnchorStatics();
+    while (SDL_PollEvent(&event)) {
+        if ( event.type == SDL_MOUSEBUTTONDOWN ) {
+            if ( event.button.button == SDL_BUTTON_LEFT ) {
+                if ( fabs(y - 550) <= 30 && fabs(x - 490) <= 50 ) {
+                    world->player->u = TILEWIDTH * 1.0;
+                    world->player2->u = TILEWIDTH * 2.0;
+                    startGame = true;
+                }
+                if ( fabs(y - 550) <= 30 && fabs(x - 830) <= 50 ) {
+                    world->player->u = TILEWIDTH * 2.0;
+                    world->player2->u = TILEWIDTH * 1.0;
+                    startGame = true;
+                }
+            }
+        }
+    }
     
-    // do game effects, world effects, world->player effects
-    if ( world->raining) world->Rain();
-    if ( world->snowing ) world->Snow();
-    if ( world->inSpace ) world->Space();
+    if ( fabs(y - 550) <= 30 && fabs(x - 490) <= 50 ) {
+        world->menuItems[2]->x = -0.412;
+        world->menuItems[2]->y = -0.195;
+    }
     
-    ProjectileCheck(world->player);
-    ProjectileCheck(world->player2);
+    else {
+        world->menuItems[2]->x = 500;
+        world->menuItems[2]->y = 500;
+    }
     
-    CollisionCheck(world->player);
-    CollisionCheck(world->player2);
+    if ( fabs(y - 550) <= 30 && fabs(x - 830) <= 50 ) {
+        world->menuItems[1]->x = 0.101;
+        world->menuItems[1]->y = -0.195;
+    }
     
-    CollisionCheck(world->projectiles[0]);
-    CollisionCheck(world->projectiles[1]);
-    
-    world->player->shaking = false;
-    world->player2->shaking = false;
-    
-    // jump shake range cutoff
-    float jumpshake;
-    if ( world->player->shaking ) jumpshake = fabs((world->player->y - world->player->height/2) - (world->platform->y + world->platform->height/2));
-    else jumpshake = fabs((world->player2->y - world->player2->height/2) - (world->platform->y + world->platform->height/2));
-    // check jumpshake range
-    if ( jumpshake > 0.095 & jumpshake < 0.1 ) shake = false;
-    
+    else {
+        world->menuItems[1]->x = 500;
+        world->menuItems[1]->y = 500;
+    }
 
-    // movement p1
-    if ( !world->player->floating && !world->player->shaking && !world->player->hit ) world->player->Go(world->platform->y);
-    else if ( !world->player->hit ) world->player->Float(world->platform->y);
-    else world->player->KO(world->platform->y);
-    // movement p2
-    if ( !world->player2->floating && !world->player2->shaking && !world->player2->hit ) world->player2->Go(world->platform->y);
-    else if ( !world->player2->hit ) world->player2->Float(world->platform->y);
-    else world->player2->KO(world->platform->y);
+    if ( startGame ) {
+        PlayerControls(keys, event);
+        PlayerBehavior(world->player);
+        PlayerBehavior(world->player2);
+        
+        world->WeatherCheck();
+        world->Lightning();
+        world->MovePlatform();
+        world->AnchorStatics();
+        
+        // do game effects, world effects, world->player effects
+        if ( world->raining) world->Rain();
+        if ( world->snowing ) world->Snow();
+        if ( world->inSpace ) world->Space();
+        
+        ProjectileCheck(world->player);
+        ProjectileCheck(world->player2);
+        
+        CollisionCheck(world->player);
+        CollisionCheck(world->player2);
+        
+        CollisionCheck(world->projectiles[0]);
+        CollisionCheck(world->projectiles[1]);
+        
+        world->player->shaking = false;
+        world->player2->shaking = false;
+        
+        // jump shake range cutoff
+        float jumpshake;
+        if ( world->player->shaking ) jumpshake = fabs((world->player->y - world->player->height/2) - (world->platform->y + world->platform->height/2));
+        else jumpshake = fabs((world->player2->y - world->player2->height/2) - (world->platform->y + world->platform->height/2));
+        // check jumpshake range
+        if ( jumpshake > 0.095 & jumpshake < 0.1 ) shake = false;
+        
+        
+        // movement p1
+        if ( !world->player->floating && !world->player->shaking && !world->player->hit ) world->player->Go(world->platform->y);
+        else if ( !world->player->hit ) world->player->Float(world->platform->y);
+        else world->player->KO(world->platform->y);
+        // movement p2
+        if ( !world->player2->floating && !world->player2->shaking && !world->player2->hit ) world->player2->Go(world->platform->y);
+        else if ( !world->player2->hit ) world->player2->Float(world->platform->y);
+        else world->player2->KO(world->platform->y);
+    }
 }
 
 void Game::Render() {
@@ -570,16 +633,20 @@ void Game::Render() {
     }
     
     // STATICS
-    for ( size_t k = 0; k < world->statics.size()-2; k++ ) {
+    
+    world->statics[world->statics.size()-1]->Draw(SCALE *1.5);
+    world->statics[world->statics.size()-2]->Draw(SCALE *1.5);
+    
+    for ( size_t k = 0; k < world->statics.size()-4; k++ ) {
         world->statics[k]->Draw(SCALE * 1.2);
     }
     
-    world->statics[world->statics.size()-1]->Draw(SCALE *0.6);
-    world->statics[world->statics.size()-2]->Draw(SCALE *0.6);
+    for ( size_t l = 0; l < world->buttons.size(); l++ ) {
+        world->buttons[l]->Draw(SCALE * 0.8);
+    }
     
-    //DrawText( GLuint textTexture, std::string text, float x, float y, float spacing, float size, float r, float g, float b, float a )
-    world->DrawText(world->LoadTexture("pixel_font.png"), to_string(world->player->score), -0.15f, -0.92, FONT_SPACING, FONT_SIZE, 1.0, 1.0, 1.0, 1.0 );
-    world->DrawText(world->LoadTexture("pixel_font.png"), to_string(world->player2->score), 0.02f, -0.92, FONT_SPACING, FONT_SIZE, 1.0, 1.0, 1.0, 1.0 );
+    world->statics[world->statics.size()-3]->Draw(SCALE *0.6);
+    world->statics[world->statics.size()-4]->Draw(SCALE *0.6);
     
     ///////
     // Lock camera onto world->player
@@ -599,14 +666,12 @@ void Game::StartMenu() {
     SDL_ShowCursor(1);
     int x, y;
     SDL_GetMouseState(&x, &y);
-    glTranslatef(x/-10000.0, y/-10000.0, 0.0f);
+    glTranslatef(x/-10000.0 + 0.1, y/7000.0 - 0.1, 0.0f);
     glClearColor(0.2, 0.23, 0.25, 1.0);
     
     for ( size_t k = 0; k < world->menuItems.size(); k++ ) {
         world->menuItems[k]->Draw(SCALE);
     }
-    
-    
     
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     if ( keys[SDL_SCANCODE_RETURN] ) {
@@ -618,7 +683,7 @@ void Game::StartMenu() {
 }
 
 bool Game::UpdateAndRender() {
-    if ( startGame ) {
+    //if ( startGame ) {
         // time elapsed stuff
         float ticks = (float)SDL_GetTicks()/1000.0f;
         float elapsed = ticks - lastFrameTicks;
@@ -634,7 +699,7 @@ bool Game::UpdateAndRender() {
         }
         
         timeLeftOver = fixedElapsed;
-    }
+    //}
     
     // update and render
     Update(elapsed);

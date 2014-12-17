@@ -31,11 +31,6 @@ void World::PlaceBlocks() {
         blocks.push_back(cloud);
     }
     
-    Entity * frame = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 4.0f, TILEHEIGHT * 6.0, 0.05, 0.0);
-    frame->width = TILEWIDTH * 8.0;
-    frame->height = TILEHEIGHT * 1;
-    statics.push_back(frame);
-    
     Entity * minus1 = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0f, TILEHEIGHT * 0.0, 0.05, 0.0);
     statics.push_back(minus1);
     Entity * plus1 = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0f, TILEHEIGHT * 1.0, 0.05, 0.0);
@@ -53,34 +48,84 @@ void World::PlaceBlocks() {
     Entity * outofbounds3 = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 1.0f, TILEHEIGHT * 1.0, 0.05, 0.0);
     statics.push_back(outofbounds3);
     
+    Entity * panelRight = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 10.0f, TILEHEIGHT * 0.0, 0.93, 0.0);
+    panelRight->height = TILEHEIGHT * 7.0;
+    statics.push_back(panelRight);
+    
+    Entity * panelLeft = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 11.0f, TILEHEIGHT * 0.0, -0.93, 0.0);
+    panelLeft->height = TILEHEIGHT * 7.0;
+    statics.push_back(panelLeft);
+    
     // Menu items
     
     Entity * players = new Entity(LoadTexture(menuSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 0.2, 0.0f, 0.0f);
     players->width = TILEWIDTH * 10.0;
     players->height = TILEHEIGHT * 8.0;
     menuItems.push_back(players);
+    Entity * s = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0f, TILEHEIGHT * 3.0, 0.0, 0.0);
+    menuItems.push_back(s);
+    Entity * s1 = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0f, TILEHEIGHT * 4.0, 0.0, 0.0);
+    menuItems.push_back(s1);
+    Entity * decor = new Entity(LoadTexture(menuSheet), TILEWIDTH * 10.5f, TILEHEIGHT * 0.0, 0.94, 0.0);
+    decor->height = TILEHEIGHT * 10.0f;
+    decor->width = TILEWIDTH * 3.0f;
+    menuItems.push_back(decor);
+    
+    // Buttons
+    for ( int k = 0; k < 6; k++ ) {
+        Entity * b = new Entity(LoadTexture(spriteSheet), TILEWIDTH * (4.0f + k), TILEHEIGHT * 6.0, -0.95f, 0.0f);
+        buttons.push_back(b);
+        
+    }
+    
+    for ( int l = 0; l < 6; l++ ) {
+        Entity * b2 = new Entity(LoadTexture(spriteSheet), TILEWIDTH * (4.0f + l), TILEHEIGHT * 8.0, 0.95, 0.0f);
+        buttons.push_back(b2);
+        
+    }
 
 }
 
 void World::AnchorStatics() {
-    statics[0]->y = platform->y - 0.75;
-    if ( player2->hit ) {
-        statics[1]->y = player2->y;
-        statics[1]->x = player2->x;
-        statics[2]->y = player->y;
-        statics[2]->x = player->x;
+    statics[6]->y = platform->y + 0.35;
+    statics[7]->y = platform->y + 0.35;
+    for ( size_t i = 0; i < buttons.size()/2; i++ ) {
+        buttons[i]->y = platform->y + i/7.0;
     }
-    if ( player->hit ) {
-        statics[2]->y = player2->y;
-        statics[2]->x = player2->x;
+    for ( size_t i = buttons.size()/2; i < buttons.size(); i++ ) {
+        buttons[i]->y = platform->y + (i - buttons.size()/2)/7.0;
+    }
+    if ( player2->hit ) {
+        statics[0]->y = player2->y;
+        statics[0]->x = player2->x;
         statics[1]->y = player->y;
         statics[1]->x = player->x;
     }
+    if ( player->hit ) {
+        statics[1]->y = player2->y;
+        statics[1]->x = player2->x;
+        statics[0]->y = player->y;
+        statics[0]->x = player->x;
+    }
     if ( player->y > platform->y + 1.2 ) {
+        statics[2]->y = platform->y + 1.1;
+        statics[2]->x = player->x;
+        statics[4]->u = player->u;
+        statics[4]->v = player->v;
+        statics[4]->y = platform->y + 1.1;
+        statics[4]->x = statics[2]->x;
+    }
+    else {
+        statics[2]->x = 100;
+        statics[2]->y = 100;
+        statics[4]->x = 100;
+        statics[4]->y = 100;
+    }
+    if ( player2->y > platform->y + 1.2 ) {
         statics[3]->y = platform->y + 1.1;
-        statics[3]->x = player->x;
-        statics[5]->u = player->u;
-        statics[5]->v = player->v;
+        statics[3]->x = player2->x;
+        statics[5]->u = player2->u;
+        statics[5]->v = player2->v;
         statics[5]->y = platform->y + 1.1;
         statics[5]->x = statics[3]->x;
     }
@@ -89,20 +134,6 @@ void World::AnchorStatics() {
         statics[3]->y = 100;
         statics[5]->x = 100;
         statics[5]->y = 100;
-    }
-    if ( player2->y > platform->y + 1.2 ) {
-        statics[4]->y = platform->y + 1.1;
-        statics[4]->x = player2->x;
-        statics[6]->u = player2->u;
-        statics[6]->v = player2->v;
-        statics[6]->y = platform->y + 1.1;
-        statics[6]->x = statics[4]->x;
-    }
-    else {
-        statics[4]->x = 100;
-        statics[4]->y = 100;
-        statics[6]->x = 100;
-        statics[6]->y = 100;
     }
 }
 

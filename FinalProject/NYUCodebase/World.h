@@ -27,6 +27,7 @@ public:
     std::vector<Entity*> projectiles;
     std::vector<Entity*> statics;
     std::vector<Entity*> menuItems;
+    std::vector<Entity*> buttons;
     
     std::vector<float> vertexData;
     std::vector<float> texCoordData;
