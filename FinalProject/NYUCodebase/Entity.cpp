@@ -38,7 +38,7 @@ float Entity::lerp(float v0, float v1, float t) {
 }
 
 Entity::~Entity() {
-    delete this;
+    //delete this;
 }
 
 void Entity::Go(int originPt) {

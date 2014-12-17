@@ -220,11 +220,6 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
         
         if (event.type == SDL_KEYDOWN ) {
             
-            if ( event.key.keysym.scancode == SDL_SCANCODE_ESCAPE ) {
-                SDL_DisplayMode mode;
-                SDL_GetDisplayMode(0, 0, &mode);
-            }
-            
             // Player 1 jump
             
             if ( event.key.keysym.scancode == SDL_SCANCODE_SEMICOLON && !event.key.repeat ) {
@@ -508,6 +503,15 @@ void Game::FixedUpdate() {
     
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     SDL_Event event;
+    
+    while ( SDL_PollEvent(&event)) {
+        if ( event.type == SDL_KEYDOWN ) {
+            if ( event.key.keysym.scancode == SDL_SCANCODE_ESCAPE ) {
+                SDL_Quit();
+                done = true;
+            }
+        }
+    }
     
     if ( !startGame ) {
         int x, y;
