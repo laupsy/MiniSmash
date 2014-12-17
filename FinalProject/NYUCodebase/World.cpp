@@ -138,7 +138,6 @@ void World::EnterVortex() {
 void World::Lightning() {
     if ( raining && ( SDL_GetTicks() % 123 == 0 || SDL_GetTicks() % 124 == 0 ) ) {
         glClearColor(0.4, 0.42, 0.46, 1.0);
-        //Mix_PlayChannel(-1, thunder, 0);
     }
     else {
         if ( raining || snowing )

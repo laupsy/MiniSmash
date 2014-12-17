@@ -78,6 +78,7 @@ public:
     
     int lastDirection;
     int damage;
+    int score;
     float onHitDamage;
     
     GLuint textureID;

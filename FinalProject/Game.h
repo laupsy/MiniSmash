@@ -55,8 +55,13 @@ public:
     float camY = 0.0f;
     
     Mix_Music *music;
-    Mix_Music *storm;
-    Mix_Chunk *thunder;
+    Mix_Chunk *storm;
+    Mix_Chunk *laser;
+    Mix_Chunk *selection;
+    Mix_Chunk *battleCryP1_1;
+    Mix_Chunk *battleCryP1_2;
+    Mix_Chunk *battleCryP2_1;
+    Mix_Chunk *battleCryP2_2;
     
     GLuint mainSpriteTexture;
     SDL_Event event;

@@ -94,12 +94,18 @@ void Game::Init() {
     glClear(GL_COLOR_BUFFER_BIT);
     
     // init music
-    music = Mix_LoadMUS("battlestargalactica_roslinandadama.mp3");
-    thunder = Mix_LoadWAV("thunder.wav");
+    music = Mix_LoadMUS("battlestargalactica_roslinandadama.wav");
+    laser = Mix_LoadWAV("laser2.wav");
+    battleCryP1_1 = Mix_LoadWAV("noise1.wav");
+    battleCryP2_1 = Mix_LoadWAV("noise2.wav");
     
     // play music
-    if ( startGame ) Mix_PlayMusic(music, -1);
-    else Mix_PlayMusic(music, -1);
+    if ( startGame ) {
+        Mix_PlayMusic(music, -1);
+    }
+    else {
+        Mix_PlayMusic(music, -1);
+    }
     
     shake = false;
 }
@@ -147,6 +153,7 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     else if ( keys[SDL_SCANCODE_K] ) { // stationary shoot
         world->player->ShootProjectile(world->projectiles[0], world->player);
         world->player->notShooting = false;
+        Mix_PlayChannel( -1, laser, 0);
     }
     
     // PLAYER 2 CONTROLS
@@ -187,6 +194,7 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
     else if ( keys[SDL_SCANCODE_W] ) { // stationary shoot
         world->player2->ShootProjectile(world->projectiles[1], world->player2);
         world->player2->notShooting = false;
+        Mix_PlayChannel( -1, laser, 0);
     }
     
     // Player 1 and 2 jump & shoot
@@ -206,8 +214,10 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
                 world->player->floating = false;
                 if ( world->player->collidesBottom )
                     world->player->collidesBottom = false;
-                if ( !world->player->jumping )
+                if ( !world->player->jumping ) {
+                    Mix_PlayChannel( -1, battleCryP1_1, 0);
                     world->player->velocity_y = 4.0f;
+                }
             }
             
             // Player 1 shoot
@@ -216,6 +226,7 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
                 if ( world->player->velocity_x != 0.0f ) {
                     world->player->ShootProjectile(world->projectiles[0], world->player);
                     world->player->notShooting = false;
+                    Mix_PlayChannel( -1, laser, 0);
                 }
             }
             
@@ -225,8 +236,10 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
                 world->player2->floating = false;
                 if ( world->player2->collidesBottom )
                     world->player2->collidesBottom = false;
-                if ( !world->player2->jumping )
+                if ( !world->player2->jumping ) {
                     world->player2->velocity_y = 4.0f;
+                    Mix_PlayChannel( -1, battleCryP2_1, 0);
+                }
             }
             
             // Player 2 shoot
@@ -235,6 +248,7 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
                 if ( world->player2->velocity_x != 0.0f ) {
                     world->player2->ShootProjectile(world->projectiles[1], world->player2);
                     world->player2->notShooting = false;
+                    Mix_PlayChannel( -1, laser, 0);
                 }
             }
         }
@@ -401,6 +415,9 @@ void Game::CollisionCheck(Entity * e) {
         shake = true;
         world->player2->floating = false;
         world->player2->hit = true;
+        world->player2->score--;
+        world->player->score++;
+        Mix_PlayChannel(-1, battleCryP2_1, 0);
         world->projectiles[0]->velocity_x = 0.0;
         world->projectiles[0]->v = TILEHEIGHT * 8.0f;
         // KO
@@ -425,7 +442,10 @@ void Game::CollisionCheck(Entity * e) {
         float dmg = 10.0 + rand() % 10 + crit;
         world->projectiles[1]->onHitDamage = dmg;
         shake = true;
+        Mix_PlayChannel(-1, battleCryP1_1, 0);
         world->player->floating = false;
+        world->player->score--;
+        world->player2->score++;
         world->player->hit = true;
         world->projectiles[1]->velocity_x = 0.0;
         world->projectiles[1]->v = TILEHEIGHT * 9.0f;
@@ -491,17 +511,8 @@ void Game::FixedUpdate() {
     CollisionCheck(world->projectiles[0]);
     CollisionCheck(world->projectiles[1]);
     
-    if ( shake ) {
-//        world->player->velocity_x = 0.0f;
-//        world->player->velocity_y = 1.0f;
-//        world->player2->velocity_x = 0.0f;
-//        world->player2->velocity_y = 1.0f;
-    }
-    
-    else {
-        world->player->shaking = false;
-        world->player2->shaking = false;
-    }
+    world->player->shaking = false;
+    world->player2->shaking = false;
     
     // jump shake range cutoff
     float jumpshake;
@@ -567,8 +578,8 @@ void Game::Render() {
     world->statics[world->statics.size()-2]->Draw(SCALE *0.6);
     
     //DrawText( GLuint textTexture, std::string text, float x, float y, float spacing, float size, float r, float g, float b, float a )
-    world->DrawText(world->LoadTexture("pixel_font.png"), to_string(world->player->damage) + "%", -0.15f, -0.92, FONT_SPACING, FONT_SIZE, 1.0, 1.0, 1.0, 1.0 );
-    world->DrawText(world->LoadTexture("pixel_font.png"), to_string(world->player2->damage) + "%", 0.02f, -0.92, FONT_SPACING, FONT_SIZE, 1.0, 1.0, 1.0, 1.0 );
+    world->DrawText(world->LoadTexture("pixel_font.png"), to_string(world->player->score), -0.15f, -0.92, FONT_SPACING, FONT_SIZE, 1.0, 1.0, 1.0, 1.0 );
+    world->DrawText(world->LoadTexture("pixel_font.png"), to_string(world->player2->score), 0.02f, -0.92, FONT_SPACING, FONT_SIZE, 1.0, 1.0, 1.0, 1.0 );
     
     ///////
     // Lock camera onto world->player

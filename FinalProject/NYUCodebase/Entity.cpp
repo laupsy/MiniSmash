@@ -29,6 +29,7 @@ textureID(textureID),u(u+0.0009),v(v+0.0009),x(x),y(y), floating(floating) {
     hit = false;
     notShooting = true;
     damage = 0;
+    score = 0;
 }
 
 float Entity::lerp(float v0, float v1, float t) {
@@ -75,6 +76,8 @@ void Entity::Go(int originPt) {
 }
 
 void Entity::KO(int originPt) {
+    
+    if ( damage > 50 ) damage = 50.0;
     
     acceleration_y = ACCELERATION_Y * damage/10.0;
     
