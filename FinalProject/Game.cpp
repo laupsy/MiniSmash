@@ -727,8 +727,11 @@ void Game::Reset() {
     world->raining = true;
     world->snowing = true;
     
+    world->platform->v = 0.0;
+    
     for ( size_t j = 0; j < RAINDROPS; j++ ) {
         world->rain[j]->v = TILEHEIGHT * 4.0;
+        world->rain[j]->y = -3.33;
     }
     
     for ( size_t i = 0; i < BLOCKS; i++ ) {
