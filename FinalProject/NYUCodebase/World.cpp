@@ -73,6 +73,7 @@ void World::PlaceBlocks() {
     
     Entity * v = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 10.0f, TILEHEIGHT * 7.0, 0.0, 0.4);
     v->width = TILEWIDTH * 3.5f;
+    v->height = TILEHEIGHT * 2.0f;
     menuItems.push_back(v);
     
     // Buttons
