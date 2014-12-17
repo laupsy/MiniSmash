@@ -24,17 +24,17 @@
 #define ACCELERATION_Y -9.8f // gravity
 #define FRICTION_X 0.99999f
 #define FRICTION_Y 0.99999f
-#define SCALE 1.0f
-#define DEFAULT_Y 0.3f
+#define SCALE 0.7f
+#define DEFAULT_Y 0.6f
 #define LEVELWIDTH 10
-#define SNOW_TRANSITION 10.0
-#define SPACE_TRANSITION 20.0
+#define SNOW_TRANSITION 70.0
+#define SPACE_TRANSITION 140.0
 
 #define BLOCKS 100
 #define RAINDROPS 100
 
 #define FONT_SIZE 0.02f
-#define FONT_SPACING 0.005f
+#define FONT_SPACING 0.0005f
 
 
 class Entity {
@@ -45,6 +45,7 @@ public:
     void Draw(float scale);
     void FixedUpdate();
     void Go(int originPt);
+    void KO(int originPt);
     void Float(int originPt);
     void Flutter();
     void FlutterLeft();
@@ -77,7 +78,7 @@ public:
     
     int lastDirection;
     int damage;
-    int onHitDamage;
+    float onHitDamage;
     
     GLuint textureID;
 };

@@ -2,6 +2,7 @@
 #include "Game.h"
 
 Game::Game() {
+    startGame = false;
     Init();
     LoadObjects();
     Loop();
@@ -57,8 +58,24 @@ Game::~Game() {
 
 void Game::Init() {
     
+    
+    SDL_DisplayMode current;
     SDL_Init(SDL_INIT_VIDEO);
-    displayWindow = SDL_CreateWindow("laupsygame",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,800, 600,SDL_WINDOW_OPENGL);
+    
+    int w, h;
+    
+    for(int i = 0; i < SDL_GetNumVideoDisplays(); ++i){
+        
+        SDL_GetCurrentDisplayMode(i, &current);
+        
+        w = current.w;
+        h = current.h;
+        
+    }
+    
+    float aspect = w/h;
+    
+    displayWindow = SDL_CreateWindow("laupsygame",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,w,h,SDL_WINDOW_OPENGL);
     SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
     SDL_GL_MakeCurrent(displayWindow, context);
     
@@ -66,9 +83,9 @@ void Game::Init() {
     Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096 );
     
     // window stuff
-    glViewport(0,0,800,600);
+    glViewport(0,0,w,h);
     glMatrixMode(GL_PROJECTION);
-    glOrtho(-2.33, 2.33, -1.0, 1.0, -1.0, 1.0);
+    glOrtho(-50 * aspect, 50 * aspect, -50.0, 50.0, -1.0, 1.0);
     
     // window color
     glClearColor(0.1, 0.11, 0.13, 1.0);
@@ -81,7 +98,8 @@ void Game::Init() {
     thunder = Mix_LoadWAV("thunder.wav");
     
     // play music
-    //Mix_PlayMusic(music, -1);
+    if ( startGame ) Mix_PlayMusic(music, -1);
+    else Mix_PlayMusic(music, -1);
     
     shake = false;
 }
@@ -177,6 +195,11 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
         
         if (event.type == SDL_KEYDOWN ) {
             
+            if ( event.key.keysym.scancode == SDL_SCANCODE_ESCAPE ) {
+                SDL_DisplayMode mode;
+                SDL_GetDisplayMode(0, 0, &mode);
+            }
+            
             // Player 1 jump
             
             if ( event.key.keysym.scancode == SDL_SCANCODE_SEMICOLON && !event.key.repeat ) {
@@ -255,20 +278,20 @@ void Game::PlayerControls(const Uint8 *keys, SDL_Event event) {
         world->player2->velocity_x = 0;
     }
     
-    if ( world->player->x > 1.33 ) {
-        world->player->x = -1.33;
+    if ( world->player->x > 1.0 ) {
+        world->player->x = 1.0;
     }
     
-    if ( world->player2->x > 1.33 ) {
-        world->player2->x = -1.33;
+    if ( world->player2->x > 1.0 ) {
+        world->player2->x = 1.0;
     }
     
-    if ( world->player->y < -1.33 ) {
-        world->player->y = 1.33;
+    if ( world->player->x < -1.0 ) {
+        world->player->x = -1.0;
     }
     
-    if ( world->player2->y < -1.33 ) {
-        world->player2->y = 1.33;
+    if ( world->player2->x < -1.0 ) {
+        world->player2->x = -1.0;
     }
 }
 
@@ -367,53 +390,58 @@ void Game::CollisionCheck(Entity * e) {
     e->collidesRight = false;
     e->collidesWith(world->platform);
     
+    
     if ( world->projectiles[0]->collidesWith(world->player2) ) {
         // crit chance
-        int crit = rand() % 50;
-        if ( crit > 20 ) crit = 50;
-        else crit = 0;
-        int dmg = 10 + rand() % 10 + crit;
-        cout << crit << endl;
-        world->projectiles[0]->onHitDamage = dmg;
+        float crit = rand() % 50 / 10.0;
+        if ( crit > 4 ) crit = 50.0;
+        else crit = 0.0;
+        float dmg = 10.0 + rand() % 10 + crit;
+        world->projectiles[1]->onHitDamage = dmg;
         shake = true;
-        world->player2->damage += dmg;
-        world->player->velocity_y = 4.0f;
         world->player2->floating = false;
+        world->player2->hit = true;
         world->projectiles[0]->velocity_x = 0.0;
+        world->projectiles[0]->v = TILEHEIGHT * 8.0f;
         // KO
-        if ( crit > 40 ) {
+        if ( crit > 4 ) {
             world->player2->velocity_x *= 20;
             world->player2->damage = 0;
-            cout << "SHOULD FLY" << endl;
+        }
+        else {
+            world->player2->damage += dmg;
         }
     }
     else {
-        world->projectiles[0]->onHitDamage = 1;
+        world->projectiles[1]->onHitDamage = 1;
+        world->projectiles[1]->v = TILEHEIGHT * 5.0f;
     }
-//    if ( world->projectiles[1]->collidesWith(world->player) ) {
-//        // crit chance
-//        crit = rand() % 50;
-//        if ( crit > 40 ) crit = 50;
-//        else crit = 0;
-//        dmg = 10 + rand() % 10 + crit;
-//        shake = true;
-//        world->player->damage += dmg;
-//        world->player->floating = false;
-//        world->player->hit = true;
-//        world->projectiles[1]->velocity_x = 0.0;
-//        world->projectiles[1]->onHitDamage = dmg;
-//        
-//        // KO
-//        if ( crit > 40 ) {
-//            world->player->velocity_y = 4.0f;
-//            world->player->damage = 0;
-//        }
-//    }
-//    else {
-//        world->projectiles[1]->onHitDamage = 1;
-//    }
     
-    //cout << world->player2->floating << endl;
+    if ( world->projectiles[1]->collidesWith(world->player) ) {
+        // crit chance
+        float crit = rand() % 50 / 10.0;
+        if ( crit > 4 ) crit = 50.0;
+        else crit = 0.0;
+        float dmg = 10.0 + rand() % 10 + crit;
+        world->projectiles[1]->onHitDamage = dmg;
+        shake = true;
+        world->player->floating = false;
+        world->player->hit = true;
+        world->projectiles[1]->velocity_x = 0.0;
+        world->projectiles[1]->v = TILEHEIGHT * 9.0f;
+        // KO
+        if ( crit > 4 ) {
+            world->player->velocity_x *= 20;
+            world->player->damage = 0;
+        }
+        else {
+            world->player->damage += dmg;
+        }
+    }
+    else {
+        world->projectiles[1]->onHitDamage = 1;
+        world->projectiles[1]->v = TILEHEIGHT * 7.0f;
+    }
 }
 
 void Game::ProjectileCheck(Entity * e) {
@@ -464,10 +492,10 @@ void Game::FixedUpdate() {
     CollisionCheck(world->projectiles[1]);
     
     if ( shake ) {
-        world->player->velocity_x = 0.0f;
-        world->player->velocity_y = 1.0f;
-        world->player2->velocity_x = 0.0f;
-        world->player2->velocity_y = 1.0f;
+//        world->player->velocity_x = 0.0f;
+//        world->player->velocity_y = 1.0f;
+//        world->player2->velocity_x = 0.0f;
+//        world->player2->velocity_y = 1.0f;
     }
     
     else {
@@ -482,13 +510,15 @@ void Game::FixedUpdate() {
     // check jumpshake range
     if ( jumpshake > 0.095 & jumpshake < 0.1 ) shake = false;
     
-    
+
     // movement p1
-    if ( !world->player->floating && !world->player->shaking ) world->player->Go(world->platform->y);
+    if ( !world->player->floating && !world->player->shaking && !world->player->hit ) world->player->Go(world->platform->y);
     else if ( !world->player->hit ) world->player->Float(world->platform->y);
+    else world->player->KO(world->platform->y);
     // movement p2
-    if ( !world->player2->floating && !world->player2->shaking ) world->player2->Go(world->platform->y);
+    if ( !world->player2->floating && !world->player2->shaking && !world->player2->hit ) world->player2->Go(world->platform->y);
     else if ( !world->player2->hit ) world->player2->Float(world->platform->y);
+    else world->player2->KO(world->platform->y);
 }
 
 void Game::Render() {
@@ -497,12 +527,14 @@ void Game::Render() {
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
+    
+    SDL_ShowCursor(0);
 
     if ( world->player->y > DEFAULT_Y )
-        camY = world->platform->y * -1 - 0.5;
+        camY = world->platform->y * -1 - 0.2;
     
     if ( shake == true ) {
-        glTranslatef( (rand() % 6 - 3)/ 100.0, camY + (rand() % 8 - 4)/100.0, 0.0f);
+        glTranslatef( (rand() % 10 - 5)/ 100.0, camY + (rand() % 12 - 6)/100.0, 0.0f);
     }
     
     else {
@@ -514,7 +546,7 @@ void Game::Render() {
     }
     
     for ( size_t j = 0; j < world->projectiles.size(); j++ ) {
-        world->projectiles[j]->Draw(SCALE/2 + world->projectiles[j]->velocity_x/5 * world->projectiles[j]->onHitDamage);
+        world->projectiles[j]->Draw(SCALE/5 + fabs(world->projectiles[j]->velocity_x/5) + world->projectiles[j]->onHitDamage/30);
     }
     
     // draw world->player last so not overlapped by solids
@@ -527,9 +559,12 @@ void Game::Render() {
     }
     
     // STATICS
-    for ( size_t k = 0; k < world->statics.size(); k++ ) {
+    for ( size_t k = 0; k < world->statics.size()-2; k++ ) {
         world->statics[k]->Draw(SCALE * 1.2);
     }
+    
+    world->statics[world->statics.size()-1]->Draw(SCALE *0.6);
+    world->statics[world->statics.size()-2]->Draw(SCALE *0.6);
     
     //DrawText( GLuint textTexture, std::string text, float x, float y, float spacing, float size, float r, float g, float b, float a )
     world->DrawText(world->LoadTexture("pixel_font.png"), to_string(world->player->damage) + "%", -0.15f, -0.92, FONT_SPACING, FONT_SIZE, 1.0, 1.0, 1.0, 1.0 );
@@ -544,26 +579,56 @@ void Game::Render() {
     SDL_GL_SwapWindow(displayWindow);
 }
 
-bool Game::UpdateAndRender() {
-    // time elapsed stuff
-    float ticks = (float)SDL_GetTicks()/1000.0f;
-    float elapsed = ticks - lastFrameTicks;
-    lastFrameTicks = ticks;
-    // fixed time elapsed stuff
-    float fixedElapsed = elapsed + timeLeftOver;
-    if ( fixedElapsed > FIXED_TIMESTEP * MAX_TIMESTEPS )
-        fixedElapsed = FIXED_TIMESTEP * MAX_TIMESTEPS;
-    // update timestep
-    while ( fixedElapsed >= FIXED_TIMESTEP ) {
-        fixedElapsed -= FIXED_TIMESTEP;
-        FixedUpdate();
+void Game::StartMenu() {
+    
+    glClear(GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    SDL_ShowCursor(1);
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    glTranslatef(x/-10000.0, y/-10000.0, 0.0f);
+    glClearColor(0.2, 0.23, 0.25, 1.0);
+    
+    for ( size_t k = 0; k < world->menuItems.size(); k++ ) {
+        world->menuItems[k]->Draw(SCALE);
     }
     
-    timeLeftOver = fixedElapsed;
+    
+    
+    const Uint8 *keys = SDL_GetKeyboardState(NULL);
+    if ( keys[SDL_SCANCODE_RETURN] ) {
+        startGame = true;
+    }
+    
+    glPopMatrix();
+    SDL_GL_SwapWindow(displayWindow);
+}
+
+bool Game::UpdateAndRender() {
+    if ( startGame ) {
+        // time elapsed stuff
+        float ticks = (float)SDL_GetTicks()/1000.0f;
+        float elapsed = ticks - lastFrameTicks;
+        lastFrameTicks = ticks;
+        // fixed time elapsed stuff
+        float fixedElapsed = elapsed + timeLeftOver;
+        if ( fixedElapsed > FIXED_TIMESTEP * MAX_TIMESTEPS )
+            fixedElapsed = FIXED_TIMESTEP * MAX_TIMESTEPS;
+        // update timestep
+        while ( fixedElapsed >= FIXED_TIMESTEP ) {
+            fixedElapsed -= FIXED_TIMESTEP;
+            FixedUpdate();
+        }
+        
+        timeLeftOver = fixedElapsed;
+    }
     
     // update and render
     Update(elapsed);
-    Render();
+    if ( startGame ) Render();
+    else StartMenu();
     
     // quit if applicable
     return done;

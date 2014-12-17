@@ -12,10 +12,10 @@ World::World() {}
 
 void World::PlaceBlocks() {
     
-    for ( size_t k = 0; k < 2; k++ ) {
-        Entity * projectile = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 6.0, -4.0f, 0.0f);
-        projectiles.push_back(projectile);
-    }
+    Entity * projectile = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 6.0, -4.0f, 0.0f);
+    projectiles.push_back(projectile);
+    Entity * projectile2 = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 7.0, -4.0f, 0.0f);
+    projectiles.push_back(projectile2);
     
     for ( size_t j = 0; j < RAINDROPS; j++ ) {
         Entity * raindrop = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 4.0, 0.0, -3.33);
@@ -26,7 +26,7 @@ void World::PlaceBlocks() {
     
     for ( size_t i = 0; i < BLOCKS; i++ ) {
         randX = (rand() % 16 - 8) / 10.0;
-        randY = (rand() % 400) / 10.0;
+        randY = (rand() % 1600) / 10.0;
         Entity * cloud = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 0.0, TILEHEIGHT * 2, randX, randY);
         blocks.push_back(cloud);
     }
@@ -35,12 +35,74 @@ void World::PlaceBlocks() {
     frame->width = TILEWIDTH * 8.0;
     frame->height = TILEHEIGHT * 1;
     statics.push_back(frame);
+    
+    Entity * minus1 = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0f, TILEHEIGHT * 0.0, 0.05, 0.0);
+    statics.push_back(minus1);
+    Entity * plus1 = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0f, TILEHEIGHT * 1.0, 0.05, 0.0);
+    statics.push_back(plus1);
+    
+    // bubbles
+    Entity * outofbounds = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0f, TILEHEIGHT * 2.0, 0.05, 0.0);
+    statics.push_back(outofbounds);
+    Entity * outofbounds2 = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 3.0f, TILEHEIGHT * 2.0, 0.05, 0.0);
+    statics.push_back(outofbounds2);
+    
+    // miniatures
+    Entity * outofbounds1 = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 1.0f, TILEHEIGHT * 1.0, 0.05, 0.0);
+    statics.push_back(outofbounds1);
+    Entity * outofbounds3 = new Entity(LoadTexture(spriteSheet), TILEWIDTH * 1.0f, TILEHEIGHT * 1.0, 0.05, 0.0);
+    statics.push_back(outofbounds3);
+    
+    // Menu items
+    
+    Entity * players = new Entity(LoadTexture(menuSheet), TILEWIDTH * 0.0f, TILEHEIGHT * 0.2, 0.0f, 0.0f);
+    players->width = TILEWIDTH * 10.0;
+    players->height = TILEHEIGHT * 8.0;
+    menuItems.push_back(players);
 
 }
 
 void World::AnchorStatics() {
-    for ( size_t i = 0; i < statics.size(); i++ ) {
-        statics[i]->y = platform->y - 0.4;
+    statics[0]->y = platform->y - 0.75;
+    if ( player2->hit ) {
+        statics[1]->y = player2->y;
+        statics[1]->x = player2->x;
+        statics[2]->y = player->y;
+        statics[2]->x = player->x;
+    }
+    if ( player->hit ) {
+        statics[2]->y = player2->y;
+        statics[2]->x = player2->x;
+        statics[1]->y = player->y;
+        statics[1]->x = player->x;
+    }
+    if ( player->y > platform->y + 1.2 ) {
+        statics[3]->y = platform->y + 1.1;
+        statics[3]->x = player->x;
+        statics[5]->u = player->u;
+        statics[5]->v = player->v;
+        statics[5]->y = platform->y + 1.1;
+        statics[5]->x = statics[3]->x;
+    }
+    else {
+        statics[3]->x = 100;
+        statics[3]->y = 100;
+        statics[5]->x = 100;
+        statics[5]->y = 100;
+    }
+    if ( player2->y > platform->y + 1.2 ) {
+        statics[4]->y = platform->y + 1.1;
+        statics[4]->x = player2->x;
+        statics[6]->u = player2->u;
+        statics[6]->v = player2->v;
+        statics[6]->y = platform->y + 1.1;
+        statics[6]->x = statics[4]->x;
+    }
+    else {
+        statics[4]->x = 100;
+        statics[4]->y = 100;
+        statics[6]->x = 100;
+        statics[6]->y = 100;
     }
 }
 
@@ -80,14 +142,14 @@ void World::Lightning() {
     }
     else {
         if ( raining || snowing )
-            glClearColor(fabs(0.1 + player->y / 100.0),
-                         fabs(0.11 + player->y / 100.0),
-                         fabs(0.13 + player->y / 50.0), 1.0);
+            glClearColor(fabs(0.1 + platform->y / 300.0),
+                         fabs(0.11 + platform->y / 300.0),
+                         fabs(0.13 + platform->y / 150.0), 1.0);
         if ( platform->y >= SPACE_TRANSITION - 5.0 )
             // + 4.9 is to start the sky darkening before entering space
-            glClearColor((0.3 - (player->y - SPACE_TRANSITION + 5.1) / 25.0),
-                         (0.31 - (player->y - SPACE_TRANSITION + 5.1) / 25.0),
-                         (0.53 - (player->y - SPACE_TRANSITION + 5.1) / 15.0), 1.0);
+            glClearColor((0.3 - (platform->y - SPACE_TRANSITION + 5.1) / 25.0),
+                         (0.31 - (platform->y - SPACE_TRANSITION + 5.1) / 25.0),
+                         (0.53 - (platform->y - SPACE_TRANSITION + 5.1) / 15.0), 1.0);
     }
 }
 
@@ -105,12 +167,12 @@ void World::Rain() {
         rain[i]->velocity_x += rain[i]->acceleration_x * FIXED_TIMESTEP;
         rain[i]->x += rain[i]->velocity_x * FIXED_TIMESTEP;
         
-        if ( rain[i]->y < player->y - 2.0f ) {
+        if ( rain[i]->y < platform->y - 2.0f ) {
             rain[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;
-            rain[i]->y = player->y + 3.0f;
+            rain[i]->y = platform->y + 3.0f;
             rain[i]->acceleration_y = (float)(rand() % 100 ) * -1;
         }
-        if ( rain[i]->x > player->x + 2.0f ) {
+        if ( rain[i]->x > platform->x + 2.0f ) {
             rain[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;
             rain[i]->velocity_x = ((float)rand())/RAND_MAX * 0.5 - 0.25;
         }
@@ -135,11 +197,11 @@ void World::Snow() {
         rain[i]->velocity_x += rain[i]->acceleration_x * FIXED_TIMESTEP;
         rain[i]->x += rain[i]->velocity_x * FIXED_TIMESTEP;
         
-        if ( rain[i]->y < player->y - 2.0f ) {
+        if ( rain[i]->y < platform->y - 2.0f ) {
             rain[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;
-            rain[i]->y = player->y + 2.0f;
+            rain[i]->y = platform->y + 2.0f;
         }
-        if ( rain[i]->x > player->x + 2.0f ) {
+        if ( rain[i]->x > platform->x + 2.0f ) {
             rain[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;
         }
     }
@@ -172,6 +234,8 @@ void World::Space() {
     
     for ( size_t i = 0; i < blocks.size(); i++ ) {
         blocks[i]->v = TILEHEIGHT * 5.0;
+        if ( i % 10 == 0 ) blocks[i]->v = TILEHEIGHT * 1.0;
+        else if ( i % 5 == 0 ) blocks[i]->v = TILEHEIGHT * 0.0;
         
         if ( blocks[i]->y < platform->y - 2.0f ) {
             blocks[i]->x = ((float)rand())/RAND_MAX * 2.66 - 1.33;

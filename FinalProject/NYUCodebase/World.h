@@ -26,11 +26,13 @@ public:
     std::vector<Entity*> rain;
     std::vector<Entity*> projectiles;
     std::vector<Entity*> statics;
+    std::vector<Entity*> menuItems;
     
     std::vector<float> vertexData;
     std::vector<float> texCoordData;
     
     const char * spriteSheet = "laurassecondsprite.png";
+    const char * menuSheet = "menusheet.png";
     
     bool raining, snowing, inSpace;
     

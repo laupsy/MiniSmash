@@ -16,6 +16,7 @@ public:
     void Update(float elapsed);
     void FixedUpdate();
     void Render();
+    void StartMenu();
     void RenderStart();
     void RenderLevel();
     void RenderGameOver();
@@ -45,6 +46,7 @@ public:
     
     bool done;
     bool shake;
+    bool startGame;
     
     float elapsed;
     float lastFrameTicks;

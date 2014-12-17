@@ -74,6 +74,24 @@ void Entity::Go(int originPt) {
     }
 }
 
+void Entity::KO(int originPt) {
+    
+    acceleration_y = ACCELERATION_Y * damage/10.0;
+    
+    velocity_y = Entity::lerp(velocity_y, 0.0f, FIXED_TIMESTEP * friction_y);
+    velocity_y -= acceleration_y * FIXED_TIMESTEP;
+    y += velocity_y * FIXED_TIMESTEP;
+    
+    // force float
+    if ( y > originPt + 1.33 && player1 ) {
+        hit = false;
+    }
+    // force float
+    if ( y > originPt + 1.33 && player2 ) {
+        hit = false;
+    }
+}
+
 void Entity::Float(int originPt) {
     
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
